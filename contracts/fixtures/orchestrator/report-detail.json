@@ -1,0 +1,28 @@
+{
+  "report_id": "rep-2026-02-01-ops-001",
+  "title": "Autonomous safety sweep - North perimeter",
+  "created_utc": "2026-02-01T12:40:00Z",
+  "status": "approved",
+  "coherence_score": 0.94,
+  "conflict_count": 1,
+  "summary": "Multi-sensor sweep completed with minor variance in thermal readings; no anomalies detected.",
+  "escalation_ticket": null,
+  "narrative": "The North perimeter sweep executed under standard governance. The drone mesh observed minor divergence in thermal bands during the final pass, resolved via consensus alignment. No compliance exceptions were triggered, and the operator confirmed safe clearance for resuming normal operations.",
+  "structured": {
+    "Primary objective": "Safety sweep + anomaly detection",
+    "Active nodes": "14 mesh nodes",
+    "Risk posture": "Low",
+    "Approval gating": "Auto-approved",
+    "Discrepancy severity": "Low"
+  },
+  "evidence": [
+    {
+      "label": "Trace ID",
+      "value": "trace-8f3a"
+    },
+    {
+      "label": "Sensor delta",
+      "value": "0.12% thermal variance"
+    }
+  ]
+}

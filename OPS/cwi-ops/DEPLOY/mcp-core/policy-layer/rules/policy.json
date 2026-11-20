@@ -1,0 +1,89 @@
+{
+  "version": "1.1",
+  "policy_name": "cwi-mcp-governance-policy",
+  "global_tool_execution_enabled": true,
+  "read_only_allowed_tools": [
+    "system.status",
+    "node.health.check",
+    "ledger.view",
+    "pack.list",
+    "pack.get",
+    "pin.resolve",
+    "weather.get",
+    "search.web"
+  ],
+  "disabled_tools": [
+    "calendar.view",
+    "email.read",
+    "email.send",
+    "task.create",
+    "task.list",
+    "notes.write",
+    "document.summarize",
+    "document.extract",
+    "alert.trigger",
+    "workflow.start",
+    "approval.request",
+    "reminder.create",
+    "search.local"
+  ],
+  "rules": [
+    {
+      "id": "require-ledger-logging",
+      "description": "All MCP actions must be logged to the ledger",
+      "enforce": true
+    },
+    {
+      "id": "block-unauthorized-tools",
+      "description": "Only tools defined in the MCP registry may execute",
+      "enforce": true
+    },
+    {
+      "id": "category-based-approval",
+      "description": "Require approval based on tool category",
+      "enforce": true,
+      "categories": {
+        "consumer": false,
+        "personal_assistant": false,
+        "productivity": false,
+        "knowledge": false,
+        "cwi_operations": false,
+        "automation": true,
+        "trust": false
+      }
+    },
+    {
+      "id": "phase1-disabled-tools",
+      "description": "Block private, write, and unapproved tools during Day-1 read-only proof mode",
+      "enforce": true,
+      "tools": [
+        "calendar.view",
+        "email.read",
+        "email.send",
+        "task.create",
+        "task.list",
+        "notes.write",
+        "document.summarize",
+        "document.extract",
+        "alert.trigger",
+        "workflow.start",
+        "approval.request",
+        "reminder.create",
+        "search.local"
+      ]
+    },
+    {
+      "id": "explicit-sensitive-tools",
+      "description": "Force approval for specific sensitive tools",
+      "enforce": true,
+      "tools": [
+        "reminder.create",
+        "email.send",
+        "task.create",
+        "notes.write",
+        "workflow.start",
+        "alert.trigger"
+      ]
+    }
+  ]
+}

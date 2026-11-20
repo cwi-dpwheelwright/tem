@@ -1,0 +1,247 @@
+{
+  "version": "1.2",
+  "catalog_name": "cwi-consumer-day-one-toolset",
+  "tools": [
+    {
+      "name": "weather.get",
+      "description": "Get current weather, forecast, and severe weather alerts for a user location.",
+      "category": "consumer",
+      "risk_class": "read_only_public",
+      "method": "GET",
+      "endpoint": "external://weather",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "news.get",
+      "description": "Get current news headlines by category, region, or user preference.",
+      "category": "consumer",
+      "risk_class": "read_only_public",
+      "method": "GET",
+      "endpoint": "external://news",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "sports.get",
+      "description": "Get sports scores, schedules, standings, and team updates.",
+      "category": "consumer",
+      "risk_class": "read_only_public",
+      "method": "GET",
+      "endpoint": "external://sports",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "calendar.view",
+      "description": "View user calendar events and daily schedule.",
+      "category": "personal_assistant",
+      "risk_class": "read_only_private",
+      "method": "GET",
+      "endpoint": "connector://calendar/view",
+      "connector_id": "calendar-primary",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "reminder.create",
+      "description": "Create a reminder for the user.",
+      "category": "personal_assistant",
+      "risk_class": "write_private",
+      "method": "POST",
+      "endpoint": "connector://calendar/reminders",
+      "connector_id": "calendar-primary",
+      "requires_approval": true,
+      "log_to_ledger": true
+    },
+    {
+      "name": "email.read",
+      "description": "Read user email with consent.",
+      "category": "personal_assistant",
+      "risk_class": "read_only_private",
+      "method": "GET",
+      "endpoint": "connector://email/read",
+      "connector_id": "email-primary",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "email.send",
+      "description": "Send or draft user email.",
+      "category": "personal_assistant",
+      "risk_class": "write_external",
+      "method": "POST",
+      "endpoint": "connector://email/send",
+      "connector_id": "email-primary",
+      "requires_approval": true,
+      "log_to_ledger": true
+    },
+    {
+      "name": "task.create",
+      "description": "Create a task in the user's task system.",
+      "category": "productivity",
+      "risk_class": "write_private",
+      "method": "POST",
+      "endpoint": "connector://tasks/create",
+      "connector_id": "tasks-primary",
+      "requires_approval": true,
+      "log_to_ledger": true
+    },
+    {
+      "name": "task.list",
+      "description": "List user tasks and open work items.",
+      "category": "productivity",
+      "risk_class": "read_only_private",
+      "method": "GET",
+      "endpoint": "connector://tasks/list",
+      "connector_id": "tasks-primary",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "notes.write",
+      "description": "Write or update a user note.",
+      "category": "productivity",
+      "risk_class": "write_private",
+      "method": "POST",
+      "endpoint": "connector://notes/write",
+      "connector_id": "notes-primary",
+      "requires_approval": true,
+      "log_to_ledger": true
+    },
+    {
+      "name": "search.web",
+      "description": "Search the live web for current information.",
+      "category": "knowledge",
+      "risk_class": "read_only_public",
+      "method": "GET",
+      "endpoint": "external://web-search",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "search.local",
+      "description": "Search local CWI knowledge packs and user-approved files.",
+      "category": "knowledge",
+      "risk_class": "read_only_private",
+      "method": "GET",
+      "endpoint": "internal://knowledge/search",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "document.summarize",
+      "description": "Summarize a user-approved document.",
+      "category": "knowledge",
+      "risk_class": "read_only_private",
+      "method": "POST",
+      "endpoint": "connector://documents/summarize",
+      "connector_id": "documents-primary",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "document.extract",
+      "description": "Extract structured information from a user-approved document.",
+      "category": "knowledge",
+      "risk_class": "read_only_private",
+      "method": "POST",
+      "endpoint": "connector://documents/extract",
+      "connector_id": "documents-primary",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "pack.list",
+      "description": "List locally mounted CWI packs available to the orchestrator.",
+      "category": "trust",
+      "risk_class": "read_only_internal",
+      "method": "GET",
+      "endpoint": "internal://packs/list",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "pack.get",
+      "description": "Inspect metadata for a permitted locally mounted CWI pack.",
+      "category": "trust",
+      "risk_class": "read_only_internal",
+      "method": "GET",
+      "endpoint": "internal://packs/get",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "pin.resolve",
+      "description": "Inspect deterministic pin mount availability for pack resolution.",
+      "category": "trust",
+      "risk_class": "read_only_internal",
+      "method": "GET",
+      "endpoint": "internal://pins/resolve",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "node.health.check",
+      "description": "Check health status of CWI nodes.",
+      "category": "cwi_operations",
+      "risk_class": "read_only_internal",
+      "method": "GET",
+      "endpoint": "internal://node/health",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "system.status",
+      "description": "Check status of CWI core services.",
+      "category": "cwi_operations",
+      "risk_class": "read_only_internal",
+      "method": "GET",
+      "endpoint": "internal://system/status",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "alert.trigger",
+      "description": "Trigger a governed operational alert.",
+      "category": "automation",
+      "risk_class": "write_external",
+      "method": "POST",
+      "endpoint": "connector://alerts/trigger",
+      "connector_id": "alerts-primary",
+      "requires_approval": true,
+      "log_to_ledger": true
+    },
+    {
+      "name": "workflow.start",
+      "description": "Start a governed workflow.",
+      "category": "automation",
+      "risk_class": "write_external",
+      "method": "POST",
+      "endpoint": "connector://workflows/start",
+      "connector_id": "workflow-primary",
+      "requires_approval": true,
+      "log_to_ledger": true
+    },
+    {
+      "name": "ledger.view",
+      "description": "View permitted ledger events and action receipts.",
+      "category": "trust",
+      "risk_class": "read_only_internal_sensitive",
+      "method": "GET",
+      "endpoint": "internal://ledger/view",
+      "requires_approval": false,
+      "log_to_ledger": true
+    },
+    {
+      "name": "approval.request",
+      "description": "Create a human approval request for sensitive actions.",
+      "category": "trust",
+      "risk_class": "write_internal",
+      "method": "POST",
+      "endpoint": "internal://approval/request",
+      "requires_approval": false,
+      "log_to_ledger": true
+    }
+  ]
+}

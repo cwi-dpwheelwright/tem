@@ -1,0 +1,5 @@
+{
+  "error": "invalid_request",
+  "message": "Request validation failed.",
+  "details": ["email is required", "password is required"]
+}

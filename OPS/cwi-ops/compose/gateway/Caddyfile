@@ -1,0 +1,247 @@
+{
+	admin off
+	auto_https disable_redirects
+	log {
+		output stdout
+		format filter {
+			wrap json
+			fields {
+				request>headers>Authorization delete
+				request>headers>Cookie delete
+				request>headers>Set-Cookie delete
+			}
+		}
+	}
+}
+
+:{$GATEWAY_HTTP_PORT} {
+	handle_errors {
+		@packs_error path /packs/* /swagger* /swagger/*
+		header @packs_error Content-Type application/json
+		respond @packs_error `{"error":"pack_service_unavailable","code":"pack_service_unavailable","message":"Pack service unavailable","trace_id":"{http.request.id}"}` 503
+		@identity_error path /auth/* /jwks*
+		header @identity_error Content-Type application/json
+		respond @identity_error `{"error":"identity_service_unavailable","code":"identity_service_unavailable","message":"Identity service unavailable","trace_id":"{http.request.id}"}` 503
+		@api_error path /api/*
+		header @api_error Content-Type application/json
+		respond @api_error `{"error":"router_unavailable","code":"router_unavailable","message":"Router unavailable","trace_id":"{http.request.id}"}` 503
+	}
+
+	header {
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "accelerometer=(), camera=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+		X-Frame-Options "DENY"
+		X-Request-Id "{http.request.id}"
+		X-CWI-Origin "gateway"
+		-Server
+		-X-Powered-By
+	}
+	@csp_strict_http not path /swagger /swagger/*
+	header @csp_strict_http {
+		Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
+	}
+
+	@ui not path /healthz /readyz /packs /packs/* /artifacts/* /swagger /swagger/* /auth/* /jwks* /api/* /coordination/* /mcp/*
+	header @ui {
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' http: https:; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'"
+	}
+	@swagger path /swagger /swagger/*
+	header @swagger {
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' http: https:; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'"
+	}
+
+	@healthz path /healthz
+	respond @healthz 200
+
+	@readyz path /readyz
+	rewrite @readyz /api/ready
+	reverse_proxy @readyz {$ROUTER_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	@packs path /packs /packs/*
+	reverse_proxy @packs {$PACK_SERVICE_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	reverse_proxy @swagger {$PACK_SERVICE_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	handle_path /artifacts/* {
+		reverse_proxy {$PACK_SERVICE_HOSTPORT} {
+			header_up X-Request-Id "{http.request.id}"
+			header_up X-Request-Start "{time.now.unix_ms}"
+		}
+	}
+
+	@identity path /auth/* /jwks*
+	reverse_proxy @identity {$IDENTITY_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	@ui_api path /api/login /api/health /api/packs /api/packs/*
+	reverse_proxy @ui_api {$GPT_WEB_UI_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	@orchestrator_api path /api/reconciliation/* /api/ledger/*
+	reverse_proxy @orchestrator_api {$ORCHESTRATOR_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	handle_path /coordination/* {
+		reverse_proxy {$COORDINATION_HOSTPORT} {
+			header_up X-Request-Id "{http.request.id}"
+			header_up X-Request-Start "{time.now.unix_ms}"
+		}
+	}
+
+	@api path /api/*
+	reverse_proxy @api {$ROUTER_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+		health_uri /api/health
+	}
+
+	@mcp path /mcp/*
+	@mcp_enabled expression {env.MCP_ALIAS_ENABLED} == "true"
+	handle @mcp {
+		handle @mcp_enabled {
+			reverse_proxy {$ROUTER_HOSTPORT} {
+				header_up X-Request-Id "{http.request.id}"
+				header_up X-Request-Start "{time.now.unix_ms}"
+			}
+		}
+		respond 404
+	}
+
+	reverse_proxy @ui {$GPT_WEB_UI_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+}
+
+:{$GATEWAY_HTTPS_PORT} {
+	tls internal
+
+	handle_errors {
+		@packs_error path /packs/* /swagger* /swagger/*
+		header @packs_error Content-Type application/json
+		respond @packs_error `{"error":"pack_service_unavailable","code":"pack_service_unavailable","message":"Pack service unavailable","trace_id":"{http.request.id}"}` 503
+		@identity_error path /auth/* /jwks*
+		header @identity_error Content-Type application/json
+		respond @identity_error `{"error":"identity_service_unavailable","code":"identity_service_unavailable","message":"Identity service unavailable","trace_id":"{http.request.id}"}` 503
+		@api_error path /api/*
+		header @api_error Content-Type application/json
+		respond @api_error `{"error":"router_unavailable","code":"router_unavailable","message":"Router unavailable","trace_id":"{http.request.id}"}` 503
+	}
+
+	header {
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "accelerometer=(), camera=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+		X-Frame-Options "DENY"
+		X-Request-Id "{http.request.id}"
+		X-CWI-Origin "gateway"
+		-Server
+		-X-Powered-By
+	}
+	@csp_strict not path /swagger /swagger/*
+	header @csp_strict {
+		Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
+	}
+
+	@ui not path /healthz /readyz /packs /packs/* /artifacts/* /swagger /swagger/* /auth/* /jwks* /api/* /coordination/* /mcp/*
+	header @ui {
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' http: https:; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'"
+	}
+	@swagger path /swagger /swagger/*
+	header @swagger {
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' http: https:; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'"
+	}
+
+	@healthz path /healthz
+	respond @healthz 200
+
+	@readyz path /readyz
+	rewrite @readyz /api/ready
+	reverse_proxy @readyz {$ROUTER_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	@packs path /packs /packs/*
+	reverse_proxy @packs {$PACK_SERVICE_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	reverse_proxy @swagger {$PACK_SERVICE_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	handle_path /artifacts/* {
+		reverse_proxy {$PACK_SERVICE_HOSTPORT} {
+			header_up X-Request-Id "{http.request.id}"
+			header_up X-Request-Start "{time.now.unix_ms}"
+		}
+	}
+
+	@identity path /auth/* /jwks*
+	reverse_proxy @identity {$IDENTITY_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	@ui_api path /api/login /api/health /api/packs /api/packs/*
+	reverse_proxy @ui_api {$GPT_WEB_UI_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	@orchestrator_api path /api/reconciliation/* /api/ledger/*
+	reverse_proxy @orchestrator_api {$ORCHESTRATOR_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+
+	handle_path /coordination/* {
+		reverse_proxy {$COORDINATION_HOSTPORT} {
+			header_up X-Request-Id "{http.request.id}"
+			header_up X-Request-Start "{time.now.unix_ms}"
+		}
+	}
+
+	@api path /api/*
+	reverse_proxy @api {$ROUTER_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+		health_uri /api/health
+	}
+
+	@mcp path /mcp/*
+	@mcp_enabled expression {env.MCP_ALIAS_ENABLED} == "true"
+	handle @mcp {
+		handle @mcp_enabled {
+			reverse_proxy {$ROUTER_HOSTPORT} {
+				header_up X-Request-Id "{http.request.id}"
+				header_up X-Request-Start "{time.now.unix_ms}"
+			}
+		}
+		respond 404
+	}
+
+	reverse_proxy @ui {$GPT_WEB_UI_HOSTPORT} {
+		header_up X-Request-Id "{http.request.id}"
+		header_up X-Request-Start "{time.now.unix_ms}"
+	}
+}

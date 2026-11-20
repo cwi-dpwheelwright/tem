@@ -1,0 +1,21 @@
+groups:
+  - name: cwi-vector-shard
+    rules:
+      - alert: CwiVectorShardDown
+        expr: up{job="cwi-vector-shard"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Vector shard is down"
+          description: "cwi-vector-shard has been unreachable for more than 2 minutes."
+
+      - alert: CwiVectorShardStoragePressure
+        # Requires node_exporter (filesystem metrics) on the host mounting /qdrant/storage.
+        expr: (node_filesystem_avail_bytes{mountpoint="/qdrant/storage"} / node_filesystem_size_bytes{mountpoint="/qdrant/storage"}) < 0.15
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Vector shard storage pressure"
+          description: "Available space below 15% on /qdrant/storage for 10 minutes."

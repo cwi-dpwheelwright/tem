@@ -1,0 +1,3 @@
+services:
+  cwi-gpu-worker-pro:
+    gpus: all

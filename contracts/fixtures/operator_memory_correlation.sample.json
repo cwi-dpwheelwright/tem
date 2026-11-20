@@ -1,0 +1,35 @@
+{
+  "correlation_id": "omc-2026-02-02-001",
+  "tenant_id": "tenant-demo",
+  "operator_id": "op-217",
+  "session_id": "sess-88a1",
+  "observed_utc": "2026-02-02T18:10:00Z",
+  "consent": {
+    "granted": true,
+    "granted_utc": "2026-02-02T17:55:00Z",
+    "source": "carplay-ui"
+  },
+  "signals": [
+    {
+      "signal_type": "correction",
+      "value": 2,
+      "unit": "count",
+      "confidence": 0.92,
+      "occurred_utc": "2026-02-02T18:00:12Z"
+    }
+  ],
+  "performance": [
+    {
+      "metric": "response_latency_ms",
+      "value": 420,
+      "unit": "ms",
+      "window_utc": "2026-02-02T18:05:00Z",
+      "confidence": 0.88
+    }
+  ],
+  "correlation_score": 0.64,
+  "notes": "Spike in manual corrections correlates with increased latency.",
+  "metadata": {
+    "shift": "night"
+  }
+}

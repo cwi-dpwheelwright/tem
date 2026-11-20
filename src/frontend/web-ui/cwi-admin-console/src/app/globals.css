@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  --cwi-navy-600: #043e80;
+  --cwi-navy-700: #012d67;
+  --cwi-navy-800: #002659;
+  --cwi-navy-850: #001f48;
+  --cwi-navy-900: #01173e;
+  --cwi-navy-950: #010b31;
+  --cwi-accent-400: #408af4;
+  --cwi-accent-500: #0063f0;
+  --cwi-accent-600: #004fc0;
+  --cwi-text-muted: #8fa4c3;
+  --cwi-text-primary: #ffffff;
+  --cwi-text-secondary: #c8d3e6;
+  --cwi-divider: rgba(255, 255, 255, 0.08);
+  --cwi-gradient-bg: radial-gradient(120% 120% at 50% 20%, #012d67 0%, #010b31 70%);
+  --cwi-gradient-surface: linear-gradient(180deg, #012d67 0%, #001f48 100%);
+  --cwi-shadow-raised: 0 10px 30px rgba(0, 0, 0, 0.45), 0 -6px 18px rgba(255, 255, 255, 0.05);
+  --cwi-shadow-inset: inset 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 -4px 14px rgba(255, 255, 255, 0.05);
+  --cwi-brand: #1034a6;
+
+  --page-bg: var(--cwi-gradient-bg);
+}
+
+@theme inline {
+  --color-background: var(--cwi-navy-950);
+  --color-foreground: var(--cwi-text-primary);
+  --color-slate-50: #101b3f;
+  --color-slate-100: #0d1a3a;
+  --color-slate-200: #192a55;
+  --color-slate-300: var(--cwi-text-secondary);
+  --color-slate-400: var(--cwi-text-muted);
+  --color-slate-500: #5c73a0;
+  --color-slate-600: #345084;
+  --color-slate-700: var(--cwi-navy-700);
+  --color-slate-800: var(--cwi-navy-800);
+  --color-slate-900: var(--cwi-navy-900);
+  --color-slate-950: var(--cwi-navy-950);
+  --color-sky-400: var(--cwi-accent-400);
+  --color-sky-500: var(--cwi-accent-500);
+  --color-sky-600: var(--cwi-accent-600);
+  --font-sans: var(--font-sans);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--cwi-text-primary);
+  font-family: var(--font-sans);
+}

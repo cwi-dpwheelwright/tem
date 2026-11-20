@@ -1,0 +1,11 @@
+[
+  {
+    "doc_id": "doc-proc-018",
+    "title": "Zone 3 safety procedure",
+    "type": "procedure",
+    "owner": "Safety Office",
+    "status": "active",
+    "versions_count": 3,
+    "latest_version": "1.8.2"
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "$id": "https://cwi.dev/schemas/auth_token_response.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AuthTokenResponse",
+  "type": "object",
+  "required": ["access_token", "refresh_token", "token_type", "expires_utc"],
+  "properties": {
+    "access_token": { "type": "string" },
+    "refresh_token": { "type": "string" },
+    "token_type": { "type": "string" },
+    "expires_utc": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

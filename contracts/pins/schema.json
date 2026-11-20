@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CWI Pin Document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pack_id"],
+  "anyOf": [
+    { "required": ["latest_stable"] },
+    { "required": ["approved"] },
+    { "required": ["experiment"] }
+  ],
+  "properties": {
+    "pack_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique pack identifier."
+    },
+    "latest_stable": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA256 hash of the latest stable pack version."
+    },
+    "approved": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA256 hash of the approved pack version."
+    },
+    "experiment": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA256 hash of the experiment pack version."
+    },
+    "issued_at_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC3339 timestamp when this pin document was issued."
+    },
+    "signature_algorithm": {
+      "type": "string",
+      "enum": ["ed25519-raw"],
+      "description": "Signature algorithm used to sign this pin document."
+    },
+    "signature": {
+      "type": "string",
+      "description": "Base64-encoded Ed25519 signature over the canonicalized pin payload."
+    },
+    "signature_key_id": {
+      "type": "string",
+      "description": "Identifier for the public key used to verify the signature."
+    }
+  }
+}

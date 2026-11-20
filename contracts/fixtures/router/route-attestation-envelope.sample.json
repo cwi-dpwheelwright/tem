@@ -1,0 +1,24 @@
+{
+  "schema_version": "v1",
+  "attestation_id": "attest-4c9c8a0f4b9a4a0ea9d4b57d12e2f3a0",
+  "issued_utc": "2026-02-02T12:00:30Z",
+  "trace_id": "trace-01",
+  "tenant_id": "tenant-123",
+  "node_id": "node-17",
+  "decision_id": "decision-6f5a2c9d",
+  "selected_tier": "pro",
+  "selected_endpoint": "http://model-pro:11434",
+  "network_status": "healthy",
+  "network_score": 0.78,
+  "mesh_health_status": "healthy",
+  "preferred_interface": "lte",
+  "reroute_required": false,
+  "reroute_reason": "",
+  "nonce": "nonce-7b1c9f0e",
+  "sequence": 42,
+  "reason_codes": [
+    "complexity_high",
+    "network_healthy"
+  ],
+  "signature": ""
+}

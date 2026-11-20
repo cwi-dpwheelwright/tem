@@ -1,0 +1,54 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cwi.Router.Api", "src\Cwi.Router.Api\Cwi.Router.Api.csproj", "{198FB939-7D67-4447-BC7E-C818E691EDC5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cwi.Router.Application", "src\Cwi.Router.Application\Cwi.Router.Application.csproj", "{63FC6EFB-A88F-47CE-B87C-E41A084791CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cwi.Router.Domain", "src\Cwi.Router.Domain\Cwi.Router.Domain.csproj", "{4B17BED8-C92E-4289-9DD7-AB89B2D318E4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cwi.Router.DataAccess", "src\Cwi.Router.DataAccess\Cwi.Router.DataAccess.csproj", "{CDD65370-2F93-4A49-8149-28449E3296B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cwi.Router.ArchTests", "tests\Cwi.Router.ArchTests\Cwi.Router.ArchTests.csproj", "{5AAD0855-3C49-416F-8FD2-189BD11E78F0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cwi.Router.UnitTests", "tests\Cwi.Router.UnitTests\Cwi.Router.UnitTests.csproj", "{3F099BFC-CAF3-4725-BA20-0365BCFB09D3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cwi.Router.IntegrationTests", "tests\Cwi.Router.IntegrationTests\Cwi.Router.IntegrationTests.csproj", "{0F1E8ED1-8C16-4ED2-B9BC-92A750C232AD}"
+EndProject
+Global
+  GlobalSection(SolutionConfigurationPlatforms) = preSolution
+    Debug|Any CPU = Debug|Any CPU
+    Release|Any CPU = Release|Any CPU
+  EndGlobalSection
+  GlobalSection(ProjectConfigurationPlatforms) = postSolution
+    {198FB939-7D67-4447-BC7E-C818E691EDC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {198FB939-7D67-4447-BC7E-C818E691EDC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {198FB939-7D67-4447-BC7E-C818E691EDC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {198FB939-7D67-4447-BC7E-C818E691EDC5}.Release|Any CPU.Build.0 = Release|Any CPU
+    {63FC6EFB-A88F-47CE-B87C-E41A084791CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {63FC6EFB-A88F-47CE-B87C-E41A084791CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {63FC6EFB-A88F-47CE-B87C-E41A084791CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {63FC6EFB-A88F-47CE-B87C-E41A084791CE}.Release|Any CPU.Build.0 = Release|Any CPU
+    {4B17BED8-C92E-4289-9DD7-AB89B2D318E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {4B17BED8-C92E-4289-9DD7-AB89B2D318E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {4B17BED8-C92E-4289-9DD7-AB89B2D318E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {4B17BED8-C92E-4289-9DD7-AB89B2D318E4}.Release|Any CPU.Build.0 = Release|Any CPU
+    {CDD65370-2F93-4A49-8149-28449E3296B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {CDD65370-2F93-4A49-8149-28449E3296B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {CDD65370-2F93-4A49-8149-28449E3296B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {CDD65370-2F93-4A49-8149-28449E3296B5}.Release|Any CPU.Build.0 = Release|Any CPU
+    {5AAD0855-3C49-416F-8FD2-189BD11E78F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {5AAD0855-3C49-416F-8FD2-189BD11E78F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {5AAD0855-3C49-416F-8FD2-189BD11E78F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {5AAD0855-3C49-416F-8FD2-189BD11E78F0}.Release|Any CPU.Build.0 = Release|Any CPU
+    {3F099BFC-CAF3-4725-BA20-0365BCFB09D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {3F099BFC-CAF3-4725-BA20-0365BCFB09D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {3F099BFC-CAF3-4725-BA20-0365BCFB09D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {3F099BFC-CAF3-4725-BA20-0365BCFB09D3}.Release|Any CPU.Build.0 = Release|Any CPU
+    {0F1E8ED1-8C16-4ED2-B9BC-92A750C232AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {0F1E8ED1-8C16-4ED2-B9BC-92A750C232AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {0F1E8ED1-8C16-4ED2-B9BC-92A750C232AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {0F1E8ED1-8C16-4ED2-B9BC-92A750C232AD}.Release|Any CPU.Build.0 = Release|Any CPU
+  EndGlobalSection
+EndGlobal

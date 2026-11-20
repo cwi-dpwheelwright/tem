@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  cwi-orchestrator:
+    image: ${REGISTRY}/cwi-orchestrator:${CWI_ORCHESTRATOR_TAG}
+    container_name: internal-01-core-orchestrator
+    env_file: .env.template
+    environment:
+      LANGUAGE_NORMALIZATION_MODE: ${LANGUAGE_NORMALIZATION_MODE:-local}
+      LANGUAGE_NORMALIZATION_BASE_URL: ${LANGUAGE_NORMALIZATION_BASE_URL:-http://cwi-language-normalization:8081}
+      LANGUAGE_NORMALIZATION_TIMEOUT_MS: ${LANGUAGE_NORMALIZATION_TIMEOUT_MS:-750}
+      CWI_SUSTAINABILITY_ESTIMATED_NODE_WATTS: ${CWI_SUSTAINABILITY_ESTIMATED_NODE_WATTS:-180}
+      CWI_SUSTAINABILITY_COST_USD_PER_KWH: ${CWI_SUSTAINABILITY_COST_USD_PER_KWH:-0.12}
+      CWI_SUSTAINABILITY_ESTIMATED_WATER_LITERS_PER_REQUEST: ${CWI_SUSTAINABILITY_ESTIMATED_WATER_LITERS_PER_REQUEST:-0.005}
+      CWI_SUSTAINABILITY_CLOUD_BASELINE_VERSION: ${CWI_SUSTAINABILITY_CLOUD_BASELINE_VERSION:-cwi-sustainability-seeded-estimates.v1}
+      CWI_SUSTAINABILITY_CLOUD_ENERGY_WH_PER_REQUEST: ${CWI_SUSTAINABILITY_CLOUD_ENERGY_WH_PER_REQUEST:-3}
+      CWI_SUSTAINABILITY_CLOUD_COST_USD_PER_REQUEST: ${CWI_SUSTAINABILITY_CLOUD_COST_USD_PER_REQUEST:-0.001}
+      CWI_SUSTAINABILITY_CLOUD_WATER_LITERS_PER_REQUEST: ${CWI_SUSTAINABILITY_CLOUD_WATER_LITERS_PER_REQUEST:-0.02}
+    ports:
+      - "${ORCHESTRATOR_HTTP_PORT}:8081"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-language-normalization:
+    image: ${REGISTRY}/cwi-language-normalization:${CWI_LANGUAGE_NORMALIZATION_TAG:-local}
+    container_name: internal-01-core-language-normalization
+    profiles:
+      - normalization
+    environment:
+      LANGUAGE_NORMALIZATION_HTTP_PORT: 8081
+      LANGUAGE_NORMALIZATION_DEV_OPENAPI_ENABLED: ${LANGUAGE_NORMALIZATION_DEV_OPENAPI_ENABLED:-true}
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-coordination-layer:
+    image: ${REGISTRY}/cwi-coordination-layer:${CWI_COORDINATION_TAG}
+    container_name: internal-01-core-coordination-layer
+    env_file: .env.template
+    ports:
+      - "${COORDINATION_HTTP_PORT}:8081"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+networks:
+  cwi-internal:
+    name: cwi-internal

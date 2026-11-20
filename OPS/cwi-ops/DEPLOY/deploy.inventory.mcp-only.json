@@ -1,0 +1,45 @@
+{
+  "defaults": {
+    "sshUser": "root",
+    "deployRoot": "/opt/cwi/DEPLOY",
+    "bundleRoot": "OPS/cwi-ops/DEPLOY",
+    "composeCommand": "docker compose",
+    "composeFile": "docker-compose.yml",
+    "composeArgs": "up -d",
+    "seedEnvFromTemplate": true
+  },
+  "hosts": [
+    {
+      "name": "internal-mcp-01",
+      "host": "100.120.208.51",
+      "roles": [
+        {
+          "name": "mcp-core",
+          "envFile": "OPS/cwi-ops/DEPLOY/mcp-core/.env",
+          "buildContextPaths": [
+            "global.json",
+            "src/backend/common",
+            "src/backend/services/cwi-router",
+            "src/backend/services/cwi-orchestrator",
+            "src/backend/services/cwi-coordination-layer",
+            "src/backend/services/cwi-identity-server",
+            "src/backend/services/cwi-pack-service",
+            "src/backend/services/cwi-teams-bot",
+            "src/etl",
+            "contracts/grpc",
+            "contracts/json-schema"
+          ],
+          "buildImages": [
+            { "image": "local/cwi-router:10h", "dockerfile": "src/backend/services/cwi-router/Dockerfile" },
+            { "image": "local/cwi-orchestrator:10h", "dockerfile": "src/backend/services/cwi-orchestrator/Dockerfile" },
+            { "image": "local/cwi-coordination-layer:10h", "dockerfile": "src/backend/services/cwi-coordination-layer/Dockerfile" },
+            { "image": "local/cwi-identity-server:10h", "dockerfile": "src/backend/services/cwi-identity-server/Dockerfile" },
+            { "image": "local/cwi-pack-service:10h", "dockerfile": "src/backend/services/cwi-pack-service/Dockerfile" },
+            { "image": "local/cwi-teams-bot:10h", "dockerfile": "src/backend/services/cwi-teams-bot/Dockerfile", "context": "src/backend/services/cwi-teams-bot" },
+            { "image": "local/cwi-etl:10h", "dockerfile": "src/etl/docker/Dockerfile", "context": "src/etl" }
+          ]
+        }
+      ]
+    }
+  ]
+}

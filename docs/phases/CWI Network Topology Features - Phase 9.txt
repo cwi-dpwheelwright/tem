@@ -1,0 +1,7 @@
+Phase 9 – Separation Guardrails
+Status: Not started (guards only; no Phase 9 feature implementation).
+
+Guardrails alignment:
+- No persistent per-user embeddings in global pack shards.
+- No plaintext user memory outside session scope.
+- Any detected conflict requires discussion before Phase 9 begins.

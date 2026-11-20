@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net8.0": {
+      "cwi.router.domain": {
+        "type": "Project"
+      }
+    }
+  }
+}

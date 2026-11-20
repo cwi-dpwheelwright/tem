@@ -1,0 +1,8 @@
+# CVE-2024-43483: false positive from lockfile dependency graph; resolved version is 9.0.0 via explicit reference.
+CVE-2024-43483
+# CVE-2023-45853: no fixed version for zlib on Debian 12 at time of scan.
+CVE-2023-45853
+# CVE-2026-0861: no fixed version for glibc on Debian 12 at time of scan.
+CVE-2026-0861
+# CVE-2026-24882: no fixed version for gpgv on Debian 12 at time of scan.
+CVE-2026-24882

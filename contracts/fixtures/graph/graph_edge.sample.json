@@ -1,0 +1,17 @@
+{
+  "edge_id": "edge-asset-owner-1",
+  "from_node_id": "asset:report:2026-02-02",
+  "to_node_id": "user-42",
+  "relation": "OWNED_BY",
+  "directed": true,
+  "weight": 1,
+  "properties": {
+    "granted_utc": "2026-01-15T12:00:00Z",
+    "scope": "read-write"
+  },
+  "source": "orchestrator",
+  "tenant_id": "tenant-1",
+  "graph_id": "ownership-lineage",
+  "created_utc": "2026-02-02T09:00:00Z",
+  "updated_utc": "2026-02-02T09:05:00Z"
+}

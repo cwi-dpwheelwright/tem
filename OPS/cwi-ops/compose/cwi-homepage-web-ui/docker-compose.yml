@@ -1,0 +1,16 @@
+services:
+  cwi-homepage-web-ui:
+    image: ${REGISTRY}/cwi-homepage-web-ui:${CWI_HOMEPAGE_WEB_UI_TAG}
+    container_name: public-ui-homepage-web-ui
+    env_file: .env
+    build:
+      context: ../../../..
+      dockerfile: src/frontend/web-ui/cwi-homepage-web-ui/Dockerfile
+      args:
+        NEXT_PUBLIC_CWI_BETA_ACCESS_URL: ${NEXT_PUBLIC_CWI_BETA_ACCESS_URL}
+    environment:
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_CWI_BETA_ACCESS_URL: ${NEXT_PUBLIC_CWI_BETA_ACCESS_URL}
+    ports:
+      - "${HOMEPAGE_WEB_UI_HTTP_PORT}:3000"
+    restart: unless-stopped

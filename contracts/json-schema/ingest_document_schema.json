@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IngestDocumentRequest",
+  "$ref": "#/$defs/IngestDocumentRequest",
+  "$defs": {
+    "IngestDocumentRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "tenant_id",
+        "document"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "user_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "document": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "doc_id",
+            "title",
+            "mime_type",
+            "content",
+            "content_encoding",
+            "source"
+          ],
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "mime_type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "content": {
+              "type": "string",
+              "minLength": 1
+            },
+            "content_encoding": {
+              "type": "string",
+              "enum": ["plain", "base64"]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "created_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "metadata": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "IngestDocumentResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accepted",
+        "ingest_id"
+      ],
+      "properties": {
+        "accepted": {
+          "type": "boolean"
+        },
+        "ingest_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "doc_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

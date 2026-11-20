@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ActivationHandshake",
+  "type": "object",
+  "required": [
+    "device_id",
+    "bundle_id",
+    "nonce",
+    "expires_utc"
+  ],
+  "properties": {
+    "device_id": { "type": "string" },
+    "bundle_id": { "type": "string" },
+    "nonce": { "type": "string" },
+    "expires_utc": { "type": "string", "format": "date-time" },
+    "signature": { "type": "string" },
+    "claims": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false
+}

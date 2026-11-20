@@ -1,0 +1,14 @@
+{
+  "schema_version": "v1",
+  "generated_utc": "2026-02-01T00:00:00Z",
+  "artifacts": [
+    {
+      "name": "report.json",
+      "sha256": "deadbeef"
+    },
+    {
+      "name": "report.md",
+      "sha256": "cafebabe"
+    }
+  ]
+}

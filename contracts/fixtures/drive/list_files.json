@@ -1,0 +1,15 @@
+{
+  "documents": [
+    {
+      "doc_id": "drive-doc-001",
+      "title": "Drive Demo",
+      "content": "Drive fixture content.",
+      "source": "google-drive",
+      "metadata": {
+        "folder_id": "root",
+        "tenant_id": "tenant-1",
+        "created_utc": "2026-01-01T00:00:00Z"
+      }
+    }
+  ]
+}

@@ -1,0 +1,308 @@
+{
+  "schema_version": "recursive-validation-run.v1",
+  "run_id": "recursive-run-20260508-001",
+  "generated_utc": "2026-05-08T15:00:00Z",
+  "test_suite_version": "recursive-suite.v1",
+  "prompt_set_version": "internal-ownership-open-loops.v1",
+  "environment": "ci",
+  "runtime": {
+    "node_id": "node-ci-1",
+    "tenant_id": "tenant-1",
+    "model_id": "model-ci",
+    "runtime_version": "orchestrator-ci"
+  },
+  "contract_evidence": {
+    "pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "anchor_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "canonical_pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "pack_schema_version": "pack_schema.json",
+    "trace_contract_version": "cwi-router.openapi_10H_frozen.yaml#Trace",
+    "recursive_event_schema_version": "recursive-event.v1",
+    "policy_bundle_version": "policy-ci-v1",
+    "approval_policy_version": "approval-ci-v1",
+    "ledger_hash_suite_id": "sha256-v1",
+    "fixture_ids": [
+      "contracts/fixtures/orchestrator/recursive-event.valid.json",
+      "contracts/fixtures/orchestrator/ask-response.json",
+      "contracts/fixtures/orchestrator/action-response.json"
+    ],
+    "gold_test_ids": [
+      "test_frozen_response_trace_contract_is_declared",
+      "test_recursive_validation_run_schema_requires_hard_gate_evidence",
+      "test_recursive_validation_run_fixture_records_zero_tolerance_gates"
+    ],
+    "migration_versions": []
+  },
+  "recursive_loop_steps": [
+    {
+      "step_id": "controlled_input_event",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "fixture",
+          "ref_id": "internal-ownership-open-loops.v1#fact-1"
+        }
+      ]
+    },
+    {
+      "step_id": "process_miner_observation",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "trace",
+          "ref_id": "trace-recursive-1"
+        }
+      ]
+    },
+    {
+      "step_id": "normalized_event",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "schema",
+          "ref_id": "recursive-event.v1"
+        }
+      ]
+    },
+    {
+      "step_id": "memory_graph_candidate",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "ledger",
+          "ref_id": "ledger:recursive:memory-graph-candidate"
+        }
+      ]
+    },
+    {
+      "step_id": "policy_decision",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "ledger",
+          "ref_id": "ledger:recursive:policy-decision"
+        }
+      ]
+    },
+    {
+      "step_id": "graph_update",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "ledger",
+          "ref_id": "ledger:recursive:graph-update"
+        }
+      ]
+    },
+    {
+      "step_id": "vector_refresh",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "ledger",
+          "ref_id": "ledger:recursive:vector-refresh"
+        }
+      ]
+    },
+    {
+      "step_id": "retrieval_improvement",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "metric",
+          "ref_id": "vector_retrieval_relevance_score"
+        }
+      ]
+    },
+    {
+      "step_id": "answer_improvement",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "trace",
+          "ref_id": "trace-recursive-2"
+        }
+      ]
+    },
+    {
+      "step_id": "critic_validation",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "ledger",
+          "ref_id": "ledger:recursive:critic-validation"
+        }
+      ]
+    },
+    {
+      "step_id": "truth_engine_state",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "trace",
+          "ref_id": "trace-recursive-2#truth"
+        }
+      ]
+    },
+    {
+      "step_id": "ledger_audit_proof",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "ledger",
+          "ref_id": "ledger:recursive:verify"
+        }
+      ]
+    },
+    {
+      "step_id": "regression_quality_update",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "gold_test",
+          "ref_id": "test_recursive_internal_ownership_loop"
+        }
+      ]
+    },
+    {
+      "step_id": "repeatability_check",
+      "status": "PASS",
+      "evidence_refs": [
+        {
+          "ref_type": "artifact",
+          "ref_id": "artifacts/gold-tests/recursive-run-20260508-001.json"
+        }
+      ]
+    }
+  ],
+  "hard_gates": [
+    {
+      "gate_id": "pack_trust",
+      "status": "PASS",
+      "zero_tolerance": true,
+      "evidence_refs": [
+        {
+          "ref_type": "schema",
+          "ref_id": "ANCHOR_RULES.md"
+        }
+      ]
+    },
+    {
+      "gate_id": "frozen_trace_contract",
+      "status": "PASS",
+      "zero_tolerance": true,
+      "evidence_refs": [
+        {
+          "ref_type": "fixture",
+          "ref_id": "contracts/fixtures/orchestrator/ask-response.json"
+        }
+      ]
+    },
+    {
+      "gate_id": "approval_gating",
+      "status": "PASS",
+      "zero_tolerance": true,
+      "evidence_refs": [
+        {
+          "ref_type": "fixture",
+          "ref_id": "contracts/fixtures/orchestrator/action-response.json"
+        }
+      ]
+    },
+    {
+      "gate_id": "provenance_ledger",
+      "status": "PASS",
+      "zero_tolerance": true,
+      "evidence_refs": [
+        {
+          "ref_type": "ledger",
+          "ref_id": "ledger:recursive:verify"
+        }
+      ]
+    },
+    {
+      "gate_id": "kill_switch",
+      "status": "PASS",
+      "zero_tolerance": true,
+      "evidence_refs": [
+        {
+          "ref_type": "gold_test",
+          "ref_id": "test_kill_switch_irreversible_blocks_disable"
+        }
+      ]
+    },
+    {
+      "gate_id": "tenant_isolation",
+      "status": "PASS",
+      "zero_tolerance": true,
+      "evidence_refs": [
+        {
+          "ref_type": "gold_test",
+          "ref_id": "test_missing_jwt_returns_401"
+        }
+      ]
+    },
+    {
+      "gate_id": "privacy_opsec",
+      "status": "PASS",
+      "zero_tolerance": true,
+      "evidence_refs": [
+        {
+          "ref_type": "fixture",
+          "ref_id": "recursive-privacy-canary"
+        }
+      ]
+    },
+    {
+      "gate_id": "rollback",
+      "status": "PASS",
+      "zero_tolerance": true,
+      "evidence_refs": [
+        {
+          "ref_type": "gold_test",
+          "ref_id": "test_pack_activation_and_rollback_audited"
+        }
+      ]
+    }
+  ],
+  "quality_gates": [
+    {
+      "metric": "routing_score",
+      "threshold": 0.97,
+      "observed": 0.98,
+      "status": "PASS"
+    },
+    {
+      "metric": "memory_relevance_score",
+      "threshold": 0.95,
+      "observed": 0.96,
+      "status": "PASS"
+    },
+    {
+      "metric": "source_synthesis_quality",
+      "threshold": 0.95,
+      "observed": 0.95,
+      "status": "PASS"
+    }
+  ],
+  "trace_ids": [
+    "trace-recursive-1",
+    "trace-recursive-2"
+  ],
+  "ledger_refs": [
+    "ledger:recursive:memory-graph-candidate",
+    "ledger:recursive:policy-decision",
+    "ledger:recursive:graph-update",
+    "ledger:recursive:vector-refresh",
+    "ledger:recursive:critic-validation",
+    "ledger:recursive:verify"
+  ],
+  "results": {
+    "overall_status": "PASS",
+    "critical_failures": 0,
+    "privacy_failures": 0,
+    "cross_tenant_leakage": 0,
+    "quality_failures": 0
+  },
+  "residual_risks": []
+}

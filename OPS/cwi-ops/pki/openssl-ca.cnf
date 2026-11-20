@@ -1,0 +1,35 @@
+# OpenSSL CA template (sanitized)
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+dir               = ./pki
+new_certs_dir     = $dir/newcerts
+certificate       = $dir/ca.crt
+private_key       = $dir/ca.key
+serial            = $dir/serial
+crlnumber         = $dir/crlnumber
+crl               = $dir/ca.crl
+database          = $dir/index.txt
+
+policy            = policy_loose
+x509_extensions   = v3_ca
+
+default_md        = sha256
+
+default_days      = 3650
+
+[ policy_loose ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ v3_ca ]
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer
+basicConstraints = critical, CA:true
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign

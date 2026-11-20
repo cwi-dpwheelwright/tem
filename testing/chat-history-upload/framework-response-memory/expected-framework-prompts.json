@@ -1,0 +1,84 @@
+{
+  "fixture": "CWI framework response memory fixture",
+  "upload_file": "cwi_framework_response_memory_upload.md",
+  "active_markers": [
+    "Project Cedar Lens",
+    "OPEN-CEDAR-441",
+    "CEDAR-LENS-914",
+    "HOME-CEDAR-118",
+    "Demitrius",
+    "Chad"
+  ],
+  "excluded_markers": [
+    "Project Glass Finch",
+    "Project Dust Archive",
+    "RETRACT-CEDAR-555",
+    "TANGERINE-OLD-223"
+  ],
+  "historical_markers": [
+    "Project Amber Bridge"
+  ],
+  "conflict_markers": [
+    "Riley",
+    "Morgan",
+    "no single truth"
+  ],
+  "pre_upload_prompts": [
+    {
+      "label": "superadmin-pre-what-do-you-know",
+      "question": "what do you know about me?",
+      "expected": "Empty memory state; no fixture markers; trace memory_used false."
+    },
+  ],
+  "post_upload_prompts": [
+    {
+      "label": "superadmin-what-do-you-know",
+      "question": "what do you know about me?",
+      "expected": "Uses activated memory, includes current project, collaborators, open loop, preference, conflict note, confidence, and sources."
+    },
+    {
+      "label": "superadmin-describe-me-as-person",
+      "question": "Can you describe me as a person?",
+      "expected": "Grounded self-description from memory, no generic personality filler."
+    },
+    {
+      "label": "superadmin-projects",
+      "question": "what projects am I working on?",
+      "expected": "Includes Project Cedar Lens; excludes superseded/deleted/expired/retracted markers from active context."
+    },
+    {
+      "label": "superadmin-open-loops",
+      "question": "what open loops do I have?",
+      "expected": "Includes OPEN-CEDAR-441."
+    },
+    {
+      "label": "superadmin-home-life",
+      "question": "what do you know about my home life?",
+      "expected": "Includes HOME-CEDAR-118 and avoids unrelated work overload."
+    },
+    {
+      "label": "superadmin-key-people",
+      "question": "who are the key people in my network?",
+      "expected": "Includes Demitrius and Chad; surfaces Riley/Morgan as unresolved conflict only."
+    },
+    {
+      "label": "superadmin-sources",
+      "question": "show sources for what you know about me",
+      "expected": "Shows memory/provenance sources and trace source metadata."
+    }
+  ],
+  "trace_expectations": [
+    "route activated_memory_retrieval after upload",
+    "intent memory_recall after upload",
+    "memory_used true after upload",
+    "memory_framework_version memory-framework-v1",
+    "memory_framework_decisions populated",
+    "memory_active_context_count greater than zero",
+    "memory_excluded_context_count greater than zero",
+    "memory_conflicts populated",
+    "comprehension_expression_version comprehension-expression-framework-v1",
+    "presentation_framework_version presentation-framework-v1",
+    "presentation_template_family memory_backed",
+    "presentation_source_display_mode source_pills_grouped"
+  ]
+}

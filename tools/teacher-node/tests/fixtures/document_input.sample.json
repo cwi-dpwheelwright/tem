@@ -1,0 +1,28 @@
+{
+  "tenant_id": "tenant-demo",
+  "title": "Zone 3 Safety Procedure",
+  "summary": "Draft procedure for Zone 3 entry validation and safety sweeps.",
+  "inputs": {
+    "purpose": "Validate entry protocol for Zone 3 with operator sign-off.",
+    "steps": [
+      "Verify perimeter clearance.",
+      "Validate sensor health.",
+      "Confirm operator sign-off."
+    ]
+  },
+  "governance": {
+    "approval_contact": "Safety Officer"
+  },
+  "compliance_tags": ["OSHA", "internal-safety"],
+  "sources": [
+    {
+      "source_id": "policy-pack-3",
+      "source_type": "policy_pack",
+      "version": "1.8.2",
+      "checksum": "sha256:9f5a1f3d0f7b"
+    }
+  ],
+  "metadata": {
+    "run_id": "run-2026-02-02"
+  }
+}

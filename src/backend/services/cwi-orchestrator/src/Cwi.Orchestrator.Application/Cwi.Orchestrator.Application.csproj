@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\cwi-language-normalization\src\Cwi.Normalization.Core\Cwi.Normalization.Core.csproj" />
+    <ProjectReference Include="..\Cwi.Orchestrator.Domain\Cwi.Orchestrator.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\common\Cwi.Common\Cwi.Common.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
+    <PackageReference Include="JsonSchema.Net" Version="7.2.1" />
+    <PackageReference Include="Npgsql" Version="8.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\..\..\..\..\contracts\json-schema\telemetry_schema.json">
+      <Link>Telemetry\telemetry_schema.json</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\..\..\..\..\contracts\json-schema\recursive_event_schema.json">
+      <Link>Recursive\recursive_event_schema.json</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\..\..\..\..\contracts\json-schema\ingest_document_schema.json">
+      <Link>Etl\ingest_document_schema.json</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\..\..\..\..\contracts\json-schema\pack_schema.json">
+      <Link>Packs\pack_schema.json</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\..\..\..\..\contracts\json-schema\guardrails_constraints.json">
+      <Link>Guardrails\guardrails_constraints.json</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\..\..\..\..\contracts\json-schema\retention_policy.json">
+      <Link>Retention\retention_policy.json</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

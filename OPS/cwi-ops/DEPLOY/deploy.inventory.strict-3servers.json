@@ -1,0 +1,134 @@
+{
+  "defaults": {
+    "sshUser": "root",
+    "deployRoot": "/opt/cwi/DEPLOY",
+    "bundleRoot": "OPS/cwi-ops/DEPLOY",
+    "composeCommand": "docker compose",
+    "composeFile": "docker-compose.yml",
+    "composeArgs": "up -d",
+    "deploymentMode": "strict",
+    "seedEnvFromTemplate": true,
+    "clearContainersBeforeDeploy": true,
+    "clearImagesBeforeDeploy": true,
+    "clearVolumesBeforeDeploy": true,
+    "clearCleanupExclusions": [
+      "*cadvisor*",
+      "*node-exporter*",
+      "nextcloud*",
+      "postgres:16",
+      "redis:7"
+    ]
+  },
+  "hosts": [
+    {
+      "name": "internal-mcp-01",
+      "host": "100.120.208.51",
+      "roles": [
+        {
+          "name": "mcp-core",
+          "buildContextPaths": [
+            "global.json",
+            "src/backend/common",
+            "src/backend/services/cwi-router",
+            "src/backend/services/cwi-orchestrator",
+            "src/backend/services/cwi-coordination-layer",
+            "src/backend/services/cwi-identity-server",
+            "src/backend/services/cwi-pack-service",
+            "src/backend/services/cwi-pin-resolver",
+            "src/backend/services/cwi-teams-bot",
+            "src/etl",
+            "src/edge-agent",
+            "src/node-agent-runtime",
+            "contracts/grpc",
+            "contracts/json-schema"
+          ],
+          "buildImages": [
+            { "image": "local/cwi-router:10h", "dockerfile": "src/backend/services/cwi-router/Dockerfile" },
+            { "image": "local/cwi-orchestrator:10h", "dockerfile": "src/backend/services/cwi-orchestrator/Dockerfile" },
+            { "image": "local/cwi-coordination-layer:10h", "dockerfile": "src/backend/services/cwi-coordination-layer/Dockerfile" },
+            { "image": "local/cwi-identity-server:10h", "dockerfile": "src/backend/services/cwi-identity-server/Dockerfile" },
+            { "image": "local/cwi-pack-service:10h", "dockerfile": "src/backend/services/cwi-pack-service/Dockerfile" },
+            { "image": "local/cwi-pin-resolver:phase5", "dockerfile": "src/backend/services/cwi-pin-resolver/Dockerfile", "context": "src/backend/services/cwi-pin-resolver" },
+            { "image": "local/cwi-teams-bot:10h", "dockerfile": "src/backend/services/cwi-teams-bot/Dockerfile", "context": "src/backend/services/cwi-teams-bot" },
+            { "image": "local/cwi-etl:10h", "dockerfile": "src/etl/docker/Dockerfile", "context": "src/etl" },
+            { "image": "local/cwi-edge-agent:10h", "dockerfile": "src/edge-agent/Dockerfile", "context": "src/edge-agent" },
+            { "image": "local/cwi-node-agent-runtime:10h", "dockerfile": "src/node-agent-runtime/Dockerfile", "context": "src/node-agent-runtime" }
+          ]
+        },
+        {
+          "name": "cwi-identity-admin",
+          "deployPath": "/opt/cwi/DEPLOY/identity-admin",
+          "buildContextPaths": [
+            "src/frontend/web-ui/cwi-identity-admin"
+          ],
+          "buildImages": [
+            {
+              "image": "local/cwi-identity-admin:10h",
+              "dockerfile": "src/frontend/web-ui/cwi-identity-admin/Dockerfile",
+              "context": "src/frontend/web-ui/cwi-identity-admin",
+              "buildArgs": {
+                "VITE_IDENTITY_BASE_URL": "http://100.120.208.51:8085",
+                "VITE_ORCHESTRATOR_BASE_URL": "http://100.120.208.51:18085"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "internal-teacher-01",
+      "host": "100.87.205.59",
+      "roles": [
+        {
+          "name": "teacher_node",
+          "buildContextPaths": [
+            "tools/teacher-node",
+            "src/etl"
+          ],
+          "buildImages": [
+            {
+              "image": "local/cwi-teacher-node:10h",
+              "dockerfile": "tools/teacher-node/Dockerfile"
+            }
+          ]
+        },
+        "graph_db"
+      ]
+    },
+    {
+      "name": "public-gateway-01",
+      "host": "100.124.140.66",
+      "roles": [
+        "gateway",
+        {
+          "name": "cwi-gpt-web-ui",
+          "buildContextPaths": [
+            "contracts",
+            "src/frontend/web-ui/cwi-gpt-web-ui"
+          ],
+          "buildImages": [
+            {
+              "image": "local/cwi-gpt-web-ui:10h",
+              "dockerfile": "src/frontend/web-ui/cwi-gpt-web-ui/Dockerfile",
+              "buildArgs": {
+                "NEXT_PUBLIC_CWI_GATEWAY_BASE_URL": "https://cwigpt.com",
+                "NEXT_PUBLIC_CWI_DEFAULT_TENANT": "tenant-1",
+                "NEXT_PUBLIC_CWI_AUTH_MODE": "token",
+                "NEXT_PUBLIC_CWI_OIDC_AUTHORITY": "",
+                "NEXT_PUBLIC_CWI_OIDC_CLIENT_ID": "",
+                "NEXT_PUBLIC_CWI_OIDC_REDIRECT_URI": "",
+                "NEXT_PUBLIC_CWI_OIDC_POST_LOGOUT_REDIRECT_URI": "",
+                "NEXT_PUBLIC_CWI_OIDC_SCOPES": "",
+                "NEXT_PUBLIC_CWI_ERROR_REPORT_URL": "",
+                "NEXT_PUBLIC_CWI_REQUEST_TIMEOUT_MS": "120000",
+                "NEXT_PUBLIC_CWI_BUILD_VERSION": "10h",
+                "NEXT_PUBLIC_CWI_BUILD_SHA": "CHANGE_ME"
+              }
+            }
+          ]
+        },
+        "cloudflared"
+      ]
+    }
+  ]
+}

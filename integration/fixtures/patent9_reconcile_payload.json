@@ -1,0 +1,36 @@
+{
+  "record_id": "asset:P-101",
+  "tenant_id": "tenant_dev",
+  "user_id": "integration-patent9",
+  "canonical": {
+    "asset_tag": "P-101",
+    "serial": "SN-000111",
+    "location": "Plant A — Line 3",
+    "status": "active",
+    "last_service": "2025-12-15"
+  },
+  "sources": [
+    {
+      "source_id": "cmms",
+      "updated_utc": "2026-01-31T11:59:00Z",
+      "attributes": {
+        "asset_tag": "P-101",
+        "serial": "SN-000111",
+        "location": "Plant A — Line 3",
+        "status": "active",
+        "last_service": "2025-12-15"
+      }
+    },
+    {
+      "source_id": "scada",
+      "updated_utc": "2026-01-31T11:59:00Z",
+      "attributes": {
+        "asset_tag": "P-101",
+        "serial": "SN-000111",
+        "location": "Plant A — Line 3",
+        "status": "running",
+        "last_seen": "2026-01-31T11:59:00Z"
+      }
+    }
+  ]
+}

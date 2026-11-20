@@ -1,0 +1,20 @@
+[
+  {
+    "name": "basic",
+    "json": "{\"b\":2,\"a\":\"x\",\"arr\":[1,true,null,{\"c\":\"d\"}]}",
+    "canonical": "{\"a\":\"x\",\"arr\":[1,true,null,{\"c\":\"d\"}],\"b\":2}",
+    "anchor": "89c64b6e245755a6983d59750510eb8b1e2910eda8057efb74ff03389d8700be"
+  },
+  {
+    "name": "unicode_and_escapes",
+    "json": "{\"z\":\"ñ\",\"a\":\"A/\\\"\"}",
+    "canonical": "{\"a\":\"A/\\\"\",\"z\":\"ñ\"}",
+    "anchor": "9436050adbde7b0e6deb4f7f391883463781e178de1fc385aef5ccf3cbfa9ab1"
+  },
+  {
+    "name": "numbers_and_order",
+    "json": "{\"k\":0,\"a\":-2.5,\"b\":3.14159,\"c\":[2,1],\"d\":{\"y\":1,\"x\":2}}",
+    "canonical": "{\"a\":-2.5,\"b\":3.14159,\"c\":[2,1],\"d\":{\"x\":2,\"y\":1},\"k\":0}",
+    "anchor": "b9fdd84c0c35a8fa3fbb57f6d41625a14a98fe0c054c6e964362cd1a4f15e1af"
+  }
+]

@@ -1,0 +1,347 @@
+{
+  "roles": {
+    "cwi-orchestrator": {
+      "required": [
+        "REGISTRY",
+        "CWI_ORCHESTRATOR_TAG",
+        "ORCHESTRATOR_HTTP_PORT",
+        "PACKS_BASE_URL",
+        "ORCHESTRATOR_DB_CONNECTION",
+        "VECTOR_SHARD_1_URL",
+        "VECTOR_SHARD_2_URL",
+        "VECTOR_EMBEDDING_DIMENSION",
+        "MODEL_BASE_URL",
+        "MODEL_NAME",
+        "MODEL_TIMEOUT_SECONDS"
+      ],
+      "optional": [
+        "MODEL_BASE_URL_PRO",
+        "MODEL_BASE_URL_FREE",
+        "MODEL_NAME_PRO",
+        "MODEL_NAME_FREE",
+        "ORCHESTRATOR_DB_BIND_IP",
+        "ORCHESTRATOR_DB_HOST_PORT",
+        "CWI_CONNECTOR_OAUTH_PUBLIC_BASE_URL",
+        "CWI_CONNECTOR_OAUTH_CALLBACK_PATH",
+        "CWI_CONNECTOR_OAUTH_GOOGLE_CLIENT_ID",
+        "CWI_CONNECTOR_OAUTH_GOOGLE_REDIRECT_URI",
+        "CWI_CONNECTOR_OAUTH_MICROSOFT_CLIENT_ID",
+        "CWI_CONNECTOR_OAUTH_MICROSOFT_TENANT",
+        "CWI_CONNECTOR_OAUTH_MICROSOFT_REDIRECT_URI",
+        "CWI_ACTIVATED_MEMORY_DIR",
+        "CWI_ACTIVATED_MEMORY_HOST_DIR",
+        "CWI_MEMORY_ACTIVATION_LEDGER_PATH",
+        "CWI_CRITIC_BASE_URL",
+        "CWI_CRITIC_OBSERVE_PATH",
+        "CWI_CRITIC_TIMEOUT_MS",
+        "CWI_CRITIC_ENFORCEMENT_MODE",
+        "CWI_EXTERNAL_OPINION_ENABLED",
+        "CWI_EXTERNAL_OPINION_BASE_URL",
+        "CWI_EXTERNAL_OPINION_PATH",
+        "CWI_EXTERNAL_OPINION_MAX_PROMPT_SUMMARY_CHARS",
+        "CWI_EXTERNAL_OPINION_MAX_CONTEXT_SUMMARY_CHARS"
+      ]
+    },
+    "cwi-coordination-layer": {
+      "required": [
+        "REGISTRY",
+        "CWI_COORDINATION_TAG",
+        "COORDINATION_HTTP_PORT",
+        "COORDINATION_DB_CONNECTION"
+      ]
+    },
+    "cwi-router": {
+      "required": [
+        "REGISTRY",
+        "CWI_ROUTER_TAG",
+        "ROUTER_HTTP_PORT",
+        "ORCHESTRATOR_URL",
+        "JWKS_URL",
+        "JWT_ISSUER",
+        "JWT_AUDIENCE",
+        "IDENTITY_URL",
+        "TOKEN_EPOCH_CACHE_SECONDS",
+        "AUTH_REQUIRED",
+        "MTLS_REQUIRED",
+        "REDIS_URL",
+        "CWI_RATE_LIMIT",
+        "CWI_RATE_WINDOW_SECONDS",
+        "MODEL_PRO_URL",
+        "MODEL_FREE_URL",
+        "MODEL_HEALTH_PATH",
+        "MODEL_CB_FAILURE_THRESHOLD",
+        "MODEL_CB_COOLDOWN_SECONDS",
+        "CWI_POLICY_MODE_DEFAULT",
+        "ORCHESTRATOR_TIMEOUT_SECONDS"
+      ]
+    },
+    "cwi-gpt-web-ui": {
+      "required": [
+        "REGISTRY",
+        "CWI_GPT_WEB_UI_TAG",
+        "GPT_WEB_UI_HTTP_PORT",
+        "NEXT_PUBLIC_CWI_GATEWAY_BASE_URL"
+      ],
+      "optional": [
+        "CWI_GATEWAY_BASE_URL",
+        "NEXT_PUBLIC_CWI_DEFAULT_TENANT",
+        "NEXT_PUBLIC_CWI_AUTH_MODE",
+        "NEXT_PUBLIC_CWI_OIDC_AUTHORITY",
+        "NEXT_PUBLIC_CWI_OIDC_CLIENT_ID",
+        "NEXT_PUBLIC_CWI_OIDC_REDIRECT_URI",
+        "NEXT_PUBLIC_CWI_OIDC_POST_LOGOUT_REDIRECT_URI",
+        "NEXT_PUBLIC_CWI_OIDC_SCOPES",
+        "NEXT_PUBLIC_CWI_ERROR_REPORT_URL",
+        "NEXT_PUBLIC_CWI_REQUEST_TIMEOUT_MS",
+        "NEXT_PUBLIC_CWI_BUILD_VERSION",
+        "NEXT_PUBLIC_CWI_BUILD_SHA",
+        "CWI_UI_DIRECT_LLM_ENABLED"
+      ]
+    },
+    "cloudflared": {
+      "required": [
+        "CLOUDFLARED_TUNNEL_TOKEN"
+      ],
+      "optional": [
+        "CLOUDFLARED_IMAGE"
+      ]
+    },
+    "cwi-glassbox-web-ui": {
+      "required": [
+        "REGISTRY",
+        "CWI_GLASSBOX_WEB_UI_TAG",
+        "GLASSBOX_WEB_UI_HTTP_PORT",
+        "NEXT_PUBLIC_API_BASE_URL",
+        "NEXT_PUBLIC_PACKS_BASE_URL"
+      ],
+      "optional": [
+        "NEXT_PUBLIC_OIDC_AUTHORITY",
+        "NEXT_PUBLIC_OIDC_CLIENT_ID",
+        "NEXT_PUBLIC_OIDC_REDIRECT_URI",
+        "NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI",
+        "NEXT_PUBLIC_OIDC_SCOPES"
+      ]
+    },
+    "cwi-homepage-web-ui": {
+      "required": [
+        "REGISTRY",
+        "CWI_HOMEPAGE_WEB_UI_TAG",
+        "HOMEPAGE_WEB_UI_HTTP_PORT"
+      ],
+      "optional": [
+        "NEXT_PUBLIC_CWI_BETA_ACCESS_URL"
+      ]
+    },
+    "cwi-admin-console": {
+      "required": [
+        "REGISTRY",
+        "CWI_ADMIN_CONSOLE_TAG",
+        "ADMIN_CONSOLE_HTTP_PORT",
+        "ADMIN_CONSOLE_API_BASE_URL",
+        "ADMIN_CONSOLE_IDENTITY_BASE_URL",
+        "ADMIN_CONSOLE_PACKS_BASE_URL"
+      ],
+      "optional": [
+        "ADMIN_CONSOLE_BASE_PATH",
+        "ADMIN_CONSOLE_OIDC_AUTHORITY",
+        "ADMIN_CONSOLE_OIDC_CLIENT_ID",
+        "ADMIN_CONSOLE_OIDC_REDIRECT_URI",
+        "ADMIN_CONSOLE_OIDC_POST_LOGOUT_REDIRECT_URI",
+        "ADMIN_CONSOLE_OIDC_SCOPES"
+      ]
+    },
+    "cwi-connectors": {
+      "required": [
+        "REGISTRY",
+        "CWI_CONNECTORS_TAG"
+      ],
+      "optional": [
+        "CWI_CONNECTORS_HTTP_PORT"
+      ]
+    },
+    "cwi-edge-agent": {
+      "required": [
+        "REGISTRY",
+        "CWI_EDGE_AGENT_TAG",
+        "CWI_EDGE_AGENT_IDENTITY_URL",
+        "CWI_EDGE_AGENT_IDENTITY_TENANT_ID",
+        "CWI_EDGE_AGENT_IDENTITY_USERNAME",
+        "CWI_EDGE_AGENT_IDENTITY_PASSWORD"
+      ],
+      "optional": [
+        "CWI_EDGE_AGENT_IDENTITY_PASSWORD_PATH",
+        "CWI_EDGE_AGENT_IDENTITY_LOGIN_URL",
+        "CWI_EDGE_AGENT_IDENTITY_REFRESH_URL",
+        "CWI_EDGE_AGENT_IDENTITY_REFRESH_MARGIN_SECONDS",
+        "CWI_EDGE_AGENT_STATE_DIR"
+      ]
+    },
+    "cwi-node-agent-runtime": {
+      "required": [
+        "REGISTRY",
+        "CWI_NODE_AGENT_RUNTIME_TAG",
+        "NODE_AGENT_RUNTIME_HTTP_PORT"
+      ],
+      "optional": [
+        "CWI_NODE_AGENT_RUNTIME_STATE_DIR",
+        "CWI_BREAK_GLASS_TOKEN"
+      ]
+    },
+    "vector_shard": {
+      "required": [
+        "QDRANT_IMAGE",
+        "VECTOR_SHARD_HTTP_PORT",
+        "VECTOR_SHARD_GRPC_PORT",
+        "VECTOR_SHARD_DATA_DIR",
+        "VECTOR_COLLECTION",
+        "VECTOR_EMBEDDING_DIMENSION"
+      ]
+    },
+    "graph_db": {
+      "required": [
+        "CWI_GRAPH_DB_IMAGE",
+        "CWI_GRAPH_DB_HOST_PORT",
+        "CWI_GRAPH_DB_DATA_DIR",
+        "CWI_GRAPH_DB_USER",
+        "CWI_GRAPH_DB_PASSWORD",
+        "CWI_GRAPH_DB_DATABASE"
+      ],
+      "optional": [
+        "CWI_AGE_DB_CONTAINER_NAME",
+        "CWI_GRAPH_WORK_AGE_HOST_DIR"
+      ]
+    },
+    "graph_rag": {
+      "required": [
+        "CWI_GRAPH_DB_DSN"
+      ],
+      "optional": [
+        "CWI_GRAPH_DB_NAME",
+        "CWI_GRAPH_DB_CREATE_GRAPH",
+        "CWI_GRAPH_DB_BATCH_SIZE",
+        "CWI_GRAPH_RAG_ENTITY_EXTRACTION"
+      ]
+    },
+    "gpu_worker": {
+      "required": [
+        "OLLAMA_IMAGE",
+        "GPU_WORKER_HTTP_PORT",
+        "GPU_WORKER_DATA_DIR",
+        "OLLAMA_PRO_IMAGE",
+        "PRO_WORKER_HTTP_PORT",
+        "PRO_WORKER_DATA_DIR",
+        "OLLAMA_FREE_IMAGE",
+        "FREE_WORKER_HTTP_PORT",
+        "FREE_WORKER_DATA_DIR",
+        "MODEL_CAPABILITIES_PRO_PORT",
+        "MODEL_CAPABILITIES_FREE_PORT",
+        "MODEL_HEALTH_PORT",
+        "MODEL_HEALTH_PRO_PORT",
+        "MODEL_HEALTH_FREE_PORT"
+      ]
+    },
+    "teacher_node": {
+      "required": [
+        "REGISTRY",
+        "CWI_TEACHER_NODE_TAG",
+        "TEACHER_NODE_HTTP_PORT"
+      ],
+      "optional": [
+        "TEACHER_NODE_CONTAINER_NAME",
+        "TEACHER_NODE_ARTIFACT_HOST_PATH",
+        "TEACHER_NODE_ARTIFACT_ROOT",
+        "TEACHER_NODE_CONTRACTS_HOST_PATH"
+      ]
+    },
+    "teams_bot": {
+      "required": [
+        "TEAMS_BOT_IMAGE",
+        "TEAMS_BOT_PORT",
+        "MICROSOFT_APP_ID",
+        "MICROSOFT_APP_PASSWORD",
+        "BOT_TOKEN_ISSUER",
+        "BOT_TOKEN_AUDIENCE",
+        "BOT_TOKEN_JWKS_URL",
+        "GATEWAY_BASE_URL",
+        "IDEMPOTENCY_TTL_SECONDS"
+      ]
+    },
+    "gateway": {
+      "required": [
+        "CWI_DOMAIN",
+        "CADDY_EMAIL",
+        "PACK_SERVICE_HOSTPORT",
+        "IDENTITY_HOSTPORT",
+        "ROUTER_HOSTPORT",
+        "ORCHESTRATOR_HOSTPORT",
+        "COORDINATION_HOSTPORT",
+        "GPT_WEB_UI_HOSTPORT",
+        "GATEWAY_HTTP_PORT",
+        "GATEWAY_HTTPS_PORT",
+        "HSTS_HEADER"
+      ],
+      "optional": [
+        "MCP_ALIAS_ENABLED"
+      ]
+    },
+    "cwi-identity-server": {
+      "required": [
+        "REGISTRY",
+        "CWI_IDENTITY_TAG",
+        "IDENTITY_HTTP_PORT",
+        "IDENTITY_DB_CONNECTION",
+        "IDENTITY_KEY_ENCRYPTION_KEY",
+        "IDENTITY_CORS_ORIGINS"
+      ],
+      "optional": [
+        "IDENTITY_BOOTSTRAP_TENANT_ID",
+        "IDENTITY_BOOTSTRAP_ADMIN_EMAIL",
+        "IDENTITY_BOOTSTRAP_ADMIN_USERNAME",
+        "IDENTITY_BOOTSTRAP_ADMIN_PASSWORD",
+        "IDENTITY_SUPERADMIN_TENANT_ID",
+        "IDENTITY_SUPERADMIN_USERNAME",
+        "IDENTITY_SUPERADMIN_ALIASES",
+        "IDENTITY_SUPERADMIN_EMAIL",
+        "IDENTITY_SUPERADMIN_PASSWORD",
+        "IDENTITY_ACCESS_TOKEN_MINUTES",
+        "IDENTITY_REFRESH_TOKEN_DAYS",
+        "IDENTITY_INVITE_TOKEN_MINUTES",
+        "IDENTITY_RESET_TOKEN_MINUTES",
+        "IDENTITY_LOCKOUT_MINUTES",
+        "IDENTITY_LOCKOUT_THRESHOLD",
+        "IDENTITY_RATE_LIMIT_WINDOW_SECONDS",
+        "IDENTITY_RATE_LIMIT_PER_WINDOW",
+        "IDENTITY_FAILED_LOGIN_DELAY_MS"
+      ]
+    },
+    "cwi-identity-admin": {
+      "required": [
+        "REGISTRY",
+        "CWI_IDENTITY_ADMIN_TAG",
+        "IDENTITY_ADMIN_HTTP_PORT",
+        "VITE_IDENTITY_BASE_URL",
+        "VITE_ORCHESTRATOR_BASE_URL"
+      ]
+    },
+    "consent_ingest": {
+      "required": [
+        "CWI_CONSENT_INGEST_INTERVAL_SECONDS",
+        "CWI_CONSENT_INGEST_SOURCE_TYPE"
+      ],
+      "optional": [
+        "CWI_CONSENT_INGEST_INPUT_HOST_DIR",
+        "CWI_CONSENT_INGEST_ARCHIVE_HOST_DIR",
+        "CWI_CONSENT_INGEST_ERROR_HOST_DIR",
+        "CWI_CONSENT_DB_HOST_DIR",
+        "CWI_CONSENT_INGEST_SOURCE_ID",
+        "CWI_CONSENT_INGEST_FILE_GLOB",
+        "CWI_CONSENT_INGEST_RUN_ONCE",
+        "CWI_CONSENT_INGEST_LOG_LEVEL",
+        "CWI_CONSENT_REMOTE_BASE_URL",
+        "CWI_CONSENT_REMOTE_PATH",
+        "CWI_CONSENT_REMOTE_TOKEN",
+        "CWI_CONSENT_REMOTE_TIMEOUT_SECONDS"
+      ]
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "recommendation_id": "mpr-2026-02-02-001",
+  "tenant_id": "tenant-demo",
+  "generated_utc": "2026-02-02T19:10:00Z",
+  "scenario_id": "storm-drill-7",
+  "survival_mode_bias": true,
+  "score": 0.81,
+  "constraints": {
+    "max_latency_ms": 120,
+    "min_rssi": -70,
+    "min_snr": 18
+  },
+  "nodes": [
+    {
+      "node_id": "node-17",
+      "recommended_location": {
+        "lat": 37.7749,
+        "lon": -122.4194,
+        "altitude_m": 12
+      },
+      "confidence": 0.77,
+      "rationale": "Line-of-sight coverage with redundant backhaul.",
+      "node_constraints": {
+        "max_latency_ms": 100,
+        "min_rssi": -65
+      }
+    }
+  ],
+  "governance": {
+    "status": "pending",
+    "policy_version": "1.0",
+    "decision_id": "pg-2026-02-02-001",
+    "evaluated_utc": "2026-02-02T19:10:05Z",
+    "notes": "Requires governance review (avg confidence 0.77)."
+  },
+  "provenance": {
+    "metrics_ids": ["mpm-2026-02-02-001"],
+    "node_count": 1,
+    "source": "field-sensor-v2"
+  },
+  "rationale": "Placement biases resilient routes during storm conditions.",
+  "metadata": {
+    "model_version": "heuristic-v1",
+    "average_confidence": 0.77
+  }
+}

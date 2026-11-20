@@ -1,0 +1,11 @@
+{
+  "device_id": "device-01",
+  "bundle_id": "bundle-10h",
+  "nonce": "7b6b2a5d",
+  "expires_utc": "2026-02-01T00:00:00Z",
+  "signature": "base64-signature",
+  "claims": {
+    "issuer": "cwi-ops",
+    "audience": "cwi-node-agent-runtime"
+  }
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "event_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "node_id": "node-b07",
+    "interface": "mmwave-2",
+    "event_type": "link_degraded",
+    "reason": "signal interference",
+    "created_utc": "2026-02-02T11:05:00Z"
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "doc_id": "doc-proc-018",
+  "title": "Zone 3 safety procedure",
+  "type": "procedure",
+  "owner": "Safety Office",
+  "status": "active",
+  "versions": [
+    {
+      "version": "1.8.2",
+      "created_utc": "2026-02-01T10:20:00Z",
+      "author": "ops.lead",
+      "checksum": "a18f2d7c",
+      "notes": "Aligned with new thermal thresholds.",
+      "content": "Step 1: Confirm break-glass scope.\nStep 2: Validate sensor quorum (>= 3).\nStep 3: Lock mesh handoff.\nStep 4: Execute safety sweep.\nStep 5: Record operator confirmation."
+    }
+  ]
+}

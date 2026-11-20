@@ -1,0 +1,225 @@
+Phase 1 – Base Infrastructure is formally complete.
+This was the foundational layer of CWI’s entire operational intelligence mesh. Every phase that followed — publication pipelines, ingestion determinism, governance enforcement — rests on the architecture established here.
+Below is a complete breakdown of what Phase 1 delivered and what it enabled.
+────────────────────────────
+PHASE 1 – OBJECTIVE
+────────────────────────────
+Establish a secure, deterministic, reproducible base infrastructure capable of:
+• Running Core services (Orchestrator, Pack Service, Router)
+• Hosting Teacher node
+• Supporting vector shards
+• Enforcing network boundaries
+• Providing observability
+• Establishing ledger + evidence discipline
+• Supporting containerized modular services
+This phase was about building the runway.
+────────────────────────────
+WHAT WE BUILT
+────────────────────────────
+Core Compute Layer
+• Ubuntu LTS hardened base installs
+• Docker + Compose stack
+• Service isolation via containers
+• Explicit port mappings (18083, 18084, 18085, etc.)
+• Structured deployment directory (/opt/cwi/DEPLOY/mcp-core)
+Teacher Node
+• Dedicated pack authority
+• MinIO object storage
+• Ledger integrity tracking
+• Evidence bundle storage
+• Cryptographic key custody
+Network Architecture
+• OPNsense firewall
+• LAN segmentation
+• Switch-based node topology
+• Tailscale overlay
+• Controlled port exposure
+• Deterministic internal DNS via container networking
+Observability Layer
+• Node exporter
+• cAdvisor
+• Prometheus integration
+• Baseline CPU, memory, container metrics
+Data Services
+• Redis
+• PostgreSQL (orchestrator + identity)
+• Vector shard scaffolding
+• Graph database stub
+Ledger Discipline
+• phase_events.jsonl
+• pin_events.jsonl
+• Evidence artifact structure
+• SHA256 hashing of deployment artifacts
+This was not just infrastructure.
+This was controlled infrastructure.
+────────────────────────────
+PERFORMANCE STATE AFTER PHASE 1
+────────────────────────────
+Before any optimization phases:
+• Local container RTT: sub-millisecond
+• Cross-node LAN latency: 1–3 ms class
+• No packet loss
+• Stable container orchestration
+• Deterministic port routing
+Even at Phase 1, we were operating within intra-datacenter performance class.
+This gave us the headroom required for:
+Phase 2 – Publication
+Phase 3 – Deterministic ingestion
+Phase 5 – Governance enforcement
+Phase 7 – Multi-region modeling
+────────────────────────────
+WHAT PHASE 1 ENABLED
+────────────────────────────
+Because Phase 1 was executed correctly:
+• We could enforce cryptographic governance later without re-architecting
+• We could introduce shard determinism without topology change
+• We could measure latency precisely
+• We could isolate performance domains
+• We could promote packs safely
+• We could replicate regionally
+Phase 1 created architectural leverage.
+────────────────────────────
+CAPABILITY LEVEL AFTER PHASE 1
+────────────────────────────
+At completion of Phase 1, CWI had:
+• A containerized distributed compute mesh
+• Deterministic service routing
+• Secure network boundary
+• Centralized authority node (Teacher)
+• Modular deployment capability
+• Audit logging foundation
+• Reproducible deployment state
+This was the moment CWI transitioned from concept to infrastructure.
+────────────────────────────
+Phase 1 was the silent, structural milestone.
+Every later phase succeeded because this one was executed correctly.
+Excellent foundational work.
+—
+Christian
+PHASE 1 .MD FILE
+Save as: CWI_Phase1_Base_Infrastructure_Closeout.md
+CWI Phase 1 – Base Infrastructure Closeout
+Status: Complete
+Classification: Foundational Architecture
+Dependency: Required for all subsequent phases
+1. Executive Summary
+Phase 1 established the foundational infrastructure layer for the CWI ecosystem.
+The goal was to create a secure, deterministic, containerized compute mesh capable of supporting:
+Core orchestration
+Teacher authority
+Vector shard architecture
+Governance enforcement
+Observability
+Evidence tracking
+Secure networking
+Phase 1 represents the transition from design theory to operational substrate.
+2. Infrastructure Components Delivered
+2.1 Core Node
+Location: /opt/cwi/DEPLOY/mcp-core
+Services:
+cwi-orchestrator
+cwi-pack-service
+cwi-router
+coordination layer
+identity server
+Redis
+PostgreSQL (orchestrator, identity)
+cAdvisor
+node-exporter
+Characteristics:
+Docker Compose based
+Explicit port mapping
+Service separation
+Deterministic container networking
+2.2 Teacher Node
+Responsibilities:
+Pack authority
+Signing authority (introduced later in Phase 5)
+MinIO object storage
+Evidence archive
+Ledger custody
+Directory structure:
+/srv/cwi/
+  evidence/
+  ledger/
+  pins/
+  packs/
+2.3 Network Architecture
+Topology:
+Internet
+   ↓
+OPNsense Firewall
+   ↓
+Physical Switch
+   ↓
+Core / Teacher / Vector Nodes
+Overlay:
+Tailscale mesh
+LAN routing enforced
+Explicit port exposure only where required
+Performance:
+1–3 ms intra-LAN latency
+Sub-millisecond container RTT
+Stable routing with no packet loss
+2.4 Observability
+node-exporter
+cAdvisor
+Prometheus-compatible endpoints
+Baseline CPU/memory/container metrics
+This allowed subsequent performance phase validation.
+2.5 Data Layer
+Redis (coordination)
+PostgreSQL (orchestrator, identity)
+Graph DB (AGE)
+Vector stub layer
+All services containerized and network-isolated.
+2.6 Ledger & Evidence Discipline
+Artifacts introduced:
+/srv/cwi/ledger/phase_events.jsonl
+/srv/cwi/ledger/pin_events.jsonl
+SHA256 tracking of artifacts
+Timestamped evidence bundles
+Phase 1 established immutable operational trace discipline.
+3. Performance Baseline State
+At end of Phase 1:
+Component
+Latency Class
+Container RTT
+< 1 ms
+LAN cross-node
+1–3 ms
+No packet loss
+Confirmed
+Deterministic routing
+Confirmed
+This performance class matches intra-datacenter east–west traffic ranges.
+Phase 1 did not require high-speed NIC fabric to achieve stability.
+4. Architectural Impact
+Phase 1 enabled:
+Phase 2 publication pipeline
+Phase 3 deterministic ingestion
+Phase 3.5 drift enforcement
+Phase 5 governance boundary
+Phase 7 multi-region modeling
+Without Phase 1, governance could not be centralized.
+Without Phase 1, shard determinism would not be measurable.
+Without Phase 1, replication would not be safe.
+5. Capability State After Phase 1
+CWI at end of Phase 1 had:
+Distributed container mesh
+Teacher authority separation
+Deterministic routing
+Structured deployment model
+Observability layer
+Secure network perimeter
+Evidence discipline
+This marked operational activation of the CWI infrastructure.
+6. Risk State
+Residual risks after Phase 1:
+Fabric-level throughput not yet optimized (Phase 6)
+No regional replication yet (Phase 7)
+Governance not yet cryptographically enforced (Phase 5 — later completed)
+All risks were architectural extensions, not structural gaps.
+7. Phase 1 Conclusion
+Phase 1 successfully established the base infrastructure.
+All subsequent phases were built on this substrate.

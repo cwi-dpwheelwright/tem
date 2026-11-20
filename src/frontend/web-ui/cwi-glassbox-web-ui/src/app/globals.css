@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+:root {
+  --cwi-navy-600: #043e80;
+  --cwi-navy-700: #012d67;
+  --cwi-navy-800: #002659;
+  --cwi-navy-850: #001f48;
+  --cwi-navy-900: #01173e;
+  --cwi-navy-950: #010b31;
+  --cwi-accent-400: #408af4;
+  --cwi-accent-500: #0063f0;
+  --cwi-accent-600: #004fc0;
+  --cwi-text-muted: #8fa4c3;
+  --cwi-text-primary: #ffffff;
+  --cwi-text-secondary: #c8d3e6;
+  --cwi-divider: rgba(255, 255, 255, 0.08);
+  --cwi-gradient-bg: radial-gradient(120% 120% at 50% 20%, #012d67 0%, #010b31 70%);
+  --cwi-gradient-surface: linear-gradient(180deg, #012d67 0%, #001f48 100%);
+  --cwi-shadow-raised: 0 10px 30px rgba(0, 0, 0, 0.45), 0 -6px 18px rgba(255, 255, 255, 0.05);
+  --cwi-shadow-inset: inset 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 -4px 14px rgba(255, 255, 255, 0.05);
+  --cwi-brand: #1034a6;
+
+  --cwi-light-bg: #f6f8fc;
+  --cwi-light-panel: #f3f6fb;
+  --cwi-light-panel-2: #ffffff;
+  --cwi-light-text: #0f172a;
+  --cwi-light-muted: #667085;
+  --cwi-light-border: #dbe3f1;
+  --cwi-light-shadow: 0 8px 28px rgba(16, 52, 166, 0.12);
+
+  --page-bg: var(--cwi-light-bg);
+}
+
+@theme inline {
+  --color-background: var(--cwi-light-bg);
+  --color-foreground: var(--cwi-light-text);
+  --color-slate-50: var(--cwi-light-bg);
+  --color-slate-100: var(--cwi-light-panel);
+  --color-slate-200: var(--cwi-light-border);
+  --color-slate-300: var(--cwi-text-secondary);
+  --color-slate-400: var(--cwi-text-muted);
+  --color-slate-500: var(--cwi-light-muted);
+  --color-slate-600: #4b5b7a;
+  --color-slate-700: var(--cwi-navy-700);
+  --color-slate-800: var(--cwi-navy-800);
+  --color-slate-900: var(--cwi-navy-900);
+  --color-slate-950: var(--cwi-navy-950);
+  --color-sky-100: #dfe9ff;
+  --color-sky-200: #c7dbff;
+  --color-sky-300: #a9c8ff;
+  --color-sky-400: var(--cwi-accent-400);
+  --color-sky-500: var(--cwi-accent-500);
+  --color-sky-600: var(--cwi-accent-600);
+  --color-amber-50: #eef3ff;
+  --color-amber-100: #dfe9ff;
+  --color-amber-200: #c7dbff;
+  --color-amber-300: #a9c8ff;
+  --color-amber-400: var(--cwi-accent-400);
+  --color-amber-500: var(--cwi-accent-500);
+  --color-amber-600: var(--cwi-accent-600);
+  --color-amber-700: #003a96;
+  --color-amber-800: var(--cwi-navy-800);
+  --color-amber-900: var(--cwi-navy-850);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--cwi-light-text);
+  font-family: var(--font-sans);
+}
+
+

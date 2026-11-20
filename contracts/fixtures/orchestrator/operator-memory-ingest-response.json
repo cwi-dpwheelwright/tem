@@ -1,0 +1,17 @@
+{
+  "batch_id": "omc-20260202-001",
+  "accepted": 2,
+  "rejected": 0,
+  "status": "accepted",
+  "profile": {
+    "tenant_id": "tenant-demo",
+    "operator_id": "op-217",
+    "signals_total": 1,
+    "correction_rate": 1.0,
+    "delay_rate": 0.0,
+    "confirmation_rate": 0.0,
+    "average_latency_ms": 420.0,
+    "correlation_score": 0.4,
+    "last_updated_utc": "2026-02-02T18:06:00Z"
+  }
+}

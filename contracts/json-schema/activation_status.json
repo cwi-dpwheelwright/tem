@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ActivationStatus",
+  "type": "object",
+  "required": ["node_id", "status", "checked_utc"],
+  "properties": {
+    "node_id": { "type": "string" },
+    "status": { "type": "string", "enum": ["active", "pending", "revoked", "unknown"] },
+    "revoked_utc": { "type": ["string", "null"], "format": "date-time" },
+    "checked_utc": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

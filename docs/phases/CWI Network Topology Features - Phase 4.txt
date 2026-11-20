@@ -1,0 +1,212 @@
+This phase transitions CWI from validated infrastructure into a controlled, versioned, operational knowledge network with deterministic governance boundaries.
+Phase 4 was not about adding features.
+It was about activating operational integrity.
+What Phase 4 Achieved
+Authoritative Publication Boundary (Teacher)
+Teacher publishes versioned pack artifacts to the cwi-packs-published bucket.
+Each pack version is cryptographically anchored via sha256.
+Publication is deterministic and reproducible.
+Core Mirror Adoption (PACK_ADOPTED Events)
+Core successfully mirrored fixture-pack from published storage.
+Anchor verification executed via verify_pack_anchor.py.
+Live directory replaced only after validation.
+A PACK_ADOPTED receipt was written to:
+/srv/cwi/ledger/pack_events.jsonl
+This ensures full traceability of every adopted version.
+Immutable Pack Service Boundary
+Pack-service runs read-only:
+/srv/cwi/packs:/packs:ro
+Pack-service serves:
+/packs/index.json
+/packs/{pack_id}/latest/
+/packs/{pack_id}/{hash}/
+Fail-closed behavior confirmed (404 on invalid pack/version).
+Pin Governance Activation
+Orchestrator now mounts:
+/srv/cwi/pins:/srv/cwi/pins:ro
+/srv/cwi/ledger:/srv/cwi/ledger:ro
+This introduces a formal governance control layer separating:
+Pins are version-controlled JSON documents defining:
+latest_stable
+approved
+experiment
+These are now visible inside orchestrator with read-only enforcement.
+Publication
+Adoption
+Operational approval
+Gateway Validation
+Gateway endpoint:
+http://100.124.140.66/packs/index.json
+Verified serving fixture-pack through external gateway boundary.
+Fail-closed behavior validated via negative testing.
+Evidence + Audit Capture
+Phase 4 Stage A evidence captured and uploaded to Teacher:
+teacher-node/evidence/phase4_stageA_pins_mount_20260226_185324/
+Included:
+Compose SHA256:
+d979292df721757955027477947e7ac969c2b8f50a7c930faa5a27a5a972cee3
+A formal PHASE4_STAGEA_COMPLETE receipt was written to:
+/srv/cwi/ledger/phase_events.jsonl
+Compose service map
+Orchestrator bind proof
+Pack-service index proof
+sha256 of docker-compose.yml
+Timestamp
+Container mount validation
+What This Means in Practical Terms
+CWI now has:
+• Deterministic publication
+• Deterministic adoption
+• Immutable serving boundary
+• Governance-controlled version pins
+• Ledger-backed traceability
+• Evidence custody in MinIO
+• Fail-closed enforcement
+We are no longer testing infrastructure.
+We are operating a governed knowledge network.
+Phase 4 is complete.
+Phase 5 will introduce active pin enforcement logic inside the orchestration flow and integrate pack resolution into runtime decision-making.
+We now move from infrastructure integrity to controlled runtime governance.
+Additional info below. 
+
+CWI Phase 4 Completion Report (Expanded v2)
+Executive Summary
+Phase 4 establishes the first fully governed operational boundary in the CWI distributed knowledge architecture.
+With Phase 4 complete:
+Publication is authoritative and anchored
+Adoption is deterministic and verified
+Serving is immutable and read-only
+Runtime version control is separated via pins
+Ledger entries create provable traceability
+Evidence artifacts are immutably stored
+Gateway exposure is validated and fail-closed
+This phase converts infrastructure into enforceable governance.
+1. Architectural Separation Achieved
+1.1 Teacher – Authoritative Publisher
+Responsibilities:
+Generate pack.json
+Compute canonical JSON
+Generate sha256 anchor
+Publish to MinIO bucket:
+cwi-packs-published
+Security posture:
+Publisher identity isolated
+Write permissions scoped
+No authority to alter Core
+1.2 Core – Deterministic Mirror
+Script:
+/opt/cwi/bin/pack_mirror_one.sh
+Execution flow:
+Read latest.txt pointer
+Pull pack.json + anchor.txt
+Canonical hash verification via verify_pack_anchor.py
+Backup previous version
+Replace live directory only if verified
+Write current_hash.txt
+Verification result:
+OK: bf05e724673d0d493c1818c7923b5e4d9f9a0c87786d9398a0ccde7aa750491b
+No mutation allowed without anchor match.
+2. PACK_ADOPTED Ledger Entry
+Location:
+/srv/cwi/ledger/pack_events.jsonl
+Event Written:
+{
+  "event": "PACK_ADOPTED",
+  "pack_id": "fixture-pack",
+  "version": "bf05e724673d0d493c1818c7923b5e4d9f9a0c87786d9398a0ccde7aa750491b",
+  "verified": true
+}
+This provides:
+Immutable historical adoption record
+Rollback traceability
+Chain-of-custody documentation
+3. Immutable Serving Boundary
+Pack Service Configuration:
+/srv/cwi/packs:/packs:ro
+Confirmed via:
+[
+  "/srv/cwi/pins:/srv/cwi/pins:ro",
+  "/srv/cwi/ledger:/srv/cwi/ledger:ro"
+]
+Serving endpoints validated:
+/packs/index.json
+/packs/{pack_id}/latest/
+/packs/{pack_id}/{hash}/
+Negative test:
+HTTP 404 returned for invalid pack/version.
+Fail-closed behavior confirmed.
+4. Pin Governance Activation
+Pins directory:
+/srv/cwi/pins
+Mounted read-only inside orchestrator.
+Example pin:
+{
+  "pack_id": "fixture-pack",
+  "latest_stable": "bf05e724673d0d493c1818c7923b5e4d9f9a0c87786d9398a0ccde7aa750491b"
+}
+Governance impact:
+Layer
+Authority
+Teacher
+Publish
+Core
+Adopt
+Pins
+Operational control
+Orchestrator
+Consume only
+Separation of powers is now enforceable.
+5. Gateway Boundary Validation
+External endpoint:
+http://100.124.140.66/packs/index.json
+fixture-pack successfully served externally.
+Boundary confirmed:
+Internal pack-service
+Gateway proxy
+Public access
+6. Evidence Capture
+Evidence directory created:
+/srv/cwi/evidence/phase4_stageA_pins_mount
+Uploaded to:
+teacher-node/evidence/phase4_stageA_pins_mount_20260226_185324/
+Captured artifacts:
+timestamp_utc.txt
+sha256sums.txt
+compose_services.txt
+compose_orchestrator_lines.txt
+orchestrator_binds.json
+pins_visible_in_container.txt
+packservice_index.json
+Compose SHA256:
+d979292df721757955027477947e7ac969c2b8f50a7c930faa5a27a5a972cee3
+Formal ledger event:
+PHASE4_STAGEA_COMPLETE
+7. Security & Governance Implications
+Phase 4 introduces:
+Immutable runtime serving boundary
+Deterministic version adoption
+Governance layer separate from publication
+Evidence-backed infrastructure state
+Fail-closed enforcement
+Traceable compose integrity
+This architecture now supports:
+SOC2 readiness
+NIST 800-53 traceability mapping
+DoD-style ATO boundary definition
+Controlled runtime pack promotion
+Audit defensibility
+8. Phase 4 Closure Declaration
+All objectives completed:
+☑ Mirror adoption validated
+☑ Anchor verification enforced
+☑ Ledger adoption event written
+☑ Pins mounted read-only
+☑ Gateway validated
+☑ Fail-closed behavior confirmed
+☑ Evidence archived
+☑ Compose integrity hashed
+Phase 4 is formally complete.
+
+ALIGNMENT ADDENDUM (2026-03-02)
+- JSONL receipts are the minimum audit surface; a database may exist but is not sufficient alone.
+- PACK_ADOPTED and future PIN_APPLIED events must be auditable from JSONL.

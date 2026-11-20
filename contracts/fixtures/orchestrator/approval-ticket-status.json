@@ -1,0 +1,7 @@
+{
+  "ticket_id": "ticket-1",
+  "status": "pending",
+  "risk": "high",
+  "reason": "Approval required.",
+  "updated_utc": "2026-01-23T12:10:00+00:00"
+}

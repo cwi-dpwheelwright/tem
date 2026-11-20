@@ -1,0 +1,47 @@
+Phase 2 of the CWI Knowledge Pack Infrastructure has been successfully completed.
+This phase focused on deploying and validating the dual-shard vector database layer that powers semantic retrieval and knowledge indexing within CWI.
+Both vector nodes are now fully operational and production-capable.
+Vector Shard #1
+Host: cwi-vector01-hp-z240-sff-workstation
+Tailnet IP: 100.115.118.16
+Qdrant v1.16.3 running
+Collection: cwi_kb_primary
+Vector dimension: 1536
+Distance metric: Cosine
+Vector Shard #2
+Host: cwi-vector02-hp-z240-sff-workstation
+Tailnet IP: 100.91.142.103
+Qdrant v1.16.3 running
+Collection: cwi_kb_primary
+Vector dimension: 1536
+Distance metric: Cosine
+Validation steps performed on both shards:
+Confirmed Docker and Qdrant containers operational
+Confirmed health endpoints responding
+Created production collection schema (1536 dimension)
+Inserted test vectors
+Queried and verified payload return
+Confirmed symmetric configuration across both nodes
+This locks in the following technical baselines:
+Embedding dimension: 1536
+Collection name: cwi_kb_primary
+Distance metric: Cosine
+Dual-shard redundancy model
+Vector database classified as derived infrastructure (rebuildable)
+The vector layer is now:
+Deterministic
+Redundant
+Tailnet-secured
+Instrumented
+Proven read/write capable
+With Phase 2 complete, we move into Phase 3:
+Teacher connectivity validation
+Real embedding ingestion (1536-dim confirmation)
+Dual-shard write validation
+Deterministic pack publication + ledger event integration
+The vector foundation is now stable and production-ready.
+
+ALIGNMENT ADDENDUM (2026-03-02)
+- Vector dimension or collection name changes are rebuild boundaries.
+- No in-place mutation; create a new collection and migrate pins.
+- Record rebuild boundary evidence in the ledger/evidence bundle.

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OwnershipSuccessionPlan",
+  "type": "object",
+  "required": [
+    "plan_id",
+    "tenant_id",
+    "asset_id",
+    "current_owner_id",
+    "status",
+    "effective_utc",
+    "successors"
+  ],
+  "properties": {
+    "plan_id": { "type": "string" },
+    "tenant_id": { "type": "string" },
+    "asset_id": { "type": "string" },
+    "current_owner_id": { "type": "string" },
+    "status": { "type": "string" },
+    "effective_utc": { "type": "string", "format": "date-time" },
+    "successors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["owner_id", "order", "trigger"],
+        "properties": {
+          "owner_id": { "type": "string" },
+          "order": { "type": "integer", "minimum": 1 },
+          "trigger": { "type": "string" },
+          "approval_required": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "governance": {
+      "type": "object",
+      "properties": {
+        "approval_ticket": { "type": "string" },
+        "decision": { "type": "string" },
+        "decided_utc": { "type": "string", "format": "date-time" },
+        "decided_by": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,9 @@
+{
+  "provider": "simulated",
+  "enabled": true,
+  "timeout_seconds": 2,
+  "max_concurrency": 2,
+  "max_bytes": 1000000,
+  "max_pages": 10,
+  "simulated_text": "Simulated OCR output."
+}

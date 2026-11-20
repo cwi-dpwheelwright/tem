@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cwi.dev/schemas/provenance_envelope.json",
+  "title": "ProvenanceEnvelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "envelope_id", "emitted_utc", "connector_id", "source", "summary"],
+  "properties": {
+    "version": { "type": "string" },
+    "envelope_id": { "type": "string", "minLength": 1 },
+    "emitted_utc": { "type": "string", "format": "date-time" },
+    "tenant_id": { "type": "string" },
+    "workspace_id": { "type": "string" },
+    "connector_id": { "type": "string" },
+    "source": { "type": "string" },
+    "run_id": { "type": "string" },
+    "summary": {
+      "type": "object",
+      "required": ["doc_ids", "chunk_ids", "redaction_count"],
+      "properties": {
+        "doc_ids": { "type": "array", "items": { "type": "string" } },
+        "chunk_ids": { "type": "array", "items": { "type": "string" } },
+        "redaction_count": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

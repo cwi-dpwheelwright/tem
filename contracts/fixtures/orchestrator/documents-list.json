@@ -1,0 +1,20 @@
+[
+  {
+    "doc_id": "doc-proc-018",
+    "title": "Zone 3 safety procedure",
+    "type": "procedure",
+    "owner": "Safety Office",
+    "status": "active",
+    "versions_count": 3,
+    "latest_version": "1.8.2"
+  },
+  {
+    "doc_id": "doc-policy-044",
+    "title": "Telemetry privacy policy",
+    "type": "policy",
+    "owner": "Compliance",
+    "status": "active",
+    "versions_count": 2,
+    "latest_version": "2.3.0"
+  }
+]

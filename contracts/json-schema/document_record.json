@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cwi.dev/schemas/document_record.json",
+  "title": "DocumentRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["doc_id", "title", "content", "source"],
+  "properties": {
+    "doc_id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "content": { "type": "string" },
+    "source": { "type": "string", "minLength": 1 },
+    "mime_type": { "type": "string" },
+    "metadata": { "type": "object" }
+  }
+}

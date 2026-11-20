@@ -1,0 +1,27 @@
+{
+  "document_id": "proc-2026-02-02-ops-01",
+  "tenant_id": "tenant-demo",
+  "generated_utc": "2026-02-02T15:30:00Z",
+  "status": "draft",
+  "title": "Zone 3 Safety Checklist",
+  "summary": "Draft procedure for Zone 3 entry validation and safety sweeps.",
+  "content": "Step 1: Verify perimeter clearance. Step 2: Validate sensor health. Step 3: Confirm operator sign-off.",
+  "compliance_tags": ["OSHA", "internal-safety"],
+  "sources": [
+    {
+      "source_id": "policy-pack-3",
+      "source_type": "policy_pack",
+      "version": "1.8.2",
+      "checksum": "sha256:9f5a1f3d0f7b"
+    }
+  ],
+  "approvals": [
+    {
+      "approval_id": "APR-3033",
+      "status": "pending"
+    }
+  ],
+  "metadata": {
+    "generator": "docgen-v1"
+  }
+}

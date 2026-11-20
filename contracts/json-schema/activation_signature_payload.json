@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ActivationSignaturePayload",
+  "type": "object",
+  "required": ["device_id", "bundle_id", "nonce", "expires_utc"],
+  "properties": {
+    "device_id": { "type": "string" },
+    "bundle_id": { "type": "string" },
+    "nonce": { "type": "string" },
+    "expires_utc": { "type": "string", "format": "date-time" },
+    "claims": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false
+}

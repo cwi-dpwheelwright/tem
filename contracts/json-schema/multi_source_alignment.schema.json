@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Multi-Source Alignment",
+  "type": "object",
+  "required": [
+    "inputs",
+    "normalized",
+    "alignment_map",
+    "ambiguities"
+  ],
+  "properties": {
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_id",
+          "raw_output"
+        ],
+        "properties": {
+          "source_id": { "type": "string" },
+          "model_id": { "type": [ "string", "null" ] },
+          "timestamp_utc": { "type": [ "string", "null" ], "format": "date-time" },
+          "raw_output": { "type": "string" }
+        }
+      }
+    },
+    "normalized": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "field", "value", "unit", "confidence" ],
+        "properties": {
+          "field": { "type": "string" },
+          "value": { "type": "number" },
+          "unit": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "alignment_map": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "source_id", "field", "normalized_field" ],
+        "properties": {
+          "source_id": { "type": "string" },
+          "field": { "type": "string" },
+          "normalized_field": { "type": "string" }
+        }
+      }
+    },
+    "ambiguities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "field", "candidates", "confidence" ],
+        "properties": {
+          "field": { "type": "string" },
+          "candidates": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "note": { "type": [ "string", "null" ] }
+        }
+      }
+    }
+  }
+}

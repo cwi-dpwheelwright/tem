@@ -1,0 +1,16 @@
+{
+  "node_id": "asset:report:2026-02-02",
+  "labels": ["Asset", "Report"],
+  "properties": {
+    "title": "Quarterly Safety Summary",
+    "owner_id": "user-42",
+    "classification": "restricted"
+  },
+  "source": "orchestrator",
+  "tenant_id": "tenant-1",
+  "graph_id": "ownership-lineage",
+  "embedding_ref": "vector://reports/asset:report:2026-02-02",
+  "source_doc_id": "doc-99",
+  "created_utc": "2026-02-02T09:00:00Z",
+  "updated_utc": "2026-02-02T09:05:00Z"
+}

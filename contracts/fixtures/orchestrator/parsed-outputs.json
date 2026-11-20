@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "input": "Dose is 10 mg and length is 2 cm.",
+      "expected": [
+        { "value": 10, "unit": "mg" },
+        { "value": 2, "unit": "cm" }
+      ]
+    },
+    {
+      "input": "Temperature reached 100 C over 5 min.",
+      "expected": [
+        { "value": 100, "unit": "c" },
+        { "value": 5, "unit": "min" }
+      ]
+    }
+  ]
+}

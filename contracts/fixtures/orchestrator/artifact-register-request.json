@@ -1,0 +1,16 @@
+{
+  "tenant_id": "tenant-demo",
+  "artifact_id": "report-2026-02-02-01",
+  "artifact_type": "report",
+  "version": "v1",
+  "hash": "sha256:1c2d3e4f",
+  "title": "Energy Optimization Summary",
+  "provenance_refs": [
+    "trace-90ab",
+    "ledger-221"
+  ],
+  "metadata": {
+    "source": "orchestrator",
+    "format": "dual"
+  }
+}

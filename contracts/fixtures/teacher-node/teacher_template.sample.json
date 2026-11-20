@@ -1,0 +1,74 @@
+{
+  "template_id": "procedure-zone3-safety-v1",
+  "template_type": "procedure",
+  "version": "1.0.0",
+  "title": "Zone 3 Safety Procedure",
+  "description": "Baseline safety checklist template for Zone 3 access.",
+  "classification": "restricted",
+  "constraints": {
+    "required_fields": ["purpose", "steps", "approval_contact"],
+    "max_sections": 5,
+    "allowed_tags": ["OSHA", "internal-safety"],
+    "requires_approval": true,
+    "approval_reason": "restricted_template"
+  },
+  "sections": [
+    {
+      "section_id": "overview",
+      "title": "Overview",
+      "required": true,
+      "fields": [
+        {
+          "field_id": "purpose",
+          "label": "Purpose",
+          "type": "text",
+          "required": true,
+          "constraints": { "max_length": 400 }
+        }
+      ]
+    },
+    {
+      "section_id": "steps",
+      "title": "Procedure Steps",
+      "required": true,
+      "fields": [
+        {
+          "field_id": "steps",
+          "label": "Steps",
+          "type": "list",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section_id": "approvals",
+      "title": "Approvals",
+      "fields": [
+        {
+          "field_id": "approval_contact",
+          "label": "Approval Contact",
+          "type": "text",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "mapping_rules": [
+    {
+      "field_id": "purpose",
+      "source_path": "inputs.purpose",
+      "required": true
+    },
+    {
+      "field_id": "steps",
+      "source_path": "inputs.steps",
+      "transform": "join",
+      "join_separator": "\n"
+    },
+    {
+      "field_id": "approval_contact",
+      "source_path": "governance.approval_contact",
+      "default": "Safety Officer"
+    }
+  ]
+}

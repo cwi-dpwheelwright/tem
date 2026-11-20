@@ -1,0 +1,457 @@
+{
+  "run_id": "20260502T194727Z",
+  "started_utc": "2026-05-02T19:47:39.195073Z",
+  "public_base_url": "https://cwigpt.com",
+  "identity_base_url": "http://127.0.0.1:8085",
+  "tenant_id": "tenant-1",
+  "endpoint_under_test": "https://cwigpt.com/api/ingest/document",
+  "ask_endpoint": "https://cwigpt.com/api/ask",
+  "users": {
+    "importing_user": {
+      "username": "memory-smoke-a-20260502t194727z",
+      "user_id": "ea87fbea-e06a-44b3-b3c5-b99297a31d6f"
+    },
+    "control_user": {
+      "username": "memory-smoke-b-20260502t194727z",
+      "user_id": "62f5cf98-8f14-48d6-9495-4b77386a7fe7"
+    }
+  },
+  "upload": {
+    "source_zip_sha256": "a7311f7a8cabd7f4603c9ed190368177eee4c4e4d5520bd56497857dbd15bdb2",
+    "source_entry": "input.zip/conversations.json",
+    "message_count": 2416,
+    "total_chunks": 2,
+    "payload_summaries": [
+      {
+        "doc_id": "web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00001",
+        "title": "input.zip/conversations.json (Part 1 of 2)",
+        "chars": 499877,
+        "sha256": "f0e024812117d27bd0a6072859d8a4510bd6f5a6eb1fe3946e7d810a7cae0ccd",
+        "contains_late_marker": false,
+        "contains_nebula_open_loop": false
+      },
+      {
+        "doc_id": "web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00002",
+        "title": "input.zip/conversations.json (Part 2 of 2)",
+        "chars": 209827,
+        "sha256": "13029ad6a9f45d039ede57652adaa13968a7d7f08ab293a005bce227e005ed4e",
+        "contains_late_marker": true,
+        "contains_nebula_open_loop": true
+      }
+    ],
+    "responses": [
+      {
+        "chunk_index": 1,
+        "request_id": "chat-history-smoke-20260502T194727Z-00001",
+        "ok": true,
+        "status": 200,
+        "duration_ms": 636,
+        "response": {
+          "accepted": true,
+          "ingest_id": "36c763a1a1d748ad8b5acf693f7d5ff7",
+          "trace_id": "9a87faecf3434f7dae75af6ee0d445e2",
+          "doc_id": "web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00001",
+          "message": "accepted"
+        }
+      },
+      {
+        "chunk_index": 2,
+        "request_id": "chat-history-smoke-20260502T194727Z-00002",
+        "ok": true,
+        "status": 200,
+        "duration_ms": 378,
+        "response": {
+          "accepted": true,
+          "ingest_id": "a6eefc2cb9534ec8a104313b612e9cd6",
+          "trace_id": "ce08c790b83647708b768f4645f53a99",
+          "doc_id": "web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00002",
+          "message": "accepted"
+        }
+      }
+    ]
+  },
+  "pre_import": {
+    "importing_user_profile": {
+      "ok": true,
+      "status": 200,
+      "duration_ms": 896,
+      "answer": "I don't have any stored memory about you yet. Would you like to import chat history or connect an approved memory source?",
+      "marker_hits": [],
+      "trace": {
+        "request_id": "smoke-1777751260022",
+        "trace_id": "8c9ac04373299592b3c6a7c544757221",
+        "route": "activated_memory_state",
+        "intent_type": "memory_recall",
+        "intent_mode": "memory_recall",
+        "memory_used": false,
+        "graph_used": false,
+        "confidence": 0.35,
+        "sources": [],
+        "document_hits": 0,
+        "graph_hits": 0
+      },
+      "citations": [],
+      "error": null,
+      "message": null
+    }
+  },
+  "post_import": {
+    "what do you know about me?": {
+      "ok": true,
+      "status": 200,
+      "duration_ms": 601,
+      "answer": "Here is what I know from activated imported memory:\n\nIdentity and Work Context:\n- My open loop is OPEN-LOOP-GAMMA-17: verify that imported memory is chunked and visible only to the importing user.\n- My work life includes testing CWI chat history import, governed memory retrieval, trace provenance, and user isolation.\n- My late chunk open loop is OPEN-LOOP-NEBULA-88: verify that the second imported chunk affects CWI chat responses.\n- My late chunk project marker is LATE-CHUNK-MARIGOLD-204 for Project Quartz Lantern.\n- My preference is that memory answers include traceable sources and confidence when activated memory is used.\n\nProjects and Priorities:\n- My open loop is OPEN-LOOP-GAMMA-17: verify that imported memory is chunked and visible only to the importing user.\n- My work life includes testing CWI chat history import, governed memory retrieval, trace provenance, and user isolation.\n- My late chunk open loop is OPEN-LOOP-NEBULA-88: verify that the second imported chunk affects CWI chat responses.\n\nPeople and Relationships:\n- Jasmin owns the late-chunk QA review for LATE-CHUNK-MARIGOLD-204 and Project Quartz Lantern.\n- My home life test fact is HOME-ORCHID-58: I prefer Saturday project reviews at the kitchen table.\n\nOpen Loops:\n- My open loop is OPEN-LOOP-GAMMA-17: verify that imported memory is chunked and visible only to the importing user.\n- My late chunk open loop is OPEN-LOOP-NEBULA-88: verify that the second imported chunk affects CWI chat responses.\n- I decided DECISION-EMBER-31: imported chat history must be user-owned and tenant-scoped.\n\nConfidence: 0.86\nSources: memory:mem-chat-2448505ca5de24ca / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-6415d5e43ef2ec0a / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-6c0368f7daff8a4e / provenance:ce08c790b83647708b768f4645f53a99; memory:mem-chat-75224d02ea40b3d6 / provenance:ce08c790b83647708b768f4645f53a99; memory:mem-chat-ba0e8d04108de197 / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-d5f8e680111244c2 / provenance:ce08c790b83647708b768f4645f53a99",
+      "marker_hits": [
+        "Project Quartz Lantern",
+        "OPEN-LOOP-GAMMA-17",
+        "OPEN-LOOP-NEBULA-88",
+        "LATE-CHUNK-MARIGOLD-204",
+        "DECISION-EMBER-31",
+        "HOME-ORCHID-58",
+        "Jasmin"
+      ],
+      "trace": {
+        "request_id": "smoke-1777751265020",
+        "trace_id": "7825801e3c46654ffd35c19b9fa50e86",
+        "route": "activated_memory_retrieval",
+        "intent_type": "memory_recall",
+        "intent_mode": "memory_recall",
+        "memory_used": true,
+        "graph_used": false,
+        "confidence": 0.86,
+        "sources": [
+          "memory:mem-chat-2448505ca5de24ca",
+          "memory:mem-chat-6415d5e43ef2ec0a",
+          "memory:mem-chat-6c0368f7daff8a4e",
+          "memory:mem-chat-75224d02ea40b3d6",
+          "memory:mem-chat-ba0e8d04108de197",
+          "memory:mem-chat-d5f8e680111244c2",
+          "memory:mem-chat-d7509854fe927c8a",
+          "memory:mem-chat-dbc16f366f2fe3d6",
+          "memory:mem-chat-e0921a84df6f7437",
+          "memory:mem-chat-e6f84cb56a47caed",
+          "source:web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00001:v1",
+          "source:web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00001:v1-chunk-0000",
+          "pack:cwi-intent-interpreter@1.0.0",
+          "pack:cwi-tone-adaptation@1.0.0",
+          "pack:cwi-intent-to-tone-map@1.0.0",
+          "pack:cwi-audience-profiles@1.0.0",
+          "pack:cwi-memory-policy@1.0.0",
+          "pack:cwi-memory-capsule@1.0.0",
+          "pack:cwi-source-retrieval@1.0.0",
+          "pack:cwi-identity@1.0.0",
+          "pack:cwi-values-core@1.0.0",
+          "pack:cwi-values-biblical@1.0.0",
+          "pack:cwi-ethical-reasoner@1.0.0",
+          "pack:cwi-safety-guardrails@1.0.0",
+          "pack:cwi-confidence-policy@1.0.0",
+          "pack:cwi-response-templates@1.1.0",
+          "pack:cwi-communication-core@1.3.0",
+          "pack:cwi-first-response-optimizer@1.1.0",
+          "pack:cwi-conversation-style-continuity@1.0.0",
+          "pack:cwi-response-refinement@1.1.0",
+          "pack:cwi-response-orchestrator@1.1.0"
+        ],
+        "document_hits": 0,
+        "graph_hits": 0
+      },
+      "citations": [],
+      "error": null,
+      "message": null
+    },
+    "what projects am I working on?": {
+      "ok": true,
+      "status": 200,
+      "duration_ms": 381,
+      "answer": "Here is what activated memory shows about your work and projects:\n\n- My open loop is OPEN-LOOP-GAMMA-17: verify that imported memory is chunked and visible only to the importing user.\n- My work life includes testing CWI chat history import, governed memory retrieval, trace provenance, and user isolation.\n- My late chunk open loop is OPEN-LOOP-NEBULA-88: verify that the second imported chunk affects CWI chat responses.\n- My late chunk project marker is LATE-CHUNK-MARIGOLD-204 for Project Quartz Lantern.\n- My preference is that memory answers include traceable sources and confidence when activated memory is used.\n\nConfidence: 0.86\nSources: memory:mem-chat-2448505ca5de24ca / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-6415d5e43ef2ec0a / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-6c0368f7daff8a4e / provenance:ce08c790b83647708b768f4645f53a99; memory:mem-chat-75224d02ea40b3d6 / provenance:ce08c790b83647708b768f4645f53a99; memory:mem-chat-ba0e8d04108de197 / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-d5f8e680111244c2 / provenance:ce08c790b83647708b768f4645f53a99",
+      "marker_hits": [
+        "Project Quartz Lantern",
+        "OPEN-LOOP-GAMMA-17",
+        "OPEN-LOOP-NEBULA-88",
+        "LATE-CHUNK-MARIGOLD-204"
+      ],
+      "trace": {
+        "request_id": "smoke-1777751265622",
+        "trace_id": "a9867558a5bfc68310a89539b145fb46",
+        "route": "activated_memory_retrieval",
+        "intent_type": "memory_recall",
+        "intent_mode": "memory_recall",
+        "memory_used": true,
+        "graph_used": false,
+        "confidence": 0.86,
+        "sources": [
+          "memory:mem-chat-2448505ca5de24ca",
+          "memory:mem-chat-6415d5e43ef2ec0a",
+          "memory:mem-chat-6c0368f7daff8a4e",
+          "memory:mem-chat-75224d02ea40b3d6",
+          "memory:mem-chat-ba0e8d04108de197",
+          "memory:mem-chat-d5f8e680111244c2",
+          "memory:mem-chat-dbc16f366f2fe3d6",
+          "memory:mem-chat-e0921a84df6f7437",
+          "memory:mem-chat-e6f84cb56a47caed",
+          "memory:mem-chat-e8067767cf46d0fa",
+          "source:web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00001:v1-chunk-0000",
+          "source:web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00001:v1",
+          "pack:cwi-intent-interpreter@1.0.0",
+          "pack:cwi-tone-adaptation@1.0.0",
+          "pack:cwi-intent-to-tone-map@1.0.0",
+          "pack:cwi-audience-profiles@1.0.0",
+          "pack:cwi-memory-policy@1.0.0",
+          "pack:cwi-memory-capsule@1.0.0",
+          "pack:cwi-source-retrieval@1.0.0",
+          "pack:cwi-identity@1.0.0",
+          "pack:cwi-values-core@1.0.0",
+          "pack:cwi-values-biblical@1.0.0",
+          "pack:cwi-ethical-reasoner@1.0.0",
+          "pack:cwi-safety-guardrails@1.0.0",
+          "pack:cwi-confidence-policy@1.0.0",
+          "pack:cwi-response-templates@1.1.0",
+          "pack:cwi-communication-core@1.3.0",
+          "pack:cwi-first-response-optimizer@1.1.0",
+          "pack:cwi-conversation-style-continuity@1.0.0",
+          "pack:cwi-response-refinement@1.1.0",
+          "pack:cwi-response-orchestrator@1.1.0"
+        ],
+        "document_hits": 0,
+        "graph_hits": 0
+      },
+      "citations": [],
+      "error": null,
+      "message": null
+    },
+    "who are the key people in my network?": {
+      "ok": true,
+      "status": 200,
+      "duration_ms": 354,
+      "answer": "Here are the key people and relationship signals I found in activated memory:\n\n- My identity note for this import test is Avery Testwell, and my private memory verification phrase is BLUELANTERN-7429.\n- Chad owns the observability dashboard follow-up for Project Quartz Lantern.\n- Jasmin owns the late-chunk QA review for LATE-CHUNK-MARIGOLD-204 and Project Quartz Lantern.\n- My home life test fact is HOME-ORCHID-58: I prefer Saturday project reviews at the kitchen table.\n- Jasmin owns the user-facing QA review for Project Quartz Lantern memory isolation results.\n\nConfidence: 0.86\nSources: memory:mem-chat-8f05ab57c1d97e5d / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-b3e7aa7e1e304a62 / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-d5f8e680111244c2 / provenance:ce08c790b83647708b768f4645f53a99; memory:mem-chat-dbc16f366f2fe3d6 / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-e8067767cf46d0fa / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-f5c3ba2142b468dc / provenance:9a87faecf3434f7dae75af6ee0d445e2",
+      "marker_hits": [
+        "Avery Testwell",
+        "BLUELANTERN-7429",
+        "Project Quartz Lantern",
+        "LATE-CHUNK-MARIGOLD-204",
+        "HOME-ORCHID-58",
+        "Chad",
+        "Jasmin"
+      ],
+      "trace": {
+        "request_id": "smoke-1777751266004",
+        "trace_id": "7732be84e85480a018d964f0ba44431e",
+        "route": "activated_memory_retrieval",
+        "intent_type": "memory_recall",
+        "intent_mode": "memory_recall",
+        "memory_used": true,
+        "graph_used": false,
+        "confidence": 0.86,
+        "sources": [
+          "memory:mem-chat-8f05ab57c1d97e5d",
+          "memory:mem-chat-b3e7aa7e1e304a62",
+          "memory:mem-chat-d5f8e680111244c2",
+          "memory:mem-chat-dbc16f366f2fe3d6",
+          "memory:mem-chat-e8067767cf46d0fa",
+          "memory:mem-chat-f5c3ba2142b468dc",
+          "pack:cwi-intent-interpreter@1.0.0",
+          "pack:cwi-tone-adaptation@1.0.0",
+          "pack:cwi-intent-to-tone-map@1.0.0",
+          "pack:cwi-audience-profiles@1.0.0",
+          "pack:cwi-memory-policy@1.0.0",
+          "pack:cwi-memory-capsule@1.0.0",
+          "pack:cwi-source-retrieval@1.0.0",
+          "pack:cwi-identity@1.0.0",
+          "pack:cwi-values-core@1.0.0",
+          "pack:cwi-values-biblical@1.0.0",
+          "pack:cwi-ethical-reasoner@1.0.0",
+          "pack:cwi-safety-guardrails@1.0.0",
+          "pack:cwi-confidence-policy@1.0.0",
+          "pack:cwi-response-templates@1.1.0",
+          "pack:cwi-communication-core@1.3.0",
+          "pack:cwi-first-response-optimizer@1.1.0",
+          "pack:cwi-conversation-style-continuity@1.0.0",
+          "pack:cwi-response-refinement@1.1.0",
+          "pack:cwi-response-orchestrator@1.1.0"
+        ],
+        "document_hits": 0,
+        "graph_hits": 0
+      },
+      "citations": [],
+      "error": null,
+      "message": null
+    },
+    "what open loops do I have?": {
+      "ok": true,
+      "status": 200,
+      "duration_ms": 416,
+      "answer": "Here are the open loops I found in activated memory:\n\n- My open loop is OPEN-LOOP-GAMMA-17: verify that imported memory is chunked and visible only to the importing user.\n- My late chunk open loop is OPEN-LOOP-NEBULA-88: verify that the second imported chunk affects CWI chat responses.\n- I decided DECISION-EMBER-31: imported chat history must be user-owned and tenant-scoped.\n\nConfidence: 0.86\nSources: memory:mem-chat-2448505ca5de24ca / provenance:9a87faecf3434f7dae75af6ee0d445e2; memory:mem-chat-6c0368f7daff8a4e / provenance:ce08c790b83647708b768f4645f53a99; memory:mem-chat-d7509854fe927c8a / provenance:9a87faecf3434f7dae75af6ee0d445e2",
+      "marker_hits": [
+        "OPEN-LOOP-GAMMA-17",
+        "OPEN-LOOP-NEBULA-88",
+        "DECISION-EMBER-31"
+      ],
+      "trace": {
+        "request_id": "smoke-1777751266359",
+        "trace_id": "ddc4b67acce82a4b56d5945e83ae6b68",
+        "route": "activated_memory_retrieval",
+        "intent_type": "memory_recall",
+        "intent_mode": "memory_recall",
+        "memory_used": true,
+        "graph_used": false,
+        "confidence": 0.86,
+        "sources": [
+          "memory:mem-chat-2448505ca5de24ca",
+          "memory:mem-chat-6c0368f7daff8a4e",
+          "memory:mem-chat-d7509854fe927c8a",
+          "source:web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00001:v1-chunk-0000",
+          "source:web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00002:v1",
+          "source:web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00001:v1",
+          "pack:cwi-intent-interpreter@1.0.0",
+          "pack:cwi-tone-adaptation@1.0.0",
+          "pack:cwi-intent-to-tone-map@1.0.0",
+          "pack:cwi-audience-profiles@1.0.0",
+          "pack:cwi-memory-policy@1.0.0",
+          "pack:cwi-memory-capsule@1.0.0",
+          "pack:cwi-source-retrieval@1.0.0",
+          "pack:cwi-identity@1.0.0",
+          "pack:cwi-values-core@1.0.0",
+          "pack:cwi-values-biblical@1.0.0",
+          "pack:cwi-ethical-reasoner@1.0.0",
+          "pack:cwi-safety-guardrails@1.0.0",
+          "pack:cwi-confidence-policy@1.0.0",
+          "pack:cwi-response-templates@1.1.0",
+          "pack:cwi-communication-core@1.3.0",
+          "pack:cwi-first-response-optimizer@1.1.0",
+          "pack:cwi-conversation-style-continuity@1.0.0",
+          "pack:cwi-response-refinement@1.1.0",
+          "pack:cwi-response-orchestrator@1.1.0"
+        ],
+        "document_hits": 0,
+        "graph_hits": 0
+      },
+      "citations": [],
+      "error": null,
+      "message": null
+    },
+    "show sources for what you know about me": {
+      "ok": true,
+      "status": 200,
+      "duration_ms": 340,
+      "answer": "Sources for activated memory:\n\n- mem-chat-ba0e8d04108de197 from activated_user_memory work_career project_memory work_life (provenance 9a87faecf3434f7dae75af6ee0d445e2)\n- mem-chat-2448505ca5de24ca from activated_user_memory work_career task_memory open_loop (provenance 9a87faecf3434f7dae75af6ee0d445e2)\n- mem-chat-6415d5e43ef2ec0a from activated_user_memory work_career project_memory work_life (provenance 9a87faecf3434f7dae75af6ee0d445e2)\n- mem-chat-6c0368f7daff8a4e from activated_user_memory work_career task_memory open_loop (provenance ce08c790b83647708b768f4645f53a99)\n- mem-chat-75224d02ea40b3d6 from activated_user_memory work_career project_memory current_work (provenance ce08c790b83647708b768f4645f53a99)\n- mem-chat-d5f8e680111244c2 from activated_user_memory work_career relationship_memory responsibility (provenance ce08c790b83647708b768f4645f53a99)\n- mem-chat-d7509854fe927c8a from activated_user_memory general task_memory open_loop (provenance 9a87faecf3434f7dae75af6ee0d445e2)\n- mem-chat-dbc16f366f2fe3d6 from activated_user_memory home_personal project_memory current_work (provenance 9a87faecf3434f7dae75af6ee0d445e2)\n\nConfidence: 0.86",
+      "marker_hits": [],
+      "trace": {
+        "request_id": "smoke-1777751266776",
+        "trace_id": "c77ff52ff6fa0a55dac6e104cd6f3735",
+        "route": "activated_memory_retrieval",
+        "intent_type": "memory_recall",
+        "intent_mode": "memory_recall",
+        "memory_used": true,
+        "graph_used": false,
+        "confidence": 0.86,
+        "sources": [
+          "memory:mem-chat-ba0e8d04108de197",
+          "memory:mem-chat-2448505ca5de24ca",
+          "memory:mem-chat-6415d5e43ef2ec0a",
+          "memory:mem-chat-6c0368f7daff8a4e",
+          "memory:mem-chat-75224d02ea40b3d6",
+          "memory:mem-chat-d5f8e680111244c2",
+          "memory:mem-chat-d7509854fe927c8a",
+          "memory:mem-chat-dbc16f366f2fe3d6",
+          "memory:mem-chat-e0921a84df6f7437",
+          "memory:mem-chat-e6f84cb56a47caed",
+          "source:web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00001:v1",
+          "source:web-upload-chat-history-smoke-20260502t194727z-file-001-input-zip-conversations-json-part-00001:v1-chunk-0000",
+          "pack:cwi-intent-interpreter@1.0.0",
+          "pack:cwi-tone-adaptation@1.0.0",
+          "pack:cwi-intent-to-tone-map@1.0.0",
+          "pack:cwi-audience-profiles@1.0.0",
+          "pack:cwi-memory-policy@1.0.0",
+          "pack:cwi-memory-capsule@1.0.0",
+          "pack:cwi-source-retrieval@1.0.0",
+          "pack:cwi-identity@1.0.0",
+          "pack:cwi-values-core@1.0.0",
+          "pack:cwi-values-biblical@1.0.0",
+          "pack:cwi-ethical-reasoner@1.0.0",
+          "pack:cwi-safety-guardrails@1.0.0",
+          "pack:cwi-confidence-policy@1.0.0",
+          "pack:cwi-response-templates@1.1.0",
+          "pack:cwi-communication-core@1.3.0",
+          "pack:cwi-first-response-optimizer@1.1.0",
+          "pack:cwi-conversation-style-continuity@1.0.0",
+          "pack:cwi-response-refinement@1.1.0",
+          "pack:cwi-response-orchestrator@1.1.0"
+        ],
+        "document_hits": 0,
+        "graph_hits": 0
+      },
+      "citations": [],
+      "error": null,
+      "message": null
+    }
+  },
+  "isolation": {
+    "control_user_profile": {
+      "ok": true,
+      "status": 200,
+      "duration_ms": 285,
+      "answer": "I don't have any stored memory about you yet. Would you like to import chat history or connect an approved memory source?",
+      "marker_hits": [],
+      "trace": {
+        "request_id": "smoke-1777751267117",
+        "trace_id": "51b59a16af34576c884cad3c2c9fefe9",
+        "route": "activated_memory_state",
+        "intent_type": "memory_recall",
+        "intent_mode": "memory_recall",
+        "memory_used": false,
+        "graph_used": false,
+        "confidence": 0.35,
+        "sources": [],
+        "document_hits": 0,
+        "graph_hits": 0
+      },
+      "citations": [],
+      "error": null,
+      "message": null
+    },
+    "control_user_projects": {
+      "ok": true,
+      "status": 200,
+      "duration_ms": 234,
+      "answer": "I don't have any stored memory about you yet. Would you like to import chat history or connect an approved memory source?",
+      "marker_hits": [],
+      "trace": {
+        "request_id": "smoke-1777751267403",
+        "trace_id": "1dde4041a6d649627755b651795920e2",
+        "route": "activated_memory_state",
+        "intent_type": "memory_recall",
+        "intent_mode": "memory_recall",
+        "memory_used": false,
+        "graph_used": false,
+        "confidence": 0.35,
+        "sources": [],
+        "document_hits": 0,
+        "graph_hits": 0
+      },
+      "citations": [],
+      "error": null,
+      "message": null
+    }
+  },
+  "cleanup": {
+    "remove_importing_user": {
+      "ok": true,
+      "status": 200,
+      "duration_ms": 13
+    },
+    "remove_control_user": {
+      "ok": true,
+      "status": 200,
+      "duration_ms": 15
+    }
+  },
+  "pass_fail": {
+    "upload_all_chunks_accepted": true,
+    "importing_user_answers_changed_with_memory_markers": true,
+    "importing_user_trace_memory_used": true,
+    "control_user_did_not_receive_imported_markers": true,
+    "overall_pass": true,
+    "control_user_marker_hits": []
+  },
+  "completed_utc": "2026-05-02T19:47:47.668133Z"
+}

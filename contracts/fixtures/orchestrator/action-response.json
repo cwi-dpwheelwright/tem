@@ -1,0 +1,39 @@
+{
+  "executed": false,
+  "approval_ticket": {
+    "ticket_id": "ticket-1",
+    "risk": "high",
+    "reason": "Approval required."
+  },
+  "result": null,
+  "trace": {
+    "trace_id": "trace-2",
+    "sources": [
+      "approval_ticket:ticket-1"
+    ],
+    "confidence": 0,
+    "grounded": false,
+    "reasoning_based": false,
+    "graph_used": false,
+    "graph_hits": 0,
+    "document_hits": 0,
+    "memory_results": [],
+    "memory_used": false,
+    "source_results": [],
+    "policy_mode": "approve",
+    "model": "",
+    "pack_hash": "",
+    "pack_hashes": {},
+    "pack_used": false,
+    "baseline_packs": [],
+    "pack_capabilities": [],
+    "pack_capability_decision": null,
+    "guardrails": [],
+    "guardrails_summary": null,
+    "guardrails_pointers": [],
+    "validations": [],
+    "discrepancies": [],
+    "corrections": [],
+    "pack_version": "1.0.0"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "defaults": {
+    "sshUser": "cwi-mcp1",
+    "sshKeyPath": "C:\\Users\\<user>\\.ssh\\id_ed25519",
+    "deployRoot": "/opt/cwi/DEPLOY",
+    "bundleRoot": "OPS/cwi-ops/DEPLOY",
+    "composeCommand": "docker compose",
+    "composeFile": "docker-compose.yml",
+    "composeArgs": "up -d",
+    "deploymentMode": "strict",
+    "seedEnvFromTemplate": true,
+    "clearContainersBeforeDeploy": true,
+    "clearImagesBeforeDeploy": true,
+    "clearVolumesBeforeDeploy": true,
+    "clearCleanupExclusions": [
+      "*cadvisor*",
+      "*node-exporter*",
+      "nextcloud*",
+      "postgres:16",
+      "redis:7"
+    ]
+  },
+  "hosts": [
+    {
+      "name": "internal-01",
+      "host": "10.0.0.10",
+      "roles": [
+        "cwi-orchestrator",
+        "pack-service",
+        "cwi-teams-bot"
+      ]
+    },
+    {
+      "name": "internal-02",
+      "host": "10.0.0.11",
+      "roles": [
+        "vector_shard",
+        "gpu_worker",
+        "teacher_node",
+        "graph_db"
+      ]
+    },
+    {
+      "name": "public",
+      "host": "10.0.0.12",
+      "roles": [
+        {
+          "name": "gateway",
+          "bundle": "OPS/cwi-ops/compose/gateway"
+        },
+        {
+          "name": "cwi-gpt-web-ui",
+          "bundle": "OPS/cwi-ops/compose/cwi-gpt-web-ui"
+        },
+        {
+          "name": "cloudflared",
+          "bundle": "OPS/cwi-ops/DEPLOY/cloudflared"
+        },
+        {
+          "name": "cwi-glassbox-web-ui",
+          "bundle": "OPS/cwi-ops/compose/cwi-glassbox-web-ui"
+        }
+      ]
+    }
+  ]
+}

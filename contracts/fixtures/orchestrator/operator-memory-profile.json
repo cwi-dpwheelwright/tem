@@ -1,0 +1,11 @@
+{
+  "tenant_id": "tenant-demo",
+  "operator_id": "op-217",
+  "signals_total": 5,
+  "correction_rate": 0.2,
+  "delay_rate": 0.1,
+  "confirmation_rate": 0.7,
+  "average_latency_ms": 380.0,
+  "correlation_score": 0.82,
+  "last_updated_utc": "2026-02-02T19:10:00Z"
+}

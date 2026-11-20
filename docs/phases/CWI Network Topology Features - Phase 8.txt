@@ -1,0 +1,7 @@
+Phase 8 – Deployment Solidification
+Status: Not started (definition aligned to 2026-03-02 spec).
+
+Scope alignment:
+- Repeatable deploy/verify with auditable report + evidence bundle.
+- Deterministic gates for canonicalization, pins, packs, ledger, and routes.
+- No new identity-bound memory plane introduced in Phase 8.

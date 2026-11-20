@@ -1,0 +1,43 @@
+{
+  "action": {
+    "args": {
+      "ai_entity_id": "ai:demo:001",
+      "constraints": {
+        "max_delegation_minutes": 120,
+        "require_multi_factor_approval": true,
+        "require_reason": true
+      },
+      "continuity": {
+        "carry_over": [
+          "preferences",
+          "memory_summary"
+        ],
+        "redactions": [
+          "pii",
+          "secrets"
+        ]
+      },
+      "effective_at": "2026-02-01T12:00:00Z",
+      "from_owner": {
+        "role": "admin",
+        "user_id": "user_admin_001"
+      },
+      "idempotency_key": "xfer-4e67ea4b-a960-4795-b81d-df033c9108d3",
+      "reason": "integration-test ownership transfer (synthetic)",
+      "schema_version": "1.0",
+      "to_owner": {
+        "role": "successor",
+        "user_id": "user_successor_001"
+      }
+    },
+    "type": "ownership.transfer"
+  },
+  "actor": {
+    "role": "admin",
+    "user_id": "user_admin_001"
+  },
+  "idempotency_key": "action-befce89c-d758-4d15-b0fb-0dbd3f00044b",
+  "pack": "enterprise_pack",
+  "policy_mode": "approve",
+  "tenant_id": "tenant_dev"
+}

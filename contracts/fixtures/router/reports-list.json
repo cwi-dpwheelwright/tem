@@ -1,0 +1,12 @@
+[
+  {
+    "report_id": "rep-2026-02-01-ops-001",
+    "title": "Autonomous safety sweep - North perimeter",
+    "created_utc": "2026-02-01T12:40:00Z",
+    "status": "approved",
+    "coherence_score": 0.94,
+    "conflict_count": 1,
+    "summary": "Multi-sensor sweep completed with minor variance in thermal readings; no anomalies detected.",
+    "escalation_ticket": null
+  }
+]

@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  cwi-teacher-node:
+    image: ${REGISTRY}/cwi-teacher-node:${CWI_TEACHER_NODE_TAG}
+    container_name: ${TEACHER_NODE_CONTAINER_NAME:-internal-02-teacher-node}
+    env_file: .env
+    expose:
+      - "${TEACHER_NODE_HTTP_PORT}"
+    ports:
+      - "${TEACHER_NODE_HTTP_PORT}:${TEACHER_NODE_HTTP_PORT}"
+    volumes:
+      - ${TEACHER_NODE_ARTIFACT_HOST_PATH:-/srv/cwi/teacher-node-artifacts}:${TEACHER_NODE_ARTIFACT_ROOT:-/data/teacher-node}
+      - ${TEACHER_NODE_CONTRACTS_HOST_PATH:-/srv/cwi/contracts}:/app/contracts:ro
+      - ${TEACHER_NODE_PACKS_HOST_PATH:-/srv/cwi/packs}:${TEACHER_NODE_PACK_ROOT:-/app/packs}:ro
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+networks:
+  cwi-internal:
+    name: cwi-internal

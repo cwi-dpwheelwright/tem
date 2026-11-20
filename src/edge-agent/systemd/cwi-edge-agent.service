@@ -1,0 +1,15 @@
+[Unit]
+Description=CWI Edge Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/etc/cwi/edge-agent.env
+ExecStart=/usr/bin/cwi-edge-agent run --config /etc/cwi/edge-agent.yaml
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

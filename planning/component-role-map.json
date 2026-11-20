@@ -1,0 +1,566 @@
+[
+  {
+    "role_id": "R1",
+    "role": "User-facing Q&A UI",
+    "category": "runtime",
+    "phase": "required_now",
+    "observed_aliases": ["cwi-gpt-web-ui", "GPT UI", "CWI UI"],
+    "repo_paths": ["src/frontend/web-ui/cwi-gpt-web-ui"],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/cwi-gpt-web-ui/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/cwi-gpt-web-ui/docker-compose.yml"
+    ],
+    "status": "partial",
+    "mandatory_features_found": [
+      "ask flow via orchestrator path",
+      "answer rendering",
+      "sources rendering",
+      "confidence rendering",
+      "graph-aware trace fields"
+    ],
+    "missing_mandatory_features": [
+      "live graph-backed runtime validation in this environment"
+    ],
+    "recommended_action": "Keep the existing UI, run type/build/tests when Node is available, then verify end-to-end graph-backed ask behavior."
+  },
+  {
+    "role_id": "R2",
+    "role": "Admin / glassbox / operator UI",
+    "category": "runtime",
+    "phase": "required_now",
+    "observed_aliases": ["cwi-node-ui-web", "cwi-glassbox-web-ui", "cwi-admin-console"],
+    "repo_paths": [
+      "src/frontend/web-ui/cwi-glassbox-web-ui",
+      "src/frontend/web-ui/cwi-admin-console",
+      "src/frontend/web-ui/cwi-identity-admin"
+    ],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/cwi-glassbox-web-ui/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/cwi-glassbox-web-ui/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/cwi-admin-console/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/cwi-identity-admin/docker-compose.yml"
+    ],
+    "status": "composite-satisfied",
+    "mandatory_features_found": [
+      "approvals inbox",
+      "trace viewer",
+      "break-glass audit",
+      "kill-switch controls",
+      "pack catalog",
+      "pack upload",
+      "pack retire/delete",
+      "pack audit log"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Document the composite ownership clearly; do not create another operator UI solely to satisfy naming drift."
+  },
+  {
+    "role_id": "R3",
+    "role": "Approvals surface",
+    "category": "runtime",
+    "phase": "required_now",
+    "observed_aliases": ["cwi-teams-bot", "cwi-bot-teams", "approvals inbox"],
+    "repo_paths": [
+      "src/backend/services/cwi-teams-bot",
+      "src/frontend/web-ui/cwi-glassbox-web-ui"
+    ],
+    "deployment_evidence": [
+      "OPS/cwi-ops/DEPLOY/cwi-teams-bot/docker-compose.yml"
+    ],
+    "status": "composite-satisfied",
+    "mandatory_features_found": [
+      "human approval completion path",
+      "enterprise-friendly Teams surface",
+      "idempotency store backing",
+      "web approvals UI"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Retain bot plus UI composition; verify end-to-end approval completion in release testing."
+  },
+  {
+    "role_id": "R4",
+    "role": "Gateway / ingress",
+    "category": "runtime",
+    "phase": "required_now",
+    "observed_aliases": ["cwi-gateway"],
+    "repo_paths": [],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/gateway/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/gateway/docker-compose.yml",
+      "OPS/cwi-ops/compose/gateway/Caddyfile"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "public ingress",
+      "/api routing",
+      "/packs routing"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep the existing gateway role; no duplicate ingress service is needed."
+  },
+  {
+    "role_id": "R5",
+    "role": "API router / control plane",
+    "category": "runtime",
+    "phase": "required_now",
+    "observed_aliases": ["cwi-router", "cwi--router"],
+    "repo_paths": ["src/backend/services/cwi-router"],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/cwi-router/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/mcp-core/docker-compose.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "core API router service",
+      "compose and deploy coverage"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep the existing router."
+  },
+  {
+    "role_id": "R6",
+    "role": "Orchestrator / workflow engine",
+    "category": "runtime",
+    "phase": "required_now",
+    "observed_aliases": ["cwi-orchestrator"],
+    "repo_paths": ["src/backend/services/cwi-orchestrator"],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/cwi-orchestrator/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/cwi-orchestrator/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/mcp-core/docker-compose.yml"
+    ],
+    "status": "partial",
+    "mandatory_features_found": [
+      "ask/action workflows",
+      "policy and approvals flow",
+      "vector retrieval",
+      "pack contract compatibility support",
+      "graph config hooks",
+      "AGE query provider",
+      "graph query planner",
+      "graph/document prompt merge",
+      "graph-aware trace fields"
+    ],
+    "missing_mandatory_features": [
+      "live graph-backed verification in this environment",
+      "broader graph planner coverage",
+      "release test evidence for graph fallback behavior"
+    ],
+    "recommended_action": "Patch the existing orchestrator only; do not fork. Run .NET 8 tests and live graph smoke tests once tooling is available."
+  },
+  {
+    "role_id": "R7",
+    "role": "Pack distribution service",
+    "category": "runtime",
+    "phase": "required_now",
+    "observed_aliases": ["cwi-pack-service", "cwi-pin-resolver"],
+    "repo_paths": [
+      "src/backend/services/cwi-pack-service",
+      "src/backend/services/cwi-pin-resolver"
+    ],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/pack-service/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/pack-service/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/mcp-core/docker-compose.yml"
+    ],
+    "status": "composite-satisfied",
+    "mandatory_features_found": [
+      "serves packs",
+      "supports static mode",
+      "supports API-service mode",
+      "signed pin verification",
+      "priority-based governed pack resolution",
+      "legacy-compatible latest pack routes"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep the existing pack service and the governed pack bridge; do not replace either with a duplicate distribution service."
+  },
+  {
+    "role_id": "R8",
+    "role": "Teacher publishing / graph build host",
+    "category": "tooling",
+    "phase": "required_now",
+    "observed_aliases": ["teacher-node", "cwi-teacher-node", "cwi-etl"],
+    "repo_paths": [
+      "tools/teacher-node",
+      "src/etl"
+    ],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/teacher_node/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/teacher_node/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/mcp-core/docker-compose.yml"
+    ],
+    "status": "composite-satisfied",
+    "mandatory_features_found": [
+      "pack validation",
+      "anchor generation",
+      "publish utilities",
+      "ontology and canonicalization",
+      "entity extraction",
+      "relationship extraction",
+      "rollup and curation",
+      "cross-pack graph edge generation",
+      "graph projection",
+      "graph ingestion hooks",
+      "teacher-side graph CLI wrappers"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Treat teacher-node plus ETL as the teacher/build-side composite. Do not create separate end-user apps for teacher utilities."
+  },
+  {
+    "role_id": "I1",
+    "role": "Graph database",
+    "category": "infrastructure",
+    "phase": "required_now",
+    "observed_aliases": ["graphdb", "cwi-graph-db", "cwi-age-db"],
+    "repo_paths": [],
+    "deployment_evidence": [
+      "OPS/cwi-ops/DEPLOY/mcp-core/docker-compose.yml",
+      "OPS/cwi-ops/compose/full/docker-compose.full.yml",
+      "OPS/cwi-ops/compose/test/docker-compose.test.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "graph database container",
+      "AGE-backed DSN documented for ETL/orchestrator"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Use graphdb/cwi-graph-db naming in repo artifacts; treat cwi-age-db as an alias only."
+  },
+  {
+    "role_id": "I2",
+    "role": "Vector evidence store",
+    "category": "infrastructure",
+    "phase": "required_now",
+    "observed_aliases": ["vector-shard-1", "vector-shard-2", "qdrant"],
+    "repo_paths": [],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/vector_shard/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/vector_shard/docker-compose.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "Qdrant compose bundle",
+      "vector shard deploy bundle"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep the existing vector shard topology."
+  },
+  {
+    "role_id": "I3",
+    "role": "Model inference endpoint(s)",
+    "category": "infrastructure",
+    "phase": "required_now",
+    "observed_aliases": ["cwi-model-worker", "model-worker-health", "ollama workers"],
+    "repo_paths": [],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/gpu_worker/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/gpu_worker/docker-compose.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "actual inference containers",
+      "health probes",
+      "pro and free tier variants"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Do not treat health-only probes as the runtime role; the real worker containers are already present."
+  },
+  {
+    "role_id": "I4",
+    "role": "Durable state store",
+    "category": "infrastructure",
+    "phase": "required_now",
+    "observed_aliases": ["postgres"],
+    "repo_paths": [],
+    "deployment_evidence": [
+      "OPS/cwi-ops/DEPLOY/mcp-core/docker-compose.yml",
+      "OPS/cwi-ops/compose/full/docker-compose.full.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "postgres backing services"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep the existing Postgres role."
+  },
+  {
+    "role_id": "I5",
+    "role": "Cache / locks / rate-limit store",
+    "category": "infrastructure",
+    "phase": "required_now",
+    "observed_aliases": ["redis"],
+    "repo_paths": [],
+    "deployment_evidence": [
+      "OPS/cwi-ops/DEPLOY/mcp-core/docker-compose.yml",
+      "OPS/cwi-ops/compose/full/docker-compose.full.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "redis service"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep the existing Redis role."
+  },
+  {
+    "role_id": "I6",
+    "role": "Identity / auth support",
+    "category": "infrastructure",
+    "phase": "deployment_specific",
+    "observed_aliases": ["cwi-identity-server", "cwi-identity-admin"],
+    "repo_paths": [
+      "src/backend/services/cwi-identity-server",
+      "src/frontend/web-ui/cwi-identity-admin"
+    ],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/cwi-identity-stack/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/cwi-identity-admin/docker-compose.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "identity server",
+      "identity admin UI"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep as deployment-specific support infrastructure."
+  },
+  {
+    "role_id": "I7",
+    "role": "Artifact / object custody",
+    "category": "infrastructure",
+    "phase": "deployment_specific",
+    "observed_aliases": ["teacher-minio", "artifact store", "pack roots"],
+    "repo_paths": [],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/teacher_node/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/teacher_node/docker-compose.yml",
+      "OPS/cwi-ops/runbooks/pack-lifecycle.md"
+    ],
+    "status": "composite-satisfied",
+    "mandatory_features_found": [
+      "MinIO option on teacher node",
+      "pack artifact storage and mirror flow"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep as optional-by-deployment storage custody, not a separate product app."
+  },
+  {
+    "role_id": "T1",
+    "role": "Gold tests / regression harness",
+    "category": "tooling",
+    "phase": "required_for_release",
+    "observed_aliases": ["cwi-gold-tests"],
+    "repo_paths": ["tools/cwi-gold-tests"],
+    "deployment_evidence": [],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "pack lifecycle tests",
+      "trace tests",
+      "graph contract tests",
+      "kill-switch tests",
+      "ETL tests",
+      "teams bot tests",
+      "vector shard smoke tests"
+    ],
+    "missing_mandatory_features": [
+      "local execution evidence in this environment"
+    ],
+    "recommended_action": "Use the existing gold-test harness; do not create a second one."
+  },
+  {
+    "role_id": "T2",
+    "role": "Graph build utility set",
+    "category": "tooling",
+    "phase": "required_for_graph_workstream",
+    "observed_aliases": [
+      "cwi_graph_ontology.py",
+      "cwi_entity_extractor.py",
+      "cwi_relationship_extractor.py",
+      "cwi_graph_backfill.py",
+      "cwi_graph_rollup.py",
+      "cwi_graph_curate.py",
+      "cwi_graph_crosswalk.py",
+      "cwi_age_graph_writer.py"
+    ],
+    "repo_paths": [
+      "src/etl/cwi_etl/graph_ontology.py",
+      "src/etl/cwi_etl/cwi_entity_extractor.py",
+      "src/etl/cwi_etl/cwi_relationship_extractor.py",
+      "src/etl/cwi_etl/cwi_graph_backfill.py",
+      "src/etl/cwi_etl/cwi_graph_rollup.py",
+      "src/etl/cwi_etl/cwi_graph_curate.py",
+      "src/etl/cwi_etl/cwi_graph_crosswalk.py",
+      "src/etl/cwi_etl/cwi_age_graph_writer.py",
+      "src/etl/cwi_etl/pipeline.py",
+      "tools/teacher-node/graph_cli.py"
+    ],
+    "deployment_evidence": [],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "ontology and canonicalization",
+      "entity extraction",
+      "relationship extraction",
+      "backfill utility",
+      "pack rollup generation",
+      "curation rules",
+      "cross-pack graph inference",
+      "AGE artifact generation",
+      "pipeline orchestration",
+      "teacher-side tooling wrappers"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep the implementation repo-native under ETL with thin teacher-node wrappers. Do not split these tools into standalone runtime apps."
+  },
+  {
+    "role_id": "T3",
+    "role": "Ops / observability",
+    "category": "tooling",
+    "phase": "required_for_release",
+    "observed_aliases": ["cwi-ops"],
+    "repo_paths": ["OPS/cwi-ops"],
+    "deployment_evidence": [],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "compose bundles",
+      "deploy bundles",
+      "runbooks",
+      "prometheus and grafana artifacts"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Use the existing ops tree as the system-level deployment and observability owner."
+  },
+  {
+    "role_id": "P1",
+    "role": "iOS + CarPlay client",
+    "category": "runtime",
+    "phase": "phase_gated",
+    "observed_aliases": ["ios-carplay"],
+    "repo_paths": ["src/mobile/ios-carplay"],
+    "deployment_evidence": [],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "iOS/CarPlay source tree",
+      "Xcode project",
+      "tests"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Leave out of current graph-runtime blocking work unless mobile parity is in scope."
+  },
+  {
+    "role_id": "P2",
+    "role": "Android + Android Auto client",
+    "category": "runtime",
+    "phase": "phase_gated",
+    "observed_aliases": ["android"],
+    "repo_paths": ["src/mobile/android"],
+    "deployment_evidence": [],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "android source tree",
+      "gradle project",
+      "release docs"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Leave out of current graph-runtime blocking work unless mobile parity is in scope."
+  },
+  {
+    "role_id": "P3",
+    "role": "Edge telemetry agent",
+    "category": "runtime",
+    "phase": "phase_gated",
+    "observed_aliases": ["edge-agent", "cwi-edge-agent"],
+    "repo_paths": ["src/edge-agent"],
+    "deployment_evidence": [
+      "OPS/cwi-ops/DEPLOY/edge_agent/docker-compose.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "source package",
+      "Dockerfile",
+      "deploy bundle"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep as optional-by-deployment runtime; do not omit it from inventory."
+  },
+  {
+    "role_id": "P4",
+    "role": "ETL / document ingest pipeline",
+    "category": "tooling",
+    "phase": "phase_gated",
+    "observed_aliases": ["cwi-etl", "cwi-consent-ingest"],
+    "repo_paths": ["src/etl"],
+    "deployment_evidence": [
+      "OPS/cwi-ops/DEPLOY/mcp-core/docker-compose.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "ETL module",
+      "Dockerfile",
+      "consent ingest deployment"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep the existing ETL path; no duplicate ingest service is required."
+  },
+  {
+    "role_id": "P5",
+    "role": "Enterprise connectors",
+    "category": "runtime",
+    "phase": "phase_gated",
+    "observed_aliases": ["cwi-connectors", "connectors"],
+    "repo_paths": ["src/connectors"],
+    "deployment_evidence": [
+      "OPS/cwi-ops/DEPLOY/connectors/docker-compose.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "source package",
+      "Dockerfile",
+      "deploy bundle"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep connectors as a real optional runtime, not a disposable afterthought."
+  },
+  {
+    "role_id": "P6",
+    "role": "Coordination layer",
+    "category": "runtime",
+    "phase": "phase_gated",
+    "observed_aliases": ["cwi-coordination-layer"],
+    "repo_paths": ["src/backend/services/cwi-coordination-layer"],
+    "deployment_evidence": [
+      "OPS/cwi-ops/compose/cwi-coordination-layer/docker-compose.yml",
+      "OPS/cwi-ops/DEPLOY/mcp-core/docker-compose.yml"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "runtime service",
+      "compose and deploy coverage"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep the existing coordination layer."
+  },
+  {
+    "role_id": "P7",
+    "role": "Node agent runtime",
+    "category": "runtime",
+    "phase": "phase_gated",
+    "observed_aliases": ["cwi-node-agent-runtime", "node-agent-runtime"],
+    "repo_paths": ["src/node-agent-runtime"],
+    "deployment_evidence": [
+      "src/node-agent-runtime/Dockerfile",
+      "OPS/cwi-ops/DEPLOY/node_agent_runtime/docker-compose.yml",
+      "OPS/cwi-ops/runbooks/node-agent-runtime.md"
+    ],
+    "status": "satisfied",
+    "mandatory_features_found": [
+      "source package",
+      "CLI",
+      "tests",
+      "Dockerfile",
+      "DEPLOY bundle",
+      "packaged runtime path"
+    ],
+    "missing_mandatory_features": [],
+    "recommended_action": "Keep this role phase-gated by environment, but packaging and deployment assets are now available when the scope requires it."
+  }
+]

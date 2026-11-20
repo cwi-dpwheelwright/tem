@@ -1,0 +1,107 @@
+[
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/api/generate"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      },
+      "body": "{\"model\":\"mock\",\"response\":\"ok\"}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/api/tags"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      },
+      "body": "{\"models\":[]}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/healthz"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      },
+      "body": "{\"status\":\"ok\"}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/health"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      },
+      "body": "{\"status\":\"ok\"}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/collections"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      },
+      "body": "{\"collections\":[]}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/collections/enterprise/points/search"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      },
+      "body": "{\"result\":[{\"score\":0.42,\"payload\":{\"doc_id\":\"doc-test-1\",\"chunk_id\":\"chunk-1\",\"content\":\"stub\"}}]}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/jwks"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      },
+      "body": "{\"keys\":[{\"kid\":\"cwi-test-key\",\"n\":\"wZqyKgVlkHkJ6fdoPOH9fGvFYRDP4lxKMJWMuFHQnLoo9b9lH6BWlT7suwV_nPi05_xfsSInbtsOsEQfaF6jtMtdJoMpEBjUo0mJJvixxTBmPFGB0xEBxDc1uBIwEMuzqxFInz85SLMHOZDWbD0Z_NO_LlrIim63lqFmRFT2qTBZx7XwcTTys268tEAWWdKAGtZif5Lj0ZaCyRlGiGsgKKoMDTdHYTwIgvUti6UIROfYvt2k6r1UX2aoxgb_MDoOt4mZQ38r7e6i0E2GxvPjbPsbrMo5KvMmUKC79gucOnmIN2X-Mn4wOPiKpcye4BfiCMzHRWtOGVveo2Bh3eojDQ\",\"alg\":\"RS256\",\"e\":\"AQAB\",\"kty\":\"RSA\",\"use\":\"sig\"}]}"
+    }
+  }
+]

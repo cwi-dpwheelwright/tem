@@ -1,0 +1,33 @@
+{
+  "activeIssues": [
+    {
+      "eventId": "quality-evt-0001",
+      "tenantId": "tenant-1",
+      "traceId": "trace-quality-001",
+      "category": "response_quality",
+      "rule": "backend_language_in_everyday_answer",
+      "severity": "medium",
+      "detail": "Answer exposed internal routing language.",
+      "route": "ask",
+      "promptType": "everyday_practical_guidance",
+      "sourceBehavior": "model_answer",
+      "criticScore": 0.52,
+      "fixStatus": "open",
+      "temporalState": "current",
+      "sourceComponent": "runtime_critic",
+      "observedUtc": "2026-05-08T18:45:00+00:00"
+    }
+  ],
+  "resolvedIssues": [],
+  "recurringPatterns": [
+    {
+      "rule": "backend_language_in_everyday_answer",
+      "route": "ask",
+      "promptType": "everyday_practical_guidance",
+      "activeCount": 1,
+      "resolvedCount": 0,
+      "averageCriticScore": 0.52,
+      "lastObservedUtc": "2026-05-08T18:45:00+00:00"
+    }
+  ]
+}

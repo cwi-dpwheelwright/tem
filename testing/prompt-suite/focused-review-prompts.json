@@ -1,0 +1,8 @@
+[
+  { "id": "message_001", "group": "school_and_messages", "prompt": "How do I politely ask for an extension?" },
+  { "id": "message_002", "group": "messages_and_relationships", "prompt": "Help me write a text saying I will be late." },
+  { "id": "message_003", "group": "messages_and_relationships", "prompt": "Help me write a message canceling plans politely." },
+  { "id": "buying_001", "group": "money_and_buying", "prompt": "Should I buy this now or wait?" },
+  { "id": "memory_001", "group": "current_context_and_memory", "prompt": "What should I do if I forgot what I needed to do today?" },
+  { "id": "weather_001", "group": "current_context_and_memory", "prompt": "What is the weather like today?" }
+]

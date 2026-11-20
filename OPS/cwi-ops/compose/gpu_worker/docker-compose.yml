@@ -1,0 +1,176 @@
+services:
+  cwi-gpu-worker:
+    image: ${OLLAMA_IMAGE}
+    container_name: internal-02-model-worker
+    environment:
+      OLLAMA_HOST: 0.0.0.0:${GPU_WORKER_HTTP_PORT}
+      OLLAMA_NUM_PARALLEL: ${OLLAMA_NUM_PARALLEL}
+      OLLAMA_MAX_LOADED_MODELS: ${OLLAMA_MAX_LOADED_MODELS}
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE}
+    volumes:
+      - ${GPU_WORKER_DATA_DIR}:/root/.ollama
+    expose:
+      - "${GPU_WORKER_HTTP_PORT}"
+    ports:
+      - "${GPU_WORKER_HTTP_PORT}:${GPU_WORKER_HTTP_PORT}"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  cwi-gpu-worker-pro:
+    image: ${OLLAMA_PRO_IMAGE}
+    container_name: internal-02-model-worker-pro
+    environment:
+      OLLAMA_HOST: 0.0.0.0:${PRO_WORKER_HTTP_PORT}
+      OLLAMA_NUM_PARALLEL: ${OLLAMA_NUM_PARALLEL}
+      OLLAMA_MAX_LOADED_MODELS: ${OLLAMA_MAX_LOADED_MODELS}
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE}
+    volumes:
+      - ${PRO_WORKER_DATA_DIR}:/root/.ollama
+    expose:
+      - "${PRO_WORKER_HTTP_PORT}"
+    ports:
+      - "${PRO_WORKER_HTTP_PORT}:${PRO_WORKER_HTTP_PORT}"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  cwi-gpu-worker-free:
+    image: ${OLLAMA_FREE_IMAGE}
+    container_name: internal-02-model-worker-free
+    environment:
+      OLLAMA_HOST: 0.0.0.0:${FREE_WORKER_HTTP_PORT}
+      OLLAMA_NUM_PARALLEL: ${OLLAMA_NUM_PARALLEL}
+      OLLAMA_MAX_LOADED_MODELS: ${OLLAMA_MAX_LOADED_MODELS}
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE}
+    volumes:
+      - ${FREE_WORKER_DATA_DIR}:/root/.ollama
+    expose:
+      - "${FREE_WORKER_HTTP_PORT}"
+    ports:
+      - "${FREE_WORKER_HTTP_PORT}:${FREE_WORKER_HTTP_PORT}"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  cwi-model-worker-health:
+    image: python:3.11-slim
+    container_name: internal-01-model-worker-health
+    working_dir: /health
+    volumes:
+      - ../../shared/model-worker-health:/health:ro
+    environment:
+      MODEL_UPSTREAM_URL: http://cwi-gpu-worker:${GPU_WORKER_HTTP_PORT}
+      MODEL_HEALTH_PATH: /api/tags
+      MODEL_HEALTH_PORT: ${MODEL_HEALTH_PORT}
+      MODEL_METRICS_LABELS: tier="baseline",worker="cwi-gpu-worker"
+    command: ["python", "health_server.py"]
+    expose:
+      - "${MODEL_HEALTH_PORT}"
+    ports:
+      - "${MODEL_HEALTH_PORT}:${MODEL_HEALTH_PORT}"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+    depends_on:
+      - cwi-gpu-worker
+
+  cwi-model-worker-health-pro:
+    image: python:3.11-slim
+    container_name: internal-01-model-worker-health-pro
+    working_dir: /health
+    volumes:
+      - ../../shared/model-worker-health:/health:ro
+    environment:
+      MODEL_UPSTREAM_URL: http://cwi-gpu-worker-pro:${PRO_WORKER_HTTP_PORT}
+      MODEL_HEALTH_PATH: /api/tags
+      MODEL_HEALTH_PORT: ${MODEL_HEALTH_PRO_PORT}
+      MODEL_METRICS_LABELS: tier="pro",worker="cwi-gpu-worker-pro"
+    command: ["python", "health_server.py"]
+    expose:
+      - "${MODEL_HEALTH_PRO_PORT}"
+    ports:
+      - "${MODEL_HEALTH_PRO_PORT}:${MODEL_HEALTH_PRO_PORT}"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+    depends_on:
+      - cwi-gpu-worker-pro
+
+  cwi-model-worker-health-free:
+    image: python:3.11-slim
+    container_name: internal-01-model-worker-health-free
+    working_dir: /health
+    volumes:
+      - ../../shared/model-worker-health:/health:ro
+    environment:
+      MODEL_UPSTREAM_URL: http://cwi-gpu-worker-free:${FREE_WORKER_HTTP_PORT}
+      MODEL_HEALTH_PATH: /api/tags
+      MODEL_HEALTH_PORT: ${MODEL_HEALTH_FREE_PORT}
+      MODEL_METRICS_LABELS: tier="free",worker="cwi-gpu-worker-free"
+    command: ["python", "health_server.py"]
+    expose:
+      - "${MODEL_HEALTH_FREE_PORT}"
+    ports:
+      - "${MODEL_HEALTH_FREE_PORT}:${MODEL_HEALTH_FREE_PORT}"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+    depends_on:
+      - cwi-gpu-worker-free
+
+  cwi-model-capabilities-pro:
+    image: python:3.11-slim
+    container_name: internal-02-model-capabilities-pro
+    working_dir: /capabilities
+    volumes:
+      - ./capabilities-pro:/capabilities:ro
+    command: ["python", "-m", "http.server", "${MODEL_CAPABILITIES_PRO_PORT}", "--bind", "0.0.0.0"]
+    expose:
+      - "${MODEL_CAPABILITIES_PRO_PORT}"
+    ports:
+      - "${MODEL_CAPABILITIES_PRO_PORT}:${MODEL_CAPABILITIES_PRO_PORT}"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-model-capabilities-free:
+    image: python:3.11-slim
+    container_name: internal-02-model-capabilities-free
+    working_dir: /capabilities
+    volumes:
+      - ./capabilities-free:/capabilities:ro
+    command: ["python", "-m", "http.server", "${MODEL_CAPABILITIES_FREE_PORT}", "--bind", "0.0.0.0"]
+    expose:
+      - "${MODEL_CAPABILITIES_FREE_PORT}"
+    ports:
+      - "${MODEL_CAPABILITIES_FREE_PORT}:${MODEL_CAPABILITIES_FREE_PORT}"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+networks:
+  cwi-internal:
+    name: cwi-internal

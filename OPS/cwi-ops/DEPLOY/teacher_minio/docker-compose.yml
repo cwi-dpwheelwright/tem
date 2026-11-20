@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  cwi-teacher-node-minio:
+    image: ${TEACHER_MINIO_IMAGE:-minio/minio:latest}
+    container_name: ${TEACHER_MINIO_CONTAINER_NAME:-cwi-minio}
+    env_file: .env
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - ${TEACHER_MINIO_DATA_HOST_PATH:-/srv/cwi/teacher-minio}:/data
+    ports:
+      - "${TEACHER_MINIO_API_PORT:-9000}:9000"
+      - "${TEACHER_MINIO_CONSOLE_PORT:-9001}:9001"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+networks:
+  cwi-internal:
+    name: cwi-internal

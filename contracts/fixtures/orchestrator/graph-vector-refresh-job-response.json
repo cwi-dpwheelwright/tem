@@ -1,0 +1,19 @@
+{
+  "jobId": "graph-vector-refresh-abc123",
+  "tenantId": "tenant-1",
+  "userIdHash": "8a6c4c9f4d31b2aa",
+  "nodeId": "home-node-01",
+  "graphCandidateId": "graph-candidate-abc123",
+  "recursiveEventId": "rec-evt-stale-0001",
+  "traceId": "trace-stale-001",
+  "factKey": "project_priority|observed|older observed project priority candidate retained for review.",
+  "refreshReason": "graph_candidate_add_stale",
+  "refreshStatus": "pending",
+  "affectedVectorScope": "tenant-1:user:8a6c4c9f4d31b2aa",
+  "sourceHash": "db76ed4fcade7821",
+  "attemptCount": 0,
+  "lastError": null,
+  "createdUtc": "2026-05-08T18:45:00+00:00",
+  "updatedUtc": "2026-05-08T18:45:00+00:00",
+  "completedUtc": null
+}

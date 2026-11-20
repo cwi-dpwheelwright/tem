@@ -1,0 +1,24 @@
+{
+  "nodes": [
+    {
+      "node_id": "owner-001",
+      "label": "owner-001",
+      "role": "Owner",
+      "status": "active"
+    },
+    {
+      "node_id": "delegate-101",
+      "label": "delegate-101",
+      "role": "Delegate",
+      "status": "pending"
+    }
+  ],
+  "edges": [
+    {
+      "from": "owner-001",
+      "to": "delegate-101",
+      "scope": "Ops",
+      "relationship": "delegate"
+    }
+  ]
+}

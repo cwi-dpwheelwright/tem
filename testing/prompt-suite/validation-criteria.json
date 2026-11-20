@@ -1,0 +1,37 @@
+{
+  "schema_version": "cwi.prompt-suite.validation-criteria.v1",
+  "allowed_overall_verdicts": [
+    "PASS"
+  ],
+  "min_prompt_count": 1,
+  "max_failed": 0,
+  "max_needs_work": 0,
+  "max_needs_fix": 0,
+  "max_dependency_unavailable": 0,
+  "blocked_issues": [
+    "api_dependency_unavailable",
+    "answer_appears_truncated",
+    "empty_or_too_short",
+    "entity_lookup_misroute_language",
+    "generic_memory_or_context_fallback",
+    "technical_or_backend_language_leaked",
+    "unexpected_memory_use_for_general_life_prompt"
+  ],
+  "required_record_fields": [
+    "id",
+    "group",
+    "prompt",
+    "answer",
+    "http_status",
+    "trace",
+    "evaluation"
+  ],
+  "required_trace_fields": [
+    "request_id",
+    "trace_id",
+    "confidence",
+    "policy_mode",
+    "model",
+    "pack_hash"
+  ]
+}

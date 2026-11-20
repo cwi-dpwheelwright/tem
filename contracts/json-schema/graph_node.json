@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GraphNode",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "node_id",
+    "labels",
+    "properties",
+    "source",
+    "created_utc"
+  ],
+  "properties": {
+    "node_id": { "type": "string", "minLength": 1 },
+    "labels": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "properties": { "type": "object", "additionalProperties": true },
+    "source": { "type": "string", "minLength": 1 },
+    "tenant_id": { "type": "string", "minLength": 1 },
+    "graph_id": { "type": "string", "minLength": 1 },
+    "embedding_ref": { "type": "string", "minLength": 1 },
+    "source_doc_id": { "type": "string", "minLength": 1 },
+    "created_utc": { "type": "string", "format": "date-time" },
+    "updated_utc": { "type": "string", "format": "date-time" }
+  }
+}

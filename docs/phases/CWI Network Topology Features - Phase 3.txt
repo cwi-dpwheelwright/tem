@@ -1,0 +1,29 @@
+Phase 3 of the CWI Knowledge Infrastructure is now complete.
+We have successfully validated the full authoritative lifecycle:
+• Schema-governed pack validation
+• Deterministic anchor generation
+• Versioned pack publication (filesystem + MinIO transport)
+• Dual-shard vector ingestion (1536-dimension Cosine)
+• Immutable evidence capture with sha256 receipts
+• MinIO evidence custody under controlled publisher identity
+The system now behaves exactly as originally designed:
+Teacher publishes authoritative pack artifacts.
+MinIO acts as immutable artifact store.
+API/MCP-Core consumes versions deterministically.
+Vector shards operate as derived, rebuildable memory.
+Both Qdrant shards were verified to contain identical ingested vectors using deterministic UUIDv5 point IDs. Payload metadata is preserved and queryable. Evidence receipts were recorded and uploaded under publisher boundary controls.
+Phase 3 objectives are fully satisfied.
+Phase 4 begins next.
+Phase 4 activates the operational layer:
+Core mirror adoption (PACK_ADOPTED events)
+Pack-service immutable serving
+Pin controls (latest_stable / approved / experiment)
+Gateway routing through pack-service before shard access
+Integrity verification and fail-closed anchor checks
+Performance baseline and latency measurements
+Phase 4 transitions CWI from validated infrastructure to a live distributed knowledge network ready for user-facing integration and scale testing.
+We are now operating with a provable, deterministic, and auditable publication → ingestion → retrieval pipeline.
+
+ALIGNMENT ADDENDUM (2026-03-02)
+- Canonical JSON MUST follow RFC 8785.
+- Backward-compatible verification for existing anchors is required until republish completes.

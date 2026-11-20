@@ -1,0 +1,17 @@
+{
+  "artifact_id": "report-2026-02-02-01",
+  "artifact_type": "report",
+  "title": "Energy Optimization Summary",
+  "status": "active",
+  "versions": [
+    {
+      "version": "v1",
+      "hash": "sha256:1c2d3e4f",
+      "provenance_refs": [
+        "trace-90ab",
+        "ledger-221"
+      ],
+      "created_utc": "2026-02-02T08:25:00Z"
+    }
+  ]
+}

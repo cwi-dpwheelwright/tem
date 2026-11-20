@@ -1,0 +1,518 @@
+version: "3.9"
+
+services:
+  cwi-router:
+    image: ${REGISTRY}/cwi-router:${CWI_ROUTER_TAG}
+    container_name: internal-01-core-router
+    env_file: .env
+    networks:
+      - cwi-full
+    depends_on:
+      - cwi-orchestrator
+      - redis
+
+  cwi-orchestrator:
+    image: ${REGISTRY}/cwi-orchestrator:${CWI_ORCHESTRATOR_TAG}
+    container_name: internal-01-core-orchestrator
+    env_file: .env
+    environment:
+      PACKS_DIR: /packs
+      LANGUAGE_NORMALIZATION_MODE: ${LANGUAGE_NORMALIZATION_MODE:-external_with_local_fallback}
+      LANGUAGE_NORMALIZATION_BASE_URL: ${LANGUAGE_NORMALIZATION_BASE_URL:-http://cwi-language-normalization:8081}
+      LANGUAGE_NORMALIZATION_TIMEOUT_MS: ${LANGUAGE_NORMALIZATION_TIMEOUT_MS:-750}
+      CWI_SUSTAINABILITY_ESTIMATED_NODE_WATTS: ${CWI_SUSTAINABILITY_ESTIMATED_NODE_WATTS:-180}
+      CWI_SUSTAINABILITY_COST_USD_PER_KWH: ${CWI_SUSTAINABILITY_COST_USD_PER_KWH:-0.12}
+      CWI_SUSTAINABILITY_ESTIMATED_WATER_LITERS_PER_REQUEST: ${CWI_SUSTAINABILITY_ESTIMATED_WATER_LITERS_PER_REQUEST:-0.005}
+      CWI_SUSTAINABILITY_CLOUD_BASELINE_VERSION: ${CWI_SUSTAINABILITY_CLOUD_BASELINE_VERSION:-cwi-sustainability-seeded-estimates.v1}
+      CWI_SUSTAINABILITY_CLOUD_ENERGY_WH_PER_REQUEST: ${CWI_SUSTAINABILITY_CLOUD_ENERGY_WH_PER_REQUEST:-3}
+      CWI_SUSTAINABILITY_CLOUD_COST_USD_PER_REQUEST: ${CWI_SUSTAINABILITY_CLOUD_COST_USD_PER_REQUEST:-0.001}
+      CWI_SUSTAINABILITY_CLOUD_WATER_LITERS_PER_REQUEST: ${CWI_SUSTAINABILITY_CLOUD_WATER_LITERS_PER_REQUEST:-0.02}
+    networks:
+      - cwi-full
+    depends_on:
+      cwi-pack-service:
+        condition: service_started
+      cwi-language-normalization:
+        condition: service_started
+      cwi-mockserver:
+        condition: service_started
+      postgres:
+        condition: service_started
+      orchestrator-migrations:
+        condition: service_completed_successfully
+    volumes:
+      - ${PACKS_DIR}:/packs
+
+  cwi-language-normalization:
+    image: ${REGISTRY}/cwi-language-normalization:${CWI_LANGUAGE_NORMALIZATION_TAG:-local}
+    container_name: internal-01-core-language-normalization
+    build:
+      context: ../../../..
+      dockerfile: src/backend/services/cwi-language-normalization/Dockerfile
+    environment:
+      LANGUAGE_NORMALIZATION_HTTP_PORT: 8081
+      LANGUAGE_NORMALIZATION_DEV_OPENAPI_ENABLED: ${LANGUAGE_NORMALIZATION_DEV_OPENAPI_ENABLED:-true}
+    networks:
+      - cwi-full
+
+  cwi-coordination-layer:
+    image: ${REGISTRY}/cwi-coordination-layer:${CWI_COORDINATION_TAG}
+    container_name: internal-01-core-coordination-layer
+    env_file: .env
+    networks:
+      - cwi-full
+
+  cwi-pack-service:
+    image: ${REGISTRY}/cwi-pack-service:${CWI_PACK_SERVICE_TAG}
+    container_name: internal-01-core-pack-service
+    env_file: .env
+    environment:
+      PACKS_DIR: /packs
+      PACK_SERVICE_PORT: 8082
+    volumes:
+      - ${PACKS_DIR}:/packs
+    ports:
+      - "${PACK_SERVICE_HTTP_PORT}:8082"
+    networks:
+      - cwi-full
+
+  cwi-mockserver:
+    image: mockserver/mockserver:5.15.0
+    container_name: internal-01-test-mockserver
+    environment:
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /config/mockserver.json
+    volumes:
+      - ../test/mockserver.json:/config/mockserver.json:ro
+    networks:
+      - cwi-full
+
+  cwi-vector-shard:
+    image: ${QDRANT_IMAGE}
+    container_name: internal-02-data-vector-shard
+    volumes:
+      - ${VECTOR_SHARD_DATA_DIR}:/qdrant/storage
+    networks:
+      - cwi-full
+    restart: unless-stopped
+
+  cwi-graph-db:
+    image: ${CWI_GRAPH_DB_IMAGE}
+    container_name: internal-02-data-graph-db
+    environment:
+      POSTGRES_USER: ${CWI_GRAPH_DB_USER}
+      POSTGRES_PASSWORD: ${CWI_GRAPH_DB_PASSWORD}
+      POSTGRES_DB: ${CWI_GRAPH_DB_DATABASE}
+    volumes:
+      - ${CWI_GRAPH_DB_DATA_DIR}:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cwi-full
+    restart: unless-stopped
+
+  cwi-model-worker-health:
+    image: python:3.11-slim
+    container_name: internal-01-model-worker-health
+    working_dir: /health
+    volumes:
+      - ../../shared/model-worker-health:/health:ro
+    environment:
+      MODEL_UPSTREAM_URL: http://cwi-mockserver:1080
+      MODEL_HEALTH_PATH: /api/tags
+      MODEL_HEALTH_PORT: ${MODEL_HEALTH_PORT}
+      MODEL_METRICS_LABELS: tier="smoke",worker="mockserver"
+    command: ["python", "health_server.py"]
+    networks:
+      - cwi-full
+    restart: unless-stopped
+    depends_on:
+      - cwi-mockserver
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: internal-02-data-redis
+    networks:
+      - cwi-full
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: internal-02-data-postgres
+    environment:
+      POSTGRES_USER: cwi
+      POSTGRES_PASSWORD: cwi
+      POSTGRES_DB: cwi
+    volumes:
+      - ../test/postgres-init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+    networks:
+      - cwi-full
+
+  orchestrator-migrations:
+    image: postgres:16-alpine
+    container_name: internal-01-orchestrator-migrations
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDATABASE: cwi
+      PGUSER: cwi
+      PGPASSWORD: cwi
+    volumes:
+      - ../../../../src/backend/services/cwi-orchestrator/src/Cwi.Orchestrator.DataAccess/Migrations:/migrations:ro
+      - ../../scripts/orchestrator-migrate.sh:/orchestrator-migrate.sh:ro
+    entrypoint:
+      - /bin/sh
+      - -c
+      - "tr -d '\\r' < /orchestrator-migrate.sh > /tmp/orchestrator-migrate.sh && chmod +x /tmp/orchestrator-migrate.sh && /bin/sh /tmp/orchestrator-migrate.sh"
+    networks:
+      - cwi-full
+    depends_on:
+      - postgres
+
+  identity-postgres:
+    image: postgres:16-alpine
+    container_name: internal-02-identity-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cwi_identity
+    networks:
+      - cwi-full
+
+  identity-migrations:
+    image: postgres:16
+    container_name: internal-01-identity-migrations
+    env_file: .env
+    volumes:
+      - ../../../../src/backend/services/cwi-identity-server/src/Cwi.Identity.Api/Data/Migrations:/migrations:ro
+      - ../test/identity-migrate.sh:/identity-migrate.sh:ro
+    entrypoint:
+      - /bin/sh
+      - -c
+      - "tr -d '\\r' < /identity-migrate.sh > /tmp/identity-migrate.sh && chmod +x /tmp/identity-migrate.sh && /bin/sh /tmp/identity-migrate.sh"
+    networks:
+      - cwi-full
+    depends_on:
+      - identity-postgres
+
+  identity-bootstrap:
+    image: python:3.11-slim
+    container_name: internal-01-identity-bootstrap
+    env_file: .env
+    volumes:
+      - ../test/identity-bootstrap.py:/identity-bootstrap.py:ro
+    entrypoint: ["python", "/identity-bootstrap.py"]
+    networks:
+      - cwi-full
+    depends_on:
+      cwi-identity-server:
+        condition: service_started
+
+  cwi-identity-server:
+    image: ${REGISTRY}/cwi-identity-server:${CWI_IDENTITY_TAG}
+    container_name: internal-01-identity-server
+    env_file: .env
+    networks:
+      - cwi-full
+    depends_on:
+      identity-postgres:
+        condition: service_started
+      identity-migrations:
+        condition: service_completed_successfully
+
+  cwi-identity-admin:
+    image: ${REGISTRY}/cwi-identity-admin:${CWI_IDENTITY_ADMIN_TAG}
+    container_name: internal-01-identity-admin
+    env_file: .env
+    build:
+      context: ../../../../src/frontend/web-ui/cwi-identity-admin
+      dockerfile: Dockerfile
+      args:
+        VITE_IDENTITY_BASE_URL: ${VITE_IDENTITY_BASE_URL}
+        VITE_ORCHESTRATOR_BASE_URL: ${VITE_ORCHESTRATOR_BASE_URL}
+    depends_on:
+      - cwi-identity-server
+    networks:
+      - cwi-full
+
+  cwi-glassbox-web-ui:
+    image: ${REGISTRY}/cwi-glassbox-web-ui:${CWI_GLASSBOX_WEB_UI_TAG}
+    container_name: public-ui-glassbox-web-ui
+    env_file: .env
+    build:
+      context: ../../../..
+      dockerfile: src/frontend/web-ui/cwi-glassbox-web-ui/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+        NEXT_PUBLIC_OIDC_AUTHORITY: ${NEXT_PUBLIC_OIDC_AUTHORITY}
+        NEXT_PUBLIC_OIDC_CLIENT_ID: ${NEXT_PUBLIC_OIDC_CLIENT_ID}
+        NEXT_PUBLIC_OIDC_REDIRECT_URI: ${NEXT_PUBLIC_OIDC_REDIRECT_URI}
+        NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI: ${NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI}
+        NEXT_PUBLIC_OIDC_SCOPES: ${NEXT_PUBLIC_OIDC_SCOPES}
+        NEXT_PUBLIC_PACKS_BASE_URL: ${NEXT_PUBLIC_PACKS_BASE_URL}
+    environment:
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      NEXT_PUBLIC_OIDC_AUTHORITY: ${NEXT_PUBLIC_OIDC_AUTHORITY}
+      NEXT_PUBLIC_OIDC_CLIENT_ID: ${NEXT_PUBLIC_OIDC_CLIENT_ID}
+      NEXT_PUBLIC_OIDC_REDIRECT_URI: ${NEXT_PUBLIC_OIDC_REDIRECT_URI}
+      NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI: ${NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI}
+      NEXT_PUBLIC_OIDC_SCOPES: ${NEXT_PUBLIC_OIDC_SCOPES}
+      NEXT_PUBLIC_PACKS_BASE_URL: ${NEXT_PUBLIC_PACKS_BASE_URL}
+    ports:
+      - "${GLASSBOX_WEB_UI_HTTP_PORT}:3000"
+    depends_on:
+      - cwi-gateway
+      - cwi-identity-server
+    networks:
+      - cwi-full
+
+  cwi-homepage-web-ui:
+    image: ${REGISTRY}/cwi-homepage-web-ui:${CWI_HOMEPAGE_WEB_UI_TAG:-local}
+    container_name: public-ui-homepage-web-ui
+    env_file: .env
+    build:
+      context: ../../../..
+      dockerfile: src/frontend/web-ui/cwi-homepage-web-ui/Dockerfile
+      args:
+        NEXT_PUBLIC_CWI_BETA_ACCESS_URL: ${NEXT_PUBLIC_CWI_BETA_ACCESS_URL:-}
+    environment:
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_CWI_BETA_ACCESS_URL: ${NEXT_PUBLIC_CWI_BETA_ACCESS_URL:-}
+    ports:
+      - "${HOMEPAGE_WEB_UI_HTTP_PORT:-18094}:3000"
+    networks:
+      - cwi-full
+
+
+
+  cwi-gpt-web-ui:
+    image: ${REGISTRY}/cwi-gpt-web-ui:${CWI_GPT_WEB_UI_TAG}
+    container_name: public-ui-gpt-web-ui
+    env_file: .env
+    build:
+      context: ../../../..
+      dockerfile: src/frontend/web-ui/cwi-gpt-web-ui/Dockerfile
+      args:
+        NEXT_PUBLIC_CWI_GATEWAY_BASE_URL: ${NEXT_PUBLIC_CWI_GATEWAY_BASE_URL}
+        NEXT_PUBLIC_CWI_DEFAULT_TENANT: ${NEXT_PUBLIC_CWI_DEFAULT_TENANT}
+        NEXT_PUBLIC_CWI_AUTH_MODE: ${NEXT_PUBLIC_CWI_AUTH_MODE}
+        NEXT_PUBLIC_CWI_OIDC_AUTHORITY: ${NEXT_PUBLIC_CWI_OIDC_AUTHORITY}
+        NEXT_PUBLIC_CWI_OIDC_CLIENT_ID: ${NEXT_PUBLIC_CWI_OIDC_CLIENT_ID}
+        NEXT_PUBLIC_CWI_OIDC_REDIRECT_URI: ${NEXT_PUBLIC_CWI_OIDC_REDIRECT_URI}
+        NEXT_PUBLIC_CWI_OIDC_POST_LOGOUT_REDIRECT_URI: ${NEXT_PUBLIC_CWI_OIDC_POST_LOGOUT_REDIRECT_URI}
+        NEXT_PUBLIC_CWI_OIDC_SCOPES: ${NEXT_PUBLIC_CWI_OIDC_SCOPES}
+        NEXT_PUBLIC_CWI_ERROR_REPORT_URL: ${NEXT_PUBLIC_CWI_ERROR_REPORT_URL}
+        NEXT_PUBLIC_CWI_REQUEST_TIMEOUT_MS: ${NEXT_PUBLIC_CWI_REQUEST_TIMEOUT_MS}
+        NEXT_PUBLIC_CWI_BUILD_VERSION: ${NEXT_PUBLIC_CWI_BUILD_VERSION}
+        NEXT_PUBLIC_CWI_BUILD_SHA: ${NEXT_PUBLIC_CWI_BUILD_SHA}
+    environment:
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_CWI_GATEWAY_BASE_URL: ${NEXT_PUBLIC_CWI_GATEWAY_BASE_URL}
+      NEXT_PUBLIC_CWI_DEFAULT_TENANT: ${NEXT_PUBLIC_CWI_DEFAULT_TENANT}
+      NEXT_PUBLIC_CWI_AUTH_MODE: ${NEXT_PUBLIC_CWI_AUTH_MODE}
+      NEXT_PUBLIC_CWI_OIDC_AUTHORITY: ${NEXT_PUBLIC_CWI_OIDC_AUTHORITY}
+      NEXT_PUBLIC_CWI_OIDC_CLIENT_ID: ${NEXT_PUBLIC_CWI_OIDC_CLIENT_ID}
+      NEXT_PUBLIC_CWI_OIDC_REDIRECT_URI: ${NEXT_PUBLIC_CWI_OIDC_REDIRECT_URI}
+      NEXT_PUBLIC_CWI_OIDC_POST_LOGOUT_REDIRECT_URI: ${NEXT_PUBLIC_CWI_OIDC_POST_LOGOUT_REDIRECT_URI}
+      NEXT_PUBLIC_CWI_OIDC_SCOPES: ${NEXT_PUBLIC_CWI_OIDC_SCOPES}
+      NEXT_PUBLIC_CWI_ERROR_REPORT_URL: ${NEXT_PUBLIC_CWI_ERROR_REPORT_URL}
+      NEXT_PUBLIC_CWI_REQUEST_TIMEOUT_MS: ${NEXT_PUBLIC_CWI_REQUEST_TIMEOUT_MS}
+      NEXT_PUBLIC_CWI_BUILD_VERSION: ${NEXT_PUBLIC_CWI_BUILD_VERSION}
+      NEXT_PUBLIC_CWI_BUILD_SHA: ${NEXT_PUBLIC_CWI_BUILD_SHA}
+    ports:
+      - "${GPT_WEB_UI_HTTP_PORT}:3000"
+    depends_on:
+      - cwi-gateway
+      - cwi-identity-server
+    networks:
+      - cwi-full
+
+  cwi-admin-console:
+    image: ${REGISTRY}/cwi-admin-console:${CWI_ADMIN_CONSOLE_TAG}
+    container_name: internal-01-ui-admin-console
+    env_file: .env
+    build:
+      context: ../../../..
+      dockerfile: src/frontend/web-ui/cwi-admin-console/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${ADMIN_CONSOLE_API_BASE_URL}
+        NEXT_PUBLIC_IDENTITY_BASE_URL: ${ADMIN_CONSOLE_IDENTITY_BASE_URL}
+        NEXT_PUBLIC_OIDC_AUTHORITY: ${ADMIN_CONSOLE_OIDC_AUTHORITY}
+        NEXT_PUBLIC_OIDC_CLIENT_ID: ${ADMIN_CONSOLE_OIDC_CLIENT_ID}
+        NEXT_PUBLIC_OIDC_REDIRECT_URI: ${ADMIN_CONSOLE_OIDC_REDIRECT_URI}
+        NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI: ${ADMIN_CONSOLE_OIDC_POST_LOGOUT_REDIRECT_URI}
+        NEXT_PUBLIC_OIDC_SCOPES: ${ADMIN_CONSOLE_OIDC_SCOPES}
+        NEXT_PUBLIC_PACKS_BASE_URL: ${ADMIN_CONSOLE_PACKS_BASE_URL}
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${ADMIN_CONSOLE_API_BASE_URL}
+      NEXT_PUBLIC_IDENTITY_BASE_URL: ${ADMIN_CONSOLE_IDENTITY_BASE_URL}
+      NEXT_PUBLIC_OIDC_AUTHORITY: ${ADMIN_CONSOLE_OIDC_AUTHORITY}
+      NEXT_PUBLIC_OIDC_CLIENT_ID: ${ADMIN_CONSOLE_OIDC_CLIENT_ID}
+      NEXT_PUBLIC_OIDC_REDIRECT_URI: ${ADMIN_CONSOLE_OIDC_REDIRECT_URI}
+      NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI: ${ADMIN_CONSOLE_OIDC_POST_LOGOUT_REDIRECT_URI}
+      NEXT_PUBLIC_OIDC_SCOPES: ${ADMIN_CONSOLE_OIDC_SCOPES}
+      NEXT_PUBLIC_PACKS_BASE_URL: ${ADMIN_CONSOLE_PACKS_BASE_URL}
+    depends_on:
+      - cwi-gateway
+      - cwi-identity-server
+    networks:
+      - cwi-full
+
+  cwi-connectors:
+    image: ${REGISTRY}/cwi-connectors:${CWI_CONNECTORS_TAG}
+    container_name: internal-01-integrations-connectors
+    env_file: .env
+    build:
+      context: ../../../../src/connectors
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./connectors.yaml:/app/config/connectors.yaml:ro
+      - cwi-connectors-state:/var/lib/cwi-connectors
+    depends_on:
+      - cwi-gateway
+      - cwi-orchestrator
+    networks:
+      - cwi-full
+    restart: unless-stopped
+
+  cwi-edge-agent:
+    image: ${REGISTRY}/cwi-edge-agent:${CWI_EDGE_AGENT_TAG}
+    container_name: internal-01-edge-agent
+    env_file: .env
+    build:
+      context: ../../../../src/edge-agent
+      dockerfile: Dockerfile
+    volumes:
+      - ./edge-agent.yaml:/etc/cwi/edge-agent.yaml:ro
+      - cwi-edge-agent-state:/var/lib/cwi-edge-agent
+    depends_on:
+      - cwi-gateway
+      - cwi-orchestrator
+      - cwi-coordination-layer
+    networks:
+      - cwi-full
+    restart: unless-stopped
+
+  cwi-node-agent-runtime:
+    image: ${REGISTRY}/cwi-node-agent-runtime:${CWI_NODE_AGENT_RUNTIME_TAG}
+    container_name: internal-01-node-agent-runtime
+    env_file: .env
+    build:
+      context: ../../../../src/node-agent-runtime
+      dockerfile: Dockerfile
+    environment:
+      NODE_AGENT_HEALTH_PORT: ${NODE_AGENT_RUNTIME_HTTP_PORT:-8090}
+    volumes:
+      - ./node-agent.yaml:/etc/cwi/node-agent.yaml:ro
+      - cwi-node-agent-runtime-state:/var/lib/cwi-node-agent
+    depends_on:
+      - cwi-gateway
+      - cwi-coordination-layer
+    networks:
+      - cwi-full
+    restart: unless-stopped
+
+  cwi-consent-ingest:
+    image: python:3.11-slim
+    container_name: internal-01-etl-consent-ingest
+    env_file: .env
+    working_dir: /etl
+    volumes:
+      - ../../../../src/etl:/etl:ro
+      - ./consent-ingest.py:/consent-ingest.py:ro
+      - ./consent-input:/consent-input
+      - consent-archive:/consent-archive
+      - consent-error:/consent-error
+      - consent-store:/consent-store
+    environment:
+      CWI_CONSENT_DB_PATH: ${CWI_CONSENT_DB_PATH:-/consent-store/consent.db}
+      CWI_CONSENT_INGEST_INPUT_DIR: ${CWI_CONSENT_INGEST_INPUT_DIR:-/consent-input}
+      CWI_CONSENT_INGEST_ARCHIVE_DIR: ${CWI_CONSENT_INGEST_ARCHIVE_DIR:-/consent-archive}
+      CWI_CONSENT_INGEST_ERROR_DIR: ${CWI_CONSENT_INGEST_ERROR_DIR:-/consent-error}
+    command: ["python", "/consent-ingest.py"]
+    networks:
+      - cwi-full
+    depends_on:
+      - cwi-orchestrator
+
+  cwi-teams-bot:
+    image: ${REGISTRY}/cwi-teams-bot:${CWI_TEAMS_BOT_TAG}
+    container_name: internal-01-bot-teams
+    env_file: .env
+    build:
+      context: ../../../../src/backend/services/cwi-teams-bot
+      dockerfile: Dockerfile
+    networks:
+      - cwi-full
+    depends_on:
+      - cwi-gateway
+      - redis
+
+  cwi-teacher-node:
+    image: ${REGISTRY}/cwi-teacher-node:${CWI_TEACHER_NODE_TAG}
+    container_name: internal-02-teacher-node
+    env_file: .env
+    build:
+      context: ../../../..
+      dockerfile: tools/teacher-node/Dockerfile
+    environment:
+      TEACHER_NODE_ARTIFACT_BACKEND: ${TEACHER_NODE_ARTIFACT_BACKEND:-filesystem}
+      TEACHER_NODE_ARTIFACT_ROOT: ${TEACHER_NODE_ARTIFACT_ROOT:-/data/teacher-node}
+    volumes:
+      - cwi-teacher-node-artifacts:${TEACHER_NODE_ARTIFACT_ROOT:-/data/teacher-node}
+    networks:
+      - cwi-full
+    depends_on:
+      - cwi-age-db
+      - cwi-orchestrator
+
+  cwi-age-db:
+    image: ${CWI_GRAPH_DB_IMAGE}
+    container_name: cwi-age-db
+    environment:
+      POSTGRES_USER: ${CWI_GRAPH_DB_USER}
+      POSTGRES_PASSWORD: ${CWI_GRAPH_DB_PASSWORD}
+      POSTGRES_DB: ${CWI_GRAPH_DB_DATABASE}
+    volumes:
+      - cwi-age-db-data:/var/lib/postgresql
+    networks:
+      - cwi-full
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cwi-gateway:
+    image: caddy:2
+    container_name: public-core-gateway
+    env_file: .env
+    ports:
+      - "${GATEWAY_HTTP_PORT}:${GATEWAY_HTTP_PORT}"
+      - "${GATEWAY_HTTPS_PORT}:${GATEWAY_HTTPS_PORT}"
+    volumes:
+      - ../gateway/Caddyfile:/etc/caddy/Caddyfile:ro
+    networks:
+      - cwi-full
+    depends_on:
+      - cwi-pack-service
+      - cwi-router
+      - cwi-orchestrator
+      - cwi-identity-server
+
+networks:
+  cwi-full:
+    name: cwi-full
+
+volumes:
+  cwi-connectors-state:
+  cwi-edge-agent-state:
+  cwi-node-agent-runtime-state:
+  cwi-teacher-node-artifacts:
+  cwi-age-db-data:
+  consent-archive:
+  consent-error:
+  consent-store:

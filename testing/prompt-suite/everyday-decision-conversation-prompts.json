@@ -1,0 +1,252 @@
+[
+  {
+    "id": "priority_001",
+    "group": "prioritization_and_time_pressure",
+    "prompt": "I have 20 minutes before I leave\u2014what should I do first: shower, pack lunch, or clean my room?"
+  },
+  {
+    "id": "verification_001",
+    "group": "verification_without_assumption",
+    "prompt": "I forgot whether I paid my phone bill this month\u2014how should I check without assuming?"
+  },
+  {
+    "id": "decision_001",
+    "group": "decision_support",
+    "prompt": "I have two events at the same time tonight; help me decide which one to attend."
+  },
+  {
+    "id": "relationship_001",
+    "group": "communication_and_relationships",
+    "prompt": "My friend said \u201cit\u2019s fine\u201d but seems upset\u2014what should I say?"
+  },
+  {
+    "id": "message_001",
+    "group": "message_drafting",
+    "prompt": "I need to cancel plans but still want to be respectful\u2014write the message."
+  },
+  {
+    "id": "schedule_001",
+    "group": "schedule_repair",
+    "prompt": "I accidentally double-booked myself tomorrow\u2014what is the cleanest way to fix it?"
+  },
+  {
+    "id": "energy_001",
+    "group": "energy_and_health_adjacent",
+    "prompt": "I only slept four hours last night; how should I adjust my day?"
+  },
+  {
+    "id": "study_001",
+    "group": "school_and_study",
+    "prompt": "I have a test tomorrow and barely studied\u2014what should I do tonight?"
+  },
+  {
+    "id": "procrastination_001",
+    "group": "procrastination_and_starting",
+    "prompt": "I keep putting off one important task\u2014help me start without overplanning."
+  },
+  {
+    "id": "budget_001",
+    "group": "money_and_prioritization",
+    "prompt": "I have $40 until Friday\u2014how should I prioritize food, gas, and spending?"
+  },
+  {
+    "id": "buying_001",
+    "group": "money_and_prioritization",
+    "prompt": "I want to buy something I do not need\u2014talk me through whether to wait."
+  },
+  {
+    "id": "banking_001",
+    "group": "security_and_financial_safety",
+    "prompt": "I found a charge on my bank account I do not recognize\u2014what should I do first?"
+  },
+  {
+    "id": "security_001",
+    "group": "security_and_financial_safety",
+    "prompt": "I got a suspicious text with a link\u2014what should I do?"
+  },
+  {
+    "id": "security_002",
+    "group": "security_and_financial_safety",
+    "prompt": "I think I shared personal information on a sketchy website\u2014what are my next steps?"
+  },
+  {
+    "id": "lost_item_001",
+    "group": "lost_items_and_recovery",
+    "prompt": "I lost my school ID\u2014what should I do today?"
+  },
+  {
+    "id": "lost_item_002",
+    "group": "lost_items_and_recovery",
+    "prompt": "I lost my debit card but I am not sure if it is actually missing\u2014what should I do?"
+  },
+  {
+    "id": "cleaning_001",
+    "group": "home_and_cleaning",
+    "prompt": "I need a simple plan for cleaning before someone comes over in one hour."
+  },
+  {
+    "id": "laundry_001",
+    "group": "home_and_cleaning",
+    "prompt": "My laundry has been sitting wet overnight\u2014what should I do?"
+  },
+  {
+    "id": "clothing_001",
+    "group": "quick_fixes",
+    "prompt": "I spilled something on my shirt right before leaving\u2014what is the fastest fix?"
+  },
+  {
+    "id": "cleaning_002",
+    "group": "home_and_cleaning",
+    "prompt": "My room is messy and I feel stuck\u2014give me a starting point only."
+  },
+  {
+    "id": "food_001",
+    "group": "food_and_meal_planning",
+    "prompt": "I need dinner but I am tired and only have pantry food\u2014what can I make?"
+  },
+  {
+    "id": "food_safety_001",
+    "group": "food_safety",
+    "prompt": "I have leftovers but I am not sure if they are still safe\u2014how should I decide?"
+  },
+  {
+    "id": "packing_001",
+    "group": "planning_and_checklists",
+    "prompt": "I need to pack for tomorrow but do not know where to start."
+  },
+  {
+    "id": "schedule_002",
+    "group": "schedule_repair",
+    "prompt": "I have practice after school and homework tonight\u2014help me schedule both."
+  },
+  {
+    "id": "message_002",
+    "group": "message_drafting",
+    "prompt": "I need to ask someone for a ride without sounding demanding."
+  },
+  {
+    "id": "message_003",
+    "group": "message_drafting",
+    "prompt": "I missed the bus and I am going to be late\u2014what should I text?"
+  },
+  {
+    "id": "message_004",
+    "group": "message_drafting",
+    "prompt": "I forgot someone\u2019s birthday\u2014what should I say now?"
+  },
+  {
+    "id": "message_005",
+    "group": "message_drafting",
+    "prompt": "I want to apologize, but I do not want to over-explain\u2014help me write it."
+  },
+  {
+    "id": "message_006",
+    "group": "message_drafting",
+    "prompt": "Someone owes me money and keeps forgetting\u2014how do I ask again politely?"
+  },
+  {
+    "id": "boundary_001",
+    "group": "communication_and_boundaries",
+    "prompt": "I need to say no to helping someone because I am overloaded\u2014what should I say?"
+  },
+  {
+    "id": "priority_002",
+    "group": "prioritization_and_time_pressure",
+    "prompt": "I am trying to decide between studying, cleaning, and relaxing\u2014what is the best order?"
+  },
+  {
+    "id": "health_adjacent_001",
+    "group": "energy_and_health_adjacent",
+    "prompt": "I have a headache and a lot to do\u2014how should I prioritize without making it worse?"
+  },
+  {
+    "id": "grocery_001",
+    "group": "food_and_meal_planning",
+    "prompt": "I need a quick grocery list for cheap meals that do not require much cooking."
+  },
+  {
+    "id": "food_002",
+    "group": "food_and_meal_planning",
+    "prompt": "I want to eat healthier this week but I do not want a strict diet\u2014what should I change first?"
+  },
+  {
+    "id": "exercise_001",
+    "group": "exercise_and_recovery",
+    "prompt": "I want to start exercising again, but I do not want an intense plan."
+  },
+  {
+    "id": "exercise_002",
+    "group": "exercise_and_recovery",
+    "prompt": "I feel sore from yesterday\u2014should I rest or do something light?"
+  },
+  {
+    "id": "phone_001",
+    "group": "digital_organization",
+    "prompt": "I need to organize my phone photos because storage is almost full."
+  },
+  {
+    "id": "email_001",
+    "group": "digital_organization",
+    "prompt": "My email inbox is overwhelming\u2014what is the fastest way to clean it up?"
+  },
+  {
+    "id": "decision_002",
+    "group": "decision_support",
+    "prompt": "I need to compare two options, but I keep going in circles\u2014help me decide."
+  },
+  {
+    "id": "routine_001",
+    "group": "routines",
+    "prompt": "I want a simple morning routine that works even when I wake up late."
+  },
+  {
+    "id": "routine_002",
+    "group": "routines",
+    "prompt": "I want a bedtime routine that does not require buying anything."
+  },
+  {
+    "id": "planning_001",
+    "group": "low_cost_planning",
+    "prompt": "I need help planning a low-cost hangout with friends."
+  },
+  {
+    "id": "room_001",
+    "group": "home_and_cleaning",
+    "prompt": "I want to make my room feel better without rearranging everything."
+  },
+  {
+    "id": "message_007",
+    "group": "message_drafting",
+    "prompt": "I need to write a short thank-you message that does not sound fake."
+  },
+  {
+    "id": "message_008",
+    "group": "message_drafting",
+    "prompt": "I need to ask a teacher or manager for clarification without sounding lost."
+  },
+  {
+    "id": "message_009",
+    "group": "message_drafting",
+    "prompt": "I need to explain why I missed something without making excuses."
+  },
+  {
+    "id": "priority_003",
+    "group": "prioritization_and_time_pressure",
+    "prompt": "I have three things due tomorrow\u2014help me choose what to do first."
+  },
+  {
+    "id": "checklist_001",
+    "group": "planning_and_checklists",
+    "prompt": "I need a checklist for leaving the house so I stop forgetting things."
+  },
+  {
+    "id": "boundary_002",
+    "group": "communication_and_boundaries",
+    "prompt": "I changed my mind after agreeing to something\u2014how do I back out respectfully?"
+  },
+  {
+    "id": "memory_boundary_001",
+    "group": "memory_boundary_and_honesty",
+    "prompt": "I asked you earlier to remind me of something\u2014what should you do if you cannot actually see or verify it?"
+  }
+]

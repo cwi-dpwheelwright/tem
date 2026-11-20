@@ -1,0 +1,25 @@
+{
+  "defaults": {
+    "sshUser": "root",
+    "deployRoot": "/opt/cwi/DEPLOY",
+    "bundleRoot": "OPS/cwi-ops/DEPLOY",
+    "composeCommand": "docker compose",
+    "composeFile": "docker-compose.yml",
+    "composeArgs": "up -d",
+    "seedEnvFromTemplate": true
+  },
+  "hosts": [
+    {
+      "name": "gpu-worker-01",
+      "host": "100.87.13.127",
+      "roles": [
+        {
+          "name": "gpu_worker",
+          "bundle": "OPS/cwi-ops/DEPLOY/gpu_worker",
+          "composeFile": "docker-compose.yml -f docker-compose.gpu.yml",
+          "envFile": "OPS/cwi-ops/DEPLOY/gpu_worker/qwen2.5-32b.env"
+        }
+      ]
+    }
+  ]
+}

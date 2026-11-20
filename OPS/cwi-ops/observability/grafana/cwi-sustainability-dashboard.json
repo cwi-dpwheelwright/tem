@@ -1,0 +1,276 @@
+{
+  "uid": "cwi-sustainability",
+  "title": "CWI Sustainability Metrics",
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "tags": [
+    "cwi",
+    "sustainability",
+    "orchestrator"
+  ],
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "DS_PROMETHEUS",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": {
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "hide": 0
+      },
+      {
+        "name": "DS_POSTGRES",
+        "type": "datasource",
+        "query": "postgres",
+        "current": {
+          "text": "PostgreSQL",
+          "value": "PostgreSQL"
+        },
+        "hide": 0
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Requests",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(increase(cwi_requests_total[$__range]))",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Energy Used (Wh)",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(increase(cwi_request_energy_wh_total[$__range]))",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Estimated Cost",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "sum(increase(cwi_request_cost_usd_total[$__range]))",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Average Duration",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "sum(increase(cwi_request_duration_seconds_sum[$__range])) / clamp_min(sum(increase(cwi_request_duration_seconds_count[$__range])), 1)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests Over Time",
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(cwi_requests_total[$__rate_interval])) by (tenant_id, status)",
+          "legendFormat": "{{tenant_id}} {{status}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Energy Per Request By Node",
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(cwi_request_energy_wh_total[$__rate_interval])) by (tenant_id, node_id, node_name) / clamp_min(sum(rate(cwi_requests_total[$__rate_interval])) by (tenant_id, node_id, node_name), 0.000001)",
+          "legendFormat": "{{tenant_id}} {{node_name}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Total Energy By Tenant",
+      "gridPos": { "h": 7, "w": 8, "x": 0, "y": 11 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(increase(cwi_request_energy_wh_total[$__range])) by (tenant_id)",
+          "legendFormat": "{{tenant_id}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Cost Per Request By Node",
+      "gridPos": { "h": 7, "w": 8, "x": 8, "y": 11 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(cwi_request_cost_usd_total[$__rate_interval])) by (tenant_id, node_id, node_name) / clamp_min(sum(rate(cwi_requests_total[$__rate_interval])) by (tenant_id, node_id, node_name), 0.000001)",
+          "legendFormat": "{{tenant_id}} {{node_name}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Node-Level Energy Usage",
+      "gridPos": { "h": 7, "w": 8, "x": 16, "y": 11 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(increase(cwi_request_energy_wh_total[$__range])) by (tenant_id, node_id, node_name, node_role)",
+          "legendFormat": "{{tenant_id}} {{node_name}} {{node_role}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Exact User-Level Energy From Ledger",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT tenant_id, user_id_hash, COUNT(*) AS total_requests, SUM(COALESCE(energy_wh, 0)) AS total_energy_wh, SUM(COALESCE(cost_usd, 0)) AS total_cost_usd, SUM(COALESCE(energy_saved_wh, 0)) AS total_energy_saved_wh, SUM(COALESCE(cost_saved_usd, 0)) AS total_cost_saved_usd, SUM(COALESCE(water_saved_liters, 0)) AS total_water_saved_liters, MIN(timestamp_utc) AS first_request_utc, MAX(timestamp_utc) AS last_request_utc FROM sustainability_request_records WHERE $__timeFilter(timestamp_utc) GROUP BY tenant_id, user_id_hash ORDER BY total_requests DESC LIMIT 50",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Exact Recent Request Ledger",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT timestamp_utc, request_id, trace_id, tenant_id, user_id_hash, node_id, node_name, duration_seconds, energy_wh, energy_value_type, cost_usd, cost_value_type, water_liters, water_value_type, baseline_model_version, cloud_baseline_energy_wh, cloud_baseline_cost_usd, cloud_baseline_water_liters, energy_saved_wh, cost_saved_usd, water_saved_liters, savings_value_type, status, model_or_runtime, source FROM sustainability_request_records WHERE $__timeFilter(timestamp_utc) ORDER BY timestamp_utc DESC LIMIT 100",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Estimated Energy Saved (Wh)",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 26 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(increase(cwi_energy_saved_wh_total[$__range]))",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Estimated Cost Saved",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 26 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "sum(increase(cwi_cost_saved_usd_total[$__range]))",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Estimated Water Saved (L)",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 26 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(increase(cwi_water_saved_liters_total[$__range]))",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Cloud Baseline Energy (Wh)",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 26 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(increase(cwi_cloud_baseline_energy_wh_total[$__range]))",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Baseline And Water Savings Status",
+      "gridPos": { "h": 5, "w": 24, "x": 0, "y": 30 },
+      "options": {
+        "mode": "markdown",
+        "content": "Prometheus panels intentionally use aggregate labels only: tenant, node, node group, node role, and status. Exact user-level reporting comes from the ledger/database panels, not Prometheus labels. Cloud comparison and estimated water savings are populated only when the orchestrator emits a configured baseline model version and estimated values."
+      }
+    }
+  ]
+}

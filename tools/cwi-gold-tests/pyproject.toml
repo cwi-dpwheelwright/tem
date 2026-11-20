@@ -1,0 +1,38 @@
+[project]
+name = "cwi-gold-tests"
+version = "0.1.0"
+description = "Golden tests runner for CWI"
+requires-python = ">=3.10"
+dependencies = [
+  "pytest>=8.0.0",
+  "requests>=2.31.0",
+  "defusedxml>=0.7.1",
+  "schemathesis>=3.31.0",
+  "httpx>=0.27.0",
+  "jsonschema>=4.22.0"
+]
+
+[project.scripts]
+cwi-gold-tests = "run_tests:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["run_tests", "run_conformance", "run_perf"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+markers = [
+  "smoke: basic smoke suite",
+  "negative: negative test suite",
+  "e2e: end-to-end test suite",
+  "simulation: simulation/fault injection suite",
+  "integration: integration suite",
+  "patent: patent-aligned regression suite",
+  "contract: schema/fixture contract validation suite",
+  "graph: graph contracts suite",
+  "consent: consent contract suite",
+  "parity: parity coverage suite"
+]

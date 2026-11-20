@@ -1,0 +1,13 @@
+{
+  "event_id": "evt-123",
+  "trace_id": "trace-99",
+  "tenant_id": "tenant-1",
+  "actor_id": "user-5",
+  "decision_type": "action_approval",
+  "outcome": "approved",
+  "occurred_utc": "2026-01-31T12:00:00Z",
+  "metadata": {
+    "ticket_id": "ticket-42",
+    "policy_mode": "approve"
+  }
+}

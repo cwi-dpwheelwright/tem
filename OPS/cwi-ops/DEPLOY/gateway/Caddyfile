@@ -1,0 +1,150 @@
+http://{$CWI_DOMAIN}, http://www.{$CWI_DOMAIN}, http://shield.{$CWI_DOMAIN}, http://public-core-gateway, http://127.0.0.1, http://localhost, http://100.124.140.66 {
+  encode gzip
+  header Strict-Transport-Security "{$HSTS_HEADER}"
+  header Permissions-Policy "camera=(self), microphone=(), geolocation=()"
+
+  @health path /healthz /readyz
+  handle @health {
+    respond "ok" 200
+  }
+
+  @loginApi path /api/login
+  handle @loginApi {
+    reverse_proxy http://{$GPT_WEB_UI_HOSTPORT}
+  }
+
+  @registerApi path /api/register /api/register/*
+  handle @registerApi {
+    reverse_proxy http://{$GPT_WEB_UI_HOSTPORT}
+  }
+
+  @apiPacks path /api/packs*
+  handle @apiPacks {
+    uri strip_prefix /api
+    reverse_proxy http://{$PACK_SERVICE_HOSTPORT}
+  }
+
+  @connectorOAuthCallback path /api/account/connectors/oauth/callback
+  handle @connectorOAuthCallback {
+    reverse_proxy http://{$GPT_WEB_UI_HOSTPORT}
+  }
+
+  @trustedWebStatus path /api/trusted-web/status
+  handle @trustedWebStatus {
+    reverse_proxy http://{$GPT_WEB_UI_HOSTPORT}
+  }
+
+  @trustedWebAdmin path /api/admin/trusted-web* /api/admin/home-node-user-links*
+  handle @trustedWebAdmin {
+    reverse_proxy http://{$ORCHESTRATOR_HOSTPORT}
+  }
+
+  @api path /api/*
+  handle @api {
+    reverse_proxy http://{$ROUTER_HOSTPORT}
+  }
+
+  @auth path /auth/*
+  handle @auth {
+    reverse_proxy http://{$IDENTITY_HOSTPORT}
+  }
+
+  @adminApi path /admin/*
+  handle @adminApi {
+    reverse_proxy http://{$IDENTITY_HOSTPORT}
+  }
+
+  @administration path /administration*
+  handle @administration {
+    reverse_proxy http://{$ADMIN_CONSOLE_HOSTPORT}
+  }
+
+  @packAssets path /packs/*
+  handle @packAssets {
+    reverse_proxy http://{$PACK_SERVICE_HOSTPORT}
+  }
+
+  handle {
+    reverse_proxy http://{$GPT_WEB_UI_HOSTPORT}
+  }
+}
+
+https://{$CWI_DOMAIN}, https://www.{$CWI_DOMAIN}, https://shield.{$CWI_DOMAIN} {
+  encode gzip
+  header Strict-Transport-Security "{$HSTS_HEADER}"
+  header Permissions-Policy "camera=(self), microphone=(), geolocation=()"
+
+  @health path /healthz /readyz
+  handle @health {
+    respond "ok" 200
+  }
+
+  @loginApi path /api/login
+  handle @loginApi {
+    reverse_proxy http://{$GPT_WEB_UI_HOSTPORT}
+  }
+
+  @registerApi path /api/register /api/register/*
+  handle @registerApi {
+    reverse_proxy http://{$GPT_WEB_UI_HOSTPORT}
+  }
+
+  @apiPacks path /api/packs*
+  handle @apiPacks {
+    uri strip_prefix /api
+    reverse_proxy http://{$PACK_SERVICE_HOSTPORT}
+  }
+
+  @connectorOAuthCallback path /api/account/connectors/oauth/callback
+  handle @connectorOAuthCallback {
+    reverse_proxy http://{$GPT_WEB_UI_HOSTPORT}
+  }
+
+  @trustedWebStatus path /api/trusted-web/status
+  handle @trustedWebStatus {
+    reverse_proxy http://{$GPT_WEB_UI_HOSTPORT}
+  }
+
+  @trustedWebAdmin path /api/admin/trusted-web* /api/admin/home-node-user-links*
+  handle @trustedWebAdmin {
+    reverse_proxy http://{$ORCHESTRATOR_HOSTPORT}
+  }
+
+  @api path /api/*
+  handle @api {
+    reverse_proxy http://{$ROUTER_HOSTPORT}
+  }
+
+  @auth path /auth/*
+  handle @auth {
+    reverse_proxy http://{$IDENTITY_HOSTPORT}
+  }
+
+  @adminApi path /admin/*
+  handle @adminApi {
+    reverse_proxy http://{$IDENTITY_HOSTPORT}
+  }
+
+  @administration path /administration*
+  handle @administration {
+    reverse_proxy http://{$ADMIN_CONSOLE_HOSTPORT}
+  }
+
+  @packAssets path /packs/*
+  handle @packAssets {
+    reverse_proxy http://{$PACK_SERVICE_HOSTPORT}
+  }
+
+  @mcpAlias path /mcp/*
+  handle @mcpAlias {
+    @mcpEnabled expression `{env.MCP_ALIAS_ENABLED} == "true"`
+    handle @mcpEnabled {
+      reverse_proxy http://{$ROUTER_HOSTPORT}
+    }
+    respond "MCP alias disabled" 404
+  }
+
+  handle {
+    reverse_proxy http://{$GPT_WEB_UI_HOSTPORT}
+  }
+}

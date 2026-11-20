@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  cwi-pack-service:
+    image: ${REGISTRY:-local}/cwi-pack-service:${CWI_PACK_SERVICE_TAG:-10h}
+    container_name: internal-01-core-pack-service
+    env_file: .env
+    build:
+      context: ../../../..
+      dockerfile: src/backend/services/cwi-pack-service/Dockerfile
+    ports:
+      - "${PACK_SERVICE_HTTP_PORT}:8082"
+    environment:
+      PACKS_DIR: /packs
+      PACK_SERVICE_PORT: 8082
+    volumes:
+      - ${PACKS_DIR}:/packs
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+networks:
+  cwi-internal:
+    name: cwi-internal

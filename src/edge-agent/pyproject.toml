@@ -1,0 +1,50 @@
+[project]
+name = "cwi-edge-agent"
+version = "0.1.0"
+description = "CWI edge agent"
+requires-python = ">=3.10"
+dependencies = [
+  "jsonschema>=4.21.1",
+  "pyyaml>=6.0.1"
+]
+
+[project.scripts]
+cwi-edge-agent = "edge_agent.cli:main"
+
+[project.optional-dependencies]
+opcua = ["asyncua>=1.1.3"]
+security = ["cryptography>=42.0.0"]
+metrics = ["psutil>=5.9.0"]
+otel = [
+  "opentelemetry-api>=1.25.0",
+  "opentelemetry-sdk>=1.25.0",
+  "opentelemetry-exporter-otlp-proto-http>=1.25.0"
+]
+dev = [
+  "pytest>=8.0.0",
+  "ruff>=0.3.0",
+  "mypy>=1.9.0"
+]
+[tool.setuptools]
+packages = ["edge_agent"]
+
+
+[tool.pytest.ini_options]
+addopts = "-q"
+markers = [
+  "integration: requires external services or environment configuration",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_ignores = true
+warn_redundant_casts = true
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["jsonschema", "yaml", "cryptography.*", "opentelemetry.*"]
+ignore_missing_imports = true

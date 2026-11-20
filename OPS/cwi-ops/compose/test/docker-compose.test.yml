@@ -1,0 +1,202 @@
+services:
+  cwi-router:
+    image: ${REGISTRY}/cwi-router:${CWI_ROUTER_TAG}
+    profiles: ["smoke", "integration", "simulation"]
+    env_file: ${CWI_COMPOSE_ENV_FILE:-.env}
+    ports:
+      - "${ROUTER_HOST_PORT}:8081"
+    networks:
+      - cwi-test
+    depends_on:
+      - cwi-orchestrator
+      - redis
+
+  cwi-orchestrator:
+    image: ${REGISTRY}/cwi-orchestrator:${CWI_ORCHESTRATOR_TAG}
+    profiles: ["smoke", "integration", "simulation"]
+    env_file: ${CWI_COMPOSE_ENV_FILE:-.env}
+    ports:
+      - "${ORCHESTRATOR_HOST_PORT}:8081"
+    networks:
+      - cwi-test
+    depends_on:
+      - cwi-pack-service
+      - cwi-mockserver
+      - postgres
+
+  cwi-coordination-layer:
+    image: ${REGISTRY}/cwi-coordination-layer:${CWI_COORDINATION_TAG:-10h}
+    profiles: ["smoke", "integration", "simulation"]
+    env_file: ${CWI_COMPOSE_ENV_FILE:-.env}
+    ports:
+      - "${COORDINATION_HOST_PORT:-18086}:8081"
+    networks:
+      - cwi-test
+
+  cwi-pack-service:
+    image: nginx:1.25
+    profiles: ["smoke", "integration", "simulation"]
+    env_file: ${CWI_COMPOSE_ENV_FILE:-.env}
+    environment:
+      PACKS_DIR: /packs
+    ports:
+      - "${PACK_SERVICE_HTTP_PORT}:8082"
+    volumes:
+      - ../pack-service/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../pack-service/validate-packs.sh:/validate-packs.sh:ro
+      - ${PACKS_DIR}:/packs:ro
+    command: ["/bin/sh", "-c", "sh /validate-packs.sh && nginx -g 'daemon off;'"]
+    networks:
+      - cwi-test
+
+  cwi-mockserver:
+    image: mockserver/mockserver:5.15.0
+    profiles: ["smoke", "integration", "simulation"]
+    environment:
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /config/mockserver.json
+    volumes:
+      - ./mockserver.json:/config/mockserver.json:ro
+    ports:
+      - "${MOCKSERVER_HOST_PORT}:1080"
+    networks:
+      - cwi-test
+
+  cwi-vector-shard:
+    image: ${QDRANT_IMAGE}
+    profiles: ["smoke", "integration", "simulation"]
+    volumes:
+      - ${VECTOR_SHARD_DATA_DIR}:/qdrant/storage
+    ports:
+      - "${VECTOR_SHARD_HOST_PORT}:6333"
+    networks:
+      - cwi-test
+    restart: unless-stopped
+
+  cwi-graph-db:
+    image: ${CWI_GRAPH_DB_IMAGE}
+    profiles: ["smoke", "integration", "simulation"]
+    environment:
+      POSTGRES_USER: ${CWI_GRAPH_DB_USER}
+      POSTGRES_PASSWORD: ${CWI_GRAPH_DB_PASSWORD}
+      POSTGRES_DB: ${CWI_GRAPH_DB_DATABASE}
+    ports:
+      - "${CWI_GRAPH_DB_HOST_PORT}:5432"
+    volumes:
+      - ${CWI_GRAPH_DB_DATA_DIR}:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cwi-test
+    restart: unless-stopped
+
+  cwi-model-worker-health:
+    image: python:3.11-slim
+    profiles: ["smoke", "integration", "simulation"]
+    working_dir: /health
+    volumes:
+      - ../../shared/model-worker-health:/health:ro
+    environment:
+      MODEL_UPSTREAM_URL: http://cwi-mockserver:1080
+      MODEL_HEALTH_PATH: /api/tags
+      MODEL_HEALTH_PORT: ${MODEL_HEALTH_PORT}
+      MODEL_METRICS_LABELS: tier="smoke",worker="mockserver"
+    command: ["python", "health_server.py"]
+    ports:
+      - "${MODEL_HEALTH_PORT}:${MODEL_HEALTH_PORT}"
+    networks:
+      - cwi-test
+    restart: unless-stopped
+    depends_on:
+      - cwi-mockserver
+
+  redis:
+    image: redis:7.2-alpine
+    profiles: ["smoke", "integration", "simulation"]
+    networks:
+      - cwi-test
+
+  postgres:
+    image: postgres:16-alpine
+    profiles: ["smoke", "integration", "simulation"]
+    environment:
+      POSTGRES_USER: cwi
+      POSTGRES_PASSWORD: cwi
+      POSTGRES_DB: cwi
+    volumes:
+      - ./postgres-init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+    networks:
+      - cwi-test
+
+  identity-postgres:
+    image: postgres:16-alpine
+    profiles: ["smoke", "integration", "simulation"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cwi_identity
+    networks:
+      - cwi-test
+
+  identity-migrations:
+    image: postgres:16-alpine
+    profiles: ["smoke", "integration", "simulation"]
+    env_file: ${CWI_COMPOSE_ENV_FILE:-.env}
+    volumes:
+      - ../../../../src/backend/services/cwi-identity-server/src/Cwi.Identity.Api/Data/Migrations:/migrations:ro
+      - ./identity-migrate.sh:/identity-migrate.sh:ro
+    entrypoint: ["/bin/sh", "-c", "/identity-migrate.sh"]
+    networks:
+      - cwi-test
+    depends_on:
+      - identity-postgres
+
+  identity-bootstrap:
+    image: python:3.11-slim
+    profiles: ["smoke", "integration", "simulation"]
+    env_file: ${CWI_COMPOSE_ENV_FILE:-.env}
+    volumes:
+      - ./identity-bootstrap.py:/identity-bootstrap.py:ro
+    entrypoint: ["python", "/identity-bootstrap.py"]
+    networks:
+      - cwi-test
+    depends_on:
+      cwi-identity-server:
+        condition: service_started
+
+  cwi-identity-server:
+    image: ${REGISTRY}/cwi-identity-server:${CWI_IDENTITY_TAG}
+    profiles: ["smoke", "integration", "simulation"]
+    env_file: ${CWI_COMPOSE_ENV_FILE:-.env}
+    ports:
+      - "${IDENTITY_HOST_PORT:-8085}:8085"
+    networks:
+      - cwi-test
+    depends_on:
+      identity-postgres:
+        condition: service_started
+      identity-migrations:
+        condition: service_completed_successfully
+
+  cwi-gateway:
+    image: caddy:2
+    profiles: ["smoke", "integration", "simulation"]
+    env_file: ${CWI_COMPOSE_ENV_FILE:-.env}
+    ports:
+      - "${GATEWAY_HTTP_PORT}:${GATEWAY_HTTP_PORT}"
+      - "${GATEWAY_HTTPS_PORT}:${GATEWAY_HTTPS_PORT}"
+    volumes:
+      - ../gateway/Caddyfile:/etc/caddy/Caddyfile:ro
+    networks:
+      - cwi-test
+    depends_on:
+      - cwi-pack-service
+      - cwi-router
+      - cwi-orchestrator
+      - cwi-identity-server
+
+networks:
+  cwi-test:
+    name: cwi-test

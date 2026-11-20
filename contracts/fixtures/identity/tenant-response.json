@@ -1,0 +1,5 @@
+{
+  "tenant_id": "tenant-1",
+  "name": "Example Tenant",
+  "status": "active"
+}

@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "default_profile": "general",
+  "profiles": {
+    "general": {
+      "description": "Default configured trusted-site context for the GPT web toggle. Administrators can replace or extend these sources from the administration page.",
+      "mode": "trusted_sites_only",
+      "max_results": 5,
+      "sources": [
+        {
+          "source_id": "texas-state-preservation-board-capitol-history",
+          "display_name": "Texas State Preservation Board - Capitol History",
+          "allowed_domains": [
+            "tspb.texas.gov"
+          ],
+          "seed_urls": [
+            "https://www.tspb.texas.gov/prop/tc/tc-history/history/"
+          ],
+          "sitemap_urls": [],
+          "rss_urls": [],
+          "include_path_prefixes": [
+            "/prop/"
+          ],
+          "exclude_path_prefixes": []
+        },
+        {
+          "source_id": "britannica-france",
+          "display_name": "Britannica - France",
+          "allowed_domains": [
+            "britannica.com"
+          ],
+          "seed_urls": [
+            "https://www.britannica.com/place/France"
+          ],
+          "sitemap_urls": [],
+          "rss_urls": [],
+          "include_path_prefixes": [
+            "/place/"
+          ],
+          "exclude_path_prefixes": []
+        },
+        {
+          "source_id": "wikipedia-reference",
+          "display_name": "Wikipedia Reference",
+          "allowed_domains": [
+            "wikipedia.org"
+          ],
+          "seed_urls": [
+            "https://en.wikipedia.org/wiki/Austin,_Texas",
+            "https://en.wikipedia.org/wiki/France"
+          ],
+          "sitemap_urls": [],
+          "rss_urls": [],
+          "include_path_prefixes": [
+            "/wiki/"
+          ],
+          "exclude_path_prefixes": []
+        }
+      ]
+    }
+  }
+}

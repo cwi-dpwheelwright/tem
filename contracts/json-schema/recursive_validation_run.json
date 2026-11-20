@@ -1,0 +1,411 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cwi/contracts/recursive_validation_run.json",
+  "title": "RecursiveValidationRun",
+  "description": "Evidence contract for a recursive-learning validation run. Hard governance gates are zero-tolerance and must not be averaged into quality pass rates.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "generated_utc",
+    "test_suite_version",
+    "prompt_set_version",
+    "environment",
+    "runtime",
+    "contract_evidence",
+    "recursive_loop_steps",
+    "hard_gates",
+    "quality_gates",
+    "trace_ids",
+    "ledger_refs",
+    "results",
+    "residual_risks"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "recursive-validation-run.v1"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "generated_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "test_suite_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt_set_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "local",
+        "ci",
+        "staging",
+        "pilot",
+        "production"
+      ]
+    },
+    "runtime": {
+      "type": "object",
+      "required": [
+        "node_id",
+        "tenant_id",
+        "model_id",
+        "runtime_version"
+      ],
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtime_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "contract_evidence": {
+      "type": "object",
+      "required": [
+        "pack_hash",
+        "anchor_hash",
+        "canonical_pack_hash",
+        "pack_schema_version",
+        "trace_contract_version",
+        "recursive_event_schema_version",
+        "policy_bundle_version",
+        "approval_policy_version",
+        "ledger_hash_suite_id",
+        "fixture_ids",
+        "gold_test_ids",
+        "migration_versions"
+      ],
+      "properties": {
+        "pack_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "anchor_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "canonical_pack_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "pack_schema_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trace_contract_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recursive_event_schema_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_bundle_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approval_policy_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ledger_hash_suite_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fixture_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "gold_test_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "migration_versions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "recursive_loop_steps": {
+      "type": "array",
+      "minItems": 12,
+      "items": {
+        "$ref": "#/$defs/loop_step"
+      }
+    },
+    "hard_gates": {
+      "type": "array",
+      "minItems": 8,
+      "items": {
+        "$ref": "#/$defs/hard_gate"
+      }
+    },
+    "quality_gates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/quality_gate"
+      }
+    },
+    "trace_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "ledger_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "results": {
+      "type": "object",
+      "required": [
+        "overall_status",
+        "critical_failures",
+        "privacy_failures",
+        "cross_tenant_leakage",
+        "quality_failures"
+      ],
+      "properties": {
+        "overall_status": {
+          "$ref": "#/$defs/status"
+        },
+        "critical_failures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "privacy_failures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cross_tenant_leakage": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quality_failures": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "residual_risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "risk_id",
+          "decision_impact",
+          "owner"
+        ],
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "decision_impact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FAIL",
+        "NOT_RUN"
+      ]
+    },
+    "evidence_ref": {
+      "type": "object",
+      "required": [
+        "ref_type",
+        "ref_id"
+      ],
+      "properties": {
+        "ref_type": {
+          "type": "string",
+          "enum": [
+            "trace",
+            "ledger",
+            "fixture",
+            "gold_test",
+            "schema",
+            "metric",
+            "dashboard",
+            "artifact"
+          ]
+        },
+        "ref_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "loop_step": {
+      "type": "object",
+      "required": [
+        "step_id",
+        "status",
+        "evidence_refs"
+      ],
+      "properties": {
+        "step_id": {
+          "type": "string",
+          "enum": [
+            "controlled_input_event",
+            "process_miner_observation",
+            "normalized_event",
+            "memory_graph_candidate",
+            "policy_decision",
+            "graph_update",
+            "vector_refresh",
+            "retrieval_improvement",
+            "answer_improvement",
+            "critic_validation",
+            "truth_engine_state",
+            "ledger_audit_proof",
+            "regression_quality_update",
+            "repeatability_check"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/evidence_ref"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "hard_gate": {
+      "type": "object",
+      "required": [
+        "gate_id",
+        "status",
+        "zero_tolerance",
+        "evidence_refs"
+      ],
+      "properties": {
+        "gate_id": {
+          "type": "string",
+          "enum": [
+            "pack_trust",
+            "frozen_trace_contract",
+            "approval_gating",
+            "provenance_ledger",
+            "kill_switch",
+            "tenant_isolation",
+            "privacy_opsec",
+            "rollback"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "zero_tolerance": {
+          "type": "boolean",
+          "const": true
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/evidence_ref"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "quality_gate": {
+      "type": "object",
+      "required": [
+        "metric",
+        "threshold",
+        "observed",
+        "status"
+      ],
+      "properties": {
+        "metric": {
+          "type": "string",
+          "minLength": 1
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0
+        },
+        "observed": {
+          "type": "number",
+          "minimum": 0
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

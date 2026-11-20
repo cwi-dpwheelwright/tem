@@ -1,0 +1,382 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: internal-02-data-redis
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-graph-db:
+    image: ${CWI_GRAPH_DB_IMAGE}
+    container_name: internal-02-data-graph-db
+    environment:
+      POSTGRES_USER: ${CWI_GRAPH_DB_USER}
+      POSTGRES_PASSWORD: ${CWI_GRAPH_DB_PASSWORD}
+      POSTGRES_DB: ${CWI_GRAPH_DB_DATABASE}
+    volumes:
+      - ${CWI_GRAPH_DB_DATA_DIR}:/var/lib/postgresql
+    ports:
+      - "${CWI_GRAPH_DB_HOST_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  identity-postgres:
+    image: postgres:16-alpine
+    container_name: internal-02-identity-postgres
+    environment:
+      POSTGRES_USER: ${IDENTITY_DB_USER}
+      POSTGRES_PASSWORD: ${IDENTITY_DB_PASSWORD}
+      POSTGRES_DB: ${IDENTITY_DB_NAME}
+    volumes:
+      - ${IDENTITY_DB_DATA_DIR}:/var/lib/postgresql/data
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  orchestrator-postgres:
+    image: postgres:16-alpine
+    container_name: internal-02-orchestrator-postgres
+    environment:
+      POSTGRES_USER: ${ORCHESTRATOR_DB_USER}
+      POSTGRES_PASSWORD: ${ORCHESTRATOR_DB_PASSWORD}
+      POSTGRES_DB: ${ORCHESTRATOR_DB_NAME}
+    volumes:
+      - ${ORCHESTRATOR_DB_DATA_DIR}:/var/lib/postgresql/data
+    ports:
+      - "${ORCHESTRATOR_DB_BIND_IP:-127.0.0.1}:${ORCHESTRATOR_DB_HOST_PORT:-15433}:5432"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  coordination-postgres:
+    image: postgres:16-alpine
+    container_name: internal-02-coordination-postgres
+    environment:
+      POSTGRES_USER: ${COORDINATION_DB_USER}
+      POSTGRES_PASSWORD: ${COORDINATION_DB_PASSWORD}
+      POSTGRES_DB: ${COORDINATION_DB_NAME}
+    volumes:
+      - ${COORDINATION_DB_DATA_DIR}:/var/lib/postgresql/data
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-identity-server:
+    image: ${REGISTRY}/cwi-identity-server:${CWI_IDENTITY_TAG}
+    container_name: internal-01-identity-server
+    env_file: .env
+    environment:
+      EVENT_BUS_SERVICE_NAME: cwi-identity-server
+    entrypoint: ["sh", "-c", "dotnet Cwi.Identity.Api.dll --migrate && dotnet Cwi.Identity.Api.dll"]
+    ports:
+      - "${IDENTITY_HTTP_PORT}:8085"
+    depends_on:
+      - identity-postgres
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-coordination-layer:
+    image: ${REGISTRY}/cwi-coordination-layer:${CWI_COORDINATION_TAG}
+    container_name: internal-01-core-coordination-layer
+    env_file: .env
+    environment:
+      EVENT_BUS_SERVICE_NAME: cwi-coordination-layer
+    ports:
+      - "${COORDINATION_HTTP_PORT}:8081"
+    depends_on:
+      - coordination-postgres
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-pack-service:
+    image: ${REGISTRY}/cwi-pack-service:${CWI_PACK_SERVICE_TAG}
+    container_name: internal-01-core-pack-service
+    env_file: .env
+    environment:
+      PACKS_DIR: /packs
+      PACK_SERVICE_PORT: 8082
+      EVENT_BUS_SERVICE_NAME: cwi-pack-service
+    volumes:
+      - ${PACKS_DIR}:/packs
+    ports:
+      - "${PACK_SERVICE_HTTP_PORT}:8082"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-pin-resolver:
+    image: ${PIN_RESOLVER_IMAGE}
+    container_name: internal-01-core-pin-resolver
+    env_file: .env
+    environment:
+      PORT: ${PIN_RESOLVER_PORT}
+      PIN_PRIORITY: ${PIN_PRIORITY}
+      PINS_DIR: ${PINS_DIR}
+      KEYS_DIR: ${KEYS_DIR}
+      LEDGER_DIR: ${LEDGER_DIR}
+      PACKS_DIR: ${PACKS_DIR}
+    volumes:
+      - ${LEDGER_DIR}:/srv/cwi/ledger
+      - ${PINS_DIR}:/srv/cwi/pins:ro
+      - ${PACKS_DIR}:/srv/cwi/packs:ro
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-mcp-extension:
+    image: python:3.11-slim
+    container_name: cwi-mcp-extension
+    working_dir: /srv/cwi/mcp-extension
+    command: ["python", "-m", "http.server", "3003"]
+    volumes:
+      - ./mcp-extension:/srv/cwi/mcp-extension:ro
+    ports:
+      - "${MCP_TOOL_REGISTRY_HOST_PORT:-3003}:3003"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-policy-layer:
+    image: python:3.11-slim
+    container_name: cwi-policy-layer
+    working_dir: /srv/cwi/policy-layer
+    command: ["python", "-m", "http.server", "3002"]
+    volumes:
+      - ./policy-layer:/srv/cwi/policy-layer:ro
+    ports:
+      - "${MCP_POLICY_LAYER_HOST_PORT:-3002}:3002"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  orchestrator-migrations:
+    image: postgres:16-alpine
+    container_name: internal-01-orchestrator-migrations
+    env_file: .env
+    environment:
+      PGHOST: orchestrator-postgres
+      PGPORT: 5432
+      PGDATABASE: ${ORCHESTRATOR_DB_NAME}
+      PGUSER: ${ORCHESTRATOR_DB_USER}
+      PGPASSWORD: ${ORCHESTRATOR_DB_PASSWORD}
+    volumes:
+      - ./orchestrator-migrations/Migrations:/migrations:ro
+      - ./orchestrator-migrations/orchestrator-migrate.sh:/orchestrator-migrate.sh:ro
+    entrypoint:
+      - /bin/sh
+      - -c
+      - "tr -d '\\r' < /orchestrator-migrate.sh > /tmp/orchestrator-migrate.sh && chmod +x /tmp/orchestrator-migrate.sh && /bin/sh /tmp/orchestrator-migrate.sh"
+    depends_on:
+      - orchestrator-postgres
+    networks:
+      - cwi-internal
+
+  cwi-language-normalization:
+    image: ${REGISTRY}/cwi-language-normalization:${CWI_LANGUAGE_NORMALIZATION_TAG:-local}
+    container_name: internal-01-core-language-normalization
+    env_file: .env
+    environment:
+      LANGUAGE_NORMALIZATION_HTTP_PORT: 8081
+      LANGUAGE_NORMALIZATION_DEV_OPENAPI_ENABLED: ${LANGUAGE_NORMALIZATION_DEV_OPENAPI_ENABLED:-true}
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-orchestrator:
+    image: ${REGISTRY}/cwi-orchestrator:${CWI_ORCHESTRATOR_TAG}
+    container_name: internal-01-core-orchestrator
+    env_file: .env
+    environment:
+      EVENT_BUS_SERVICE_NAME: cwi-orchestrator
+      LANGUAGE_NORMALIZATION_MODE: ${LANGUAGE_NORMALIZATION_MODE:-external_with_local_fallback}
+      LANGUAGE_NORMALIZATION_BASE_URL: ${LANGUAGE_NORMALIZATION_BASE_URL:-http://cwi-language-normalization:8081}
+      LANGUAGE_NORMALIZATION_TIMEOUT_MS: ${LANGUAGE_NORMALIZATION_TIMEOUT_MS:-750}
+      MCP_EXECUTION_ENABLED: ${MCP_EXECUTION_ENABLED:-true}
+      MCP_EXECUTION_MODE: ${MCP_EXECUTION_MODE:-read_only}
+      MCP_READ_ONLY_ALLOWED_TOOLS: ${MCP_READ_ONLY_ALLOWED_TOOLS:-system.status,node.health.check,ledger.view,pack.list,pack.get,pin.resolve,weather.get,search.web}
+      MCP_TOOL_REGISTRY_URL: ${MCP_TOOL_REGISTRY_URL:-http://cwi-mcp-extension:3003/tools/tools.json}
+      MCP_POLICY_RULES_URL: ${MCP_POLICY_RULES_URL:-http://cwi-policy-layer:3002/rules/policy.json}
+      MCP_HTTP_TIMEOUT_SECONDS: ${MCP_HTTP_TIMEOUT_SECONDS:-10}
+      CONNECTORS_CONFIG_PATH: ${CONNECTORS_CONFIG_PATH:-/opt/cwi/DEPLOY/mcp-core/connectors.yaml}
+      COORDINATION_BASE_URL: ${COORDINATION_BASE_URL:-http://cwi-coordination-layer:8081}
+      COORDINATION_PROTOCOL_VERSION: ${COORDINATION_PROTOCOL_VERSION:-1.0}
+      COORDINATION_ADMIN_HEADER_NAME: ${COORDINATION_ADMIN_HEADER_NAME:-X-Admin-Token}
+      HOME_NODE_WORK_TOKEN_ISSUER: ${HOME_NODE_WORK_TOKEN_ISSUER:-cwi-orchestrator}
+      HOME_NODE_WORK_TOKEN_TTL_SECONDS: ${HOME_NODE_WORK_TOKEN_TTL_SECONDS:-120}
+      HOME_NODE_HEARTBEAT_MAX_AGE_SECONDS: ${HOME_NODE_HEARTBEAT_MAX_AGE_SECONDS:-120}
+      HOME_NODE_WAIT_TIMEOUT_SECONDS: ${HOME_NODE_WAIT_TIMEOUT_SECONDS:-10}
+      HOME_NODE_WAIT_POLL_INTERVAL_MS: ${HOME_NODE_WAIT_POLL_INTERVAL_MS:-250}
+      CWI_SUSTAINABILITY_ESTIMATED_NODE_WATTS: ${CWI_SUSTAINABILITY_ESTIMATED_NODE_WATTS:-180}
+      CWI_SUSTAINABILITY_COST_USD_PER_KWH: ${CWI_SUSTAINABILITY_COST_USD_PER_KWH:-0.12}
+      CWI_SUSTAINABILITY_ESTIMATED_WATER_LITERS_PER_REQUEST: ${CWI_SUSTAINABILITY_ESTIMATED_WATER_LITERS_PER_REQUEST:-0.005}
+      CWI_SUSTAINABILITY_CLOUD_BASELINE_VERSION: ${CWI_SUSTAINABILITY_CLOUD_BASELINE_VERSION:-cwi-sustainability-seeded-estimates.v1}
+      CWI_SUSTAINABILITY_CLOUD_ENERGY_WH_PER_REQUEST: ${CWI_SUSTAINABILITY_CLOUD_ENERGY_WH_PER_REQUEST:-3}
+      CWI_SUSTAINABILITY_CLOUD_COST_USD_PER_REQUEST: ${CWI_SUSTAINABILITY_CLOUD_COST_USD_PER_REQUEST:-0.001}
+      CWI_SUSTAINABILITY_CLOUD_WATER_LITERS_PER_REQUEST: ${CWI_SUSTAINABILITY_CLOUD_WATER_LITERS_PER_REQUEST:-0.02}
+    ports:
+      - "${ORCHESTRATOR_HOST_PORT}:8081"
+    volumes:
+      - ${PACKS_DIR}:/srv/cwi/packs:ro
+      - ${PINS_DIR}:/srv/cwi/pins:ro
+      - ./connectors.yaml:${CONNECTORS_CONFIG_PATH:-/opt/cwi/DEPLOY/mcp-core/connectors.yaml}:ro
+      - ${CWI_ACTIVATED_MEMORY_HOST_DIR:-/srv/cwi/memory/activated}:/srv/cwi/memory/activated:ro
+      - ${LEDGER_DIR}:/srv/cwi/ledger
+      - ${CWI_FEEDBACK_SCREENSHOT_HOST_DIR:-/srv/cwi/feedback/screenshots}:/srv/cwi/feedback/screenshots
+      - ./trusted-web-context.profiles.json:/etc/cwi/trusted-web-context.profiles.json:ro
+    depends_on:
+      cwi-pack-service:
+        condition: service_started
+      cwi-pin-resolver:
+        condition: service_started
+      cwi-mcp-extension:
+        condition: service_started
+      cwi-policy-layer:
+        condition: service_started
+      cwi-language-normalization:
+        condition: service_started
+      orchestrator-postgres:
+        condition: service_started
+      orchestrator-migrations:
+        condition: service_completed_successfully
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-router:
+    image: ${REGISTRY}/cwi-router:${CWI_ROUTER_TAG}
+    container_name: internal-01-core-router
+    env_file: .env
+    environment:
+      REDIS_URL: redis:6379
+      EVENT_BUS_SERVICE_NAME: cwi-router
+    ports:
+      - "${ROUTER_HOST_PORT}:8081"
+    depends_on:
+      - cwi-orchestrator
+      - redis
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-teams-bot:
+    image: ${TEAMS_BOT_IMAGE}
+    container_name: internal-01-bot-teams
+    environment:
+      PORT: ${TEAMS_BOT_PORT}
+      MICROSOFT_APP_ID: ${MICROSOFT_APP_ID}
+      MICROSOFT_APP_PASSWORD: ${MICROSOFT_APP_PASSWORD}
+      ALLOW_UNAUTHENTICATED: ${ALLOW_UNAUTHENTICATED}
+      BOT_TOKEN_ISSUER: ${BOT_TOKEN_ISSUER}
+      BOT_TOKEN_AUDIENCE: ${BOT_TOKEN_AUDIENCE}
+      BOT_TOKEN_JWKS_URL: ${BOT_TOKEN_JWKS_URL}
+      BOT_TENANT_ALLOWLIST: ${BOT_TENANT_ALLOWLIST}
+      GATEWAY_BASE_URL: ${GATEWAY_BASE_URL}
+      GATEWAY_STATIC_TOKEN: ${GATEWAY_STATIC_TOKEN}
+      GATEWAY_OAUTH_TOKEN_URL: ${GATEWAY_OAUTH_TOKEN_URL}
+      GATEWAY_OAUTH_CLIENT_ID: ${GATEWAY_OAUTH_CLIENT_ID}
+      GATEWAY_OAUTH_CLIENT_SECRET: ${GATEWAY_OAUTH_CLIENT_SECRET}
+      GATEWAY_OAUTH_SCOPE: ${GATEWAY_OAUTH_SCOPE}
+      APPROVER_ALLOWLIST: ${APPROVER_ALLOWLIST}
+      APPROVER_ROLE_MAP: ${APPROVER_ROLE_MAP}
+      REDIS_URL: ${REDIS_URL}
+      EVENT_BUS_SERVICE_NAME: cwi-teams-bot
+      POSTGRES_URL: ${POSTGRES_URL}
+      IDEMPOTENCY_TTL_SECONDS: ${IDEMPOTENCY_TTL_SECONDS}
+      BREAK_GLASS_WEBHOOK_URL: ${BREAK_GLASS_WEBHOOK_URL}
+      BREAK_GLASS_WEBHOOK_SECRET: ${BREAK_GLASS_WEBHOOK_SECRET}
+      BREAK_GLASS_DEDUPE_TTL_SECONDS: ${BREAK_GLASS_DEDUPE_TTL_SECONDS}
+      BREAK_GLASS_THROTTLE_WINDOW_SECONDS: ${BREAK_GLASS_THROTTLE_WINDOW_SECONDS}
+    ports:
+      - "${TEAMS_BOT_PORT}:3978"
+    depends_on:
+      - redis
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3978/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  cwi-consent-ingest:
+    image: ${REGISTRY}/cwi-etl:${CWI_ETL_TAG}
+    container_name: internal-01-etl-consent-ingest
+    env_file: .env
+    working_dir: /app
+    volumes:
+      - ./consent-ingest.py:/consent-ingest.py:ro
+      - ${CWI_CONSENT_INGEST_INPUT_HOST_DIR:-/srv/cwi/consent-input}:/consent-input
+      - ${CWI_CONSENT_INGEST_ARCHIVE_HOST_DIR:-/srv/cwi/consent-archive}:/consent-archive
+      - ${CWI_CONSENT_INGEST_ERROR_HOST_DIR:-/srv/cwi/consent-error}:/consent-error
+      - ${CWI_CONSENT_DB_HOST_DIR:-/srv/cwi/consent-store}:/consent-store
+    environment:
+      CWI_CONSENT_DB_PATH: /consent-store/consent.db
+      CWI_CONSENT_INGEST_INPUT_DIR: /consent-input
+      CWI_CONSENT_INGEST_ARCHIVE_DIR: /consent-archive
+      CWI_CONSENT_INGEST_ERROR_DIR: /consent-error
+      CWI_CONSENT_INGEST_INTERVAL_SECONDS: ${CWI_CONSENT_INGEST_INTERVAL_SECONDS:-300}
+      CWI_CONSENT_INGEST_SOURCE_TYPE: ${CWI_CONSENT_INGEST_SOURCE_TYPE:-operator_memory_ingest}
+      CWI_CONSENT_INGEST_SOURCE_ID: ${CWI_CONSENT_INGEST_SOURCE_ID:-operator-memory}
+      CWI_CONSENT_INGEST_FILE_GLOB: ${CWI_CONSENT_INGEST_FILE_GLOB:-*.json*}
+      CWI_CONSENT_INGEST_RUN_ONCE: ${CWI_CONSENT_INGEST_RUN_ONCE:-false}
+      CWI_CONSENT_INGEST_LOG_LEVEL: ${CWI_CONSENT_INGEST_LOG_LEVEL:-INFO}
+      CWI_CONSENT_REMOTE_BASE_URL: ${CWI_CONSENT_REMOTE_BASE_URL:-}
+      CWI_CONSENT_REMOTE_PATH: ${CWI_CONSENT_REMOTE_PATH:-/api/consent/latest}
+      CWI_CONSENT_REMOTE_TOKEN: ${CWI_CONSENT_REMOTE_TOKEN:-}
+      CWI_CONSENT_REMOTE_TIMEOUT_SECONDS: ${CWI_CONSENT_REMOTE_TIMEOUT_SECONDS:-5}
+    command: ["python", "/consent-ingest.py"]
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-edge-agent:
+    image: ${REGISTRY}/cwi-edge-agent:${CWI_EDGE_AGENT_TAG}
+    container_name: internal-01-edge-agent
+    env_file: .env
+    volumes:
+      - ./edge-agent.yaml:/etc/cwi/edge-agent.yaml:ro
+      - ${CWI_EDGE_AGENT_STATE_DIR:-/srv/cwi/edge-agent-state}:/var/lib/cwi-edge-agent
+    depends_on:
+      - cwi-router
+      - cwi-coordination-layer
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-node-agent-runtime:
+    image: ${REGISTRY}/cwi-node-agent-runtime:${CWI_NODE_AGENT_RUNTIME_TAG}
+    container_name: internal-01-node-agent-runtime
+    env_file: .env
+    environment:
+      NODE_AGENT_HEALTH_PORT: ${NODE_AGENT_RUNTIME_HTTP_PORT:-8090}
+      CWI_BREAK_GLASS_TOKEN: ${CWI_BREAK_GLASS_TOKEN:-}
+    command:
+      - sh
+      - -c
+      - cwi-node-agent serve-qr --config /etc/cwi/node-agent.yaml --host 0.0.0.0 --port ${NODE_AGENT_HEALTH_PORT:-8090}
+    volumes:
+      - ./node-agent.yaml:/etc/cwi/node-agent.yaml:ro
+      - ${CWI_NODE_AGENT_RUNTIME_STATE_DIR:-/srv/cwi/node-agent-runtime-state}:/var/lib/cwi-node-agent
+    ports:
+      - "${NODE_AGENT_RUNTIME_BIND_IP:-127.0.0.1}:${NODE_AGENT_RUNTIME_HTTP_PORT:-8090}:8090"
+    depends_on:
+      - cwi-router
+      - cwi-coordination-layer
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+networks:
+  cwi-internal:
+    name: cwi-internal

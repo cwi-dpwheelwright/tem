@@ -1,0 +1,74 @@
+We have completed Phase 7 – Multi-Region Replication. This phase proves we can extend CWI horizontally into a second “region” while maintaining deterministic governance, controlled divergence, and clean recovery back to stable — all with full evidence capture into Teacher MinIO + ledger traceability.
+Below is the full summary, results, and what we are capable of now.
+Executive Summary (What Phase 7 achieved)
+We stood up a Region-B Core stack (simulated second region) alongside Region-A on the same hardware, with:
+Secondary Core Instance Modeling (Region-B)
+Region-B services are up concurrently with Region-A using non-conflicting ports:
+Pack Service (B): 28083
+Router (B): 28084
+Orchestrator (B): 28085
+Pin Resolver (B): 28087
+Region-B has its own Docker network and its own isolated storage paths (packs/pins/ledger).
+Deterministic Cross-Region Resolution
+Region-A and Region-B both resolve fixture-pack deterministically to the same resolved_hash when on stable pins.
+We validated determinism correctly via Docker network calls (not host-port assumptions).
+Pack Artifact Replication Strategy + Integrity
+Region-B pack storage was seeded independently (no rsync available; we used explicit recursive copy).
+Region-B Pack Service successfully served fixture-pack/latest/anchor.txt after seeding.
+Region-B Pin Resolver confirmed pack_present_locally=true once packs existed in Region-B storage.
+Governance Survivability + Controlled Divergence
+We executed a controlled divergence test:
+Region-B pin was updated to prioritize experiment with a non-existent hash.
+Region-B correctly resolved using experiment and reported pack_present_locally=false.
+Region-A remained stable on latest_stable.
+We executed a clean recovery test:
+Region-B pin restored to Region-A stable pin.
+Region-B returned to latest_stable and deterministic match with Region-A.
+This proves the governance model scales regionally and supports reversible “break-glass” / experimentation without corrupting stable operations.
+Evidence + Traceability Closed Out
+Each Stage produced:
+Compose hashes (Region-A + Region-B)
+Compose ps outputs
+Determinism proof output
+Mount inspection confirming isolation
+Service proofs (resolver resolve output, pack-service anchor HTTP output)
+Bundled .tgz + .sha256
+All Phase 7 final closeout evidence has been uploaded to Teacher MinIO and recorded in ledger.
+Key Results (What we measured)
+Deterministic resolution
+Region-A resolved_hash == Region-B resolved_hash for fixture-pack under stable governance.
+We also verified that divergence and recovery behave exactly as intended:
+Divergence: Region-B resolves to experiment hash; pack not present (expected).
+Recovery: Region-B returns to latest_stable; pack present (expected).
+Latency impact modeling (simulated cross-region)
+Important note: because Region-A and Region-B are currently running on the same host (simulation), the “cross-region” latency test mostly measures container + docker network + resolver stack overhead, not real WAN distance. Even so:
+The Docker-network based checks showed median response times roughly in the ~0.55–0.60s range for the scripted 30-run loop (this includes container spin-up for the one-shot docker run curl method, which adds significant overhead).
+The earlier Phase 5/Phase 5.5 internal endpoint baselines (pure curl HTTP timings) demonstrated low single-digit millisecond service response times on LAN paths.
+Interpretation:
+Our core service response times on LAN are already competitive for internal microservice calls.
+The Phase 7 “0.55s” results are not representative of steady-state service latency; they reflect the measurement method overhead (one-shot container invocation per request). In Phase 8 we’ll implement persistent load tools for cleaner latency measurement across regions (or in Phase 6 once NIC fabric is installed).
+What we are capable of now (new capabilities unlocked)
+With Phase 7 complete, CWI can now:
+Run multiple “regional cores” with deterministic governance
+A second region can operate with its own orchestrator/router/pack service/resolver.
+We can validate that both regions resolve packs consistently against signed governance pins.
+Replicate artifacts + validate integrity
+Pack artifacts can be seeded/replicated into Region-B storage.
+Integrity is enforced by anchor files + deterministic resolution outputs.
+Operate controlled divergence without corrupting stable
+Region-B can run “experiment” pins while Region-A stays stable.
+The system cleanly recovers to stable by restoring the signed stable pin.
+This is the foundation for safe multi-region experimentation, blue/green rollouts, and rollback procedures.
+Maintain auditability
+Evidence bundles are captured, hashed, uploaded to Teacher MinIO, and referenced in ledger events.
+This keeps us “governance-first” even as we scale horizontally.
+Current State of the Network / Stack
+Region-A Core: Running and stable (pins + pack service + orchestrator using pin-resolver proxy).
+Region-B Core (simulation): Running and stable, isolated storage, deterministic alignment verified.
+Teacher: Evidence storage + ledger events confirmed for Phase 7 final closeout.
+(Separately, Phase 6 hardware backhaul work remains pending until NIC parts arrive.)
+
+ALIGNMENT ADDENDUM (2026-03-02)
+- Region-B results are a same-host simulation and do not prove WAN latency.
+- Phase 7 gates must produce deterministic pin resolution and mirror/adopt invariants with evidence.
+- Phase 9 features remain out of scope; only separation guard checks are allowed.

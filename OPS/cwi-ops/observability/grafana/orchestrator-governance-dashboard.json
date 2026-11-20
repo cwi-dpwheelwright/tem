@@ -1,0 +1,137 @@
+{
+  "uid": "cwi-orchestrator-governance",
+  "title": "CWI Orchestrator Governance",
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "tags": [
+    "cwi",
+    "orchestrator",
+    "governance"
+  ],
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Orchestrator Ready",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "cwi_orchestrator_ready",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Discrepancy Rate (by severity)",
+      "gridPos": { "h": 7, "w": 9, "x": 6, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(cwi_orchestrator_discrepancy_total[5m])) by (severity)",
+          "legendFormat": "{{severity}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Guardrail Violations Rate (by severity)",
+      "gridPos": { "h": 7, "w": 9, "x": 15, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(cwi_orchestrator_guardrail_violation_total[5m])) by (severity)",
+          "legendFormat": "{{severity}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Guardrail Outcomes Rate (by outcome)",
+      "gridPos": { "h": 7, "w": 9, "x": 0, "y": 7 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(cwi_orchestrator_guardrail_outcome_total[5m])) by (outcome)",
+          "legendFormat": "{{outcome}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Guardrail Corrections Rate (by mode)",
+      "gridPos": { "h": 7, "w": 9, "x": 9, "y": 7 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(cwi_orchestrator_guardrail_correction_total[5m])) by (mode)",
+          "legendFormat": "{{mode}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Ownership Transfers Rate (requested/approved/revoked)",
+      "gridPos": { "h": 7, "w": 9, "x": 18, "y": 7 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(cwi_orchestrator_ownership_transfer_requested_total[5m])) by (type)",
+          "legendFormat": "requested {{type}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(cwi_orchestrator_ownership_transfer_approved_total[5m])) by (type)",
+          "legendFormat": "approved {{type}}",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(rate(cwi_orchestrator_ownership_transfer_revoked_total[5m])) by (type)",
+          "legendFormat": "revoked {{type}}",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Simulation Feasibility Failures",
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 14 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "rate(cwi_orchestrator_simulation_infeasible_total[5m])",
+          "legendFormat": "infeasible",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(cwi_orchestrator_simulation_timeout_total[5m])",
+          "legendFormat": "timeout",
+          "refId": "B"
+        }
+      ]
+    }
+  ]
+}

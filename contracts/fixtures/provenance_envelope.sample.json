@@ -1,0 +1,19 @@
+{
+  "version": "v1",
+  "envelope_id": "connector-1:run-001",
+  "emitted_utc": "2026-02-01T12:00:00Z",
+  "connector_id": "connector-1",
+  "source": "gold-test",
+  "tenant_id": "tenant-1",
+  "workspace_id": "workspace-1",
+  "run_id": "run-001",
+  "summary": {
+    "doc_ids": [
+      "doc-1"
+    ],
+    "chunk_ids": [
+      "chunk-1"
+    ],
+    "redaction_count": 0
+  }
+}

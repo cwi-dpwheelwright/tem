@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GraphEdge",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "edge_id",
+    "from_node_id",
+    "to_node_id",
+    "relation",
+    "properties",
+    "created_utc"
+  ],
+  "properties": {
+    "edge_id": { "type": "string", "minLength": 1 },
+    "from_node_id": { "type": "string", "minLength": 1 },
+    "to_node_id": { "type": "string", "minLength": 1 },
+    "relation": { "type": "string", "minLength": 1 },
+    "directed": { "type": "boolean" },
+    "weight": { "type": "number", "minimum": 0 },
+    "properties": { "type": "object", "additionalProperties": true },
+    "source": { "type": "string", "minLength": 1 },
+    "tenant_id": { "type": "string", "minLength": 1 },
+    "graph_id": { "type": "string", "minLength": 1 },
+    "created_utc": { "type": "string", "format": "date-time" },
+    "updated_utc": { "type": "string", "format": "date-time" }
+  }
+}

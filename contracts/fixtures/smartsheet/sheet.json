@@ -1,0 +1,15 @@
+{
+  "documents": [
+    {
+      "doc_id": "sheet-row-001",
+      "title": "Smartsheet Fixture",
+      "content": "Smartsheet fixture content.",
+      "source": "smartsheet",
+      "metadata": {
+        "sheet_id": "sheet",
+        "tenant_id": "tenant-1",
+        "created_utc": "2026-01-03T00:00:00Z"
+      }
+    }
+  ]
+}

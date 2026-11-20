@@ -1,0 +1,13 @@
+gateway_url: "http://cwi-router:8081"
+tenant_id: "tenant-1"
+poll_interval_seconds: 15
+buffer_path: "/var/lib/cwi-edge-agent/buffer"
+# ingest_timeout_seconds: 10
+# identity login settings are supplied via env CWI_EDGE_AGENT_IDENTITY_*
+# survival:
+#   enabled: true
+#   endpoint: "http://cwi-router:8081/api/survival/signal"
+# metrics:
+#   enabled: false
+#   node_id: "internal-mcp-01-edge-agent"
+#   endpoint: "http://cwi-coordination-layer:8081/api/transport/link-metrics"

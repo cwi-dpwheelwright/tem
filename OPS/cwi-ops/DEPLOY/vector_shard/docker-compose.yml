@@ -1,0 +1,16 @@
+services:
+  cwi-vector-shard:
+    image: ${QDRANT_IMAGE}
+    container_name: internal-02-data-vector-shard
+    volumes:
+      - ${VECTOR_SHARD_DATA_DIR}:/qdrant/storage
+    expose:
+      - "${VECTOR_SHARD_HTTP_PORT}"
+      - "${VECTOR_SHARD_GRPC_PORT}"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+networks:
+  cwi-internal:
+    name: cwi-internal

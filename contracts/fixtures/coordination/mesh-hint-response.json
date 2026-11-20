@@ -1,0 +1,13 @@
+{
+  "node_id": "node-b07",
+  "preferred_interface": "sub6-1",
+  "preferred_path": "north-backhaul",
+  "confidence": 0.78,
+  "reason": "mmwave interference detected",
+  "fallback_interfaces": [
+    "wifi-2"
+  ],
+  "ttl_seconds": 120,
+  "cooldown_seconds": 30,
+  "hysteresis_margin": 0.1
+}

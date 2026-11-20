@@ -1,0 +1,18 @@
+{
+  "pack_id": "fixture-pack",
+  "pack_version": "1.2.3",
+  "name": "Fixture Pack",
+  "modules": [],
+  "dependencies": {
+    "packs": [
+      {
+        "pack_id": "core-pack",
+        "pack_version": "0.9.1"
+      },
+      {
+        "pack_id": "extra-pack",
+        "pack_version": "2.0.0"
+      }
+    ]
+  }
+}

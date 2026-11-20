@@ -1,0 +1,32 @@
+{
+  "defaults": {
+    "sshUser": "root",
+    "deployRoot": "/opt/cwi/DEPLOY",
+    "bundleRoot": "OPS/cwi-ops/DEPLOY",
+    "composeCommand": "docker compose",
+    "composeFile": "docker-compose.yml",
+    "composeArgs": "up -d",
+    "deploymentMode": "strict",
+    "seedEnvFromTemplate": true
+  },
+  "hosts": [
+    {
+      "name": "critic-node",
+      "host": "<CRITIC_NODE_TAILSCALE_IP>",
+      "roles": [
+        {
+          "name": "critic_node",
+          "buildContextPaths": [
+            "tools/critic-node"
+          ],
+          "buildImages": [
+            {
+              "image": "local/cwi-critic-node:local",
+              "dockerfile": "tools/critic-node/Dockerfile"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

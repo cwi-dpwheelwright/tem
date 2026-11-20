@@ -1,0 +1,16 @@
+[
+  {
+    "artifact_id": "report-2026-02-02-01",
+    "artifact_type": "report",
+    "latest_version": "v1",
+    "title": "Energy Optimization Summary",
+    "status": "active"
+  },
+  {
+    "artifact_id": "doc-proc-018",
+    "artifact_type": "document",
+    "latest_version": "1.8.2",
+    "title": "Zone 3 safety procedure",
+    "status": "active"
+  }
+]

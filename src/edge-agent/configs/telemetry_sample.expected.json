@@ -1,0 +1,35 @@
+{
+  "tenant_id": "tenant-1",
+  "window": {
+    "start": "2026-01-29T00:00:00Z",
+    "end": "2026-01-29T00:01:00Z"
+  },
+  "signals": [
+    {
+      "tag": "temperature",
+      "unit": "C",
+      "series": [
+        22.5,
+        22.7
+      ]
+    },
+    {
+      "tag": "pressure",
+      "unit": "kPa",
+      "series": [
+        101.2,
+        101.1
+      ]
+    }
+  ],
+  "metadata": {
+    "source_file": "telemetry_sample.csv",
+    "row_count": 2,
+    "timestamp_column": "timestamp",
+    "mapped_signals": [
+      "temperature",
+      "pressure"
+    ],
+    "idempotency_key": "8b740d2b0394c0fed841a48ac988360143047bb2c6735500ef75b45a37fbe362"
+  }
+}

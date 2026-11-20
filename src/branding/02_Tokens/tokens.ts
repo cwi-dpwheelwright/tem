@@ -1,0 +1,31 @@
+export const CWI = {
+  colors: {
+    navy_950: '#010B31',
+    navy_900: '#01173E',
+    navy_850: '#001F48',
+    navy_800: '#002659',
+    navy_700: '#012D67',
+    navy_600: '#043E80',
+    accent_600: '#004FC0',
+    accent_500: '#0063F0',
+    accent_400: '#408AF4',
+    text_primary: '#FFFFFF',
+    text_secondary: '#C8D3E6',
+    text_muted: '#8FA4C3',
+    divider: 'rgba(255,255,255,0.08)',
+    shadow_dark: 'rgba(0,0,0,0.55)',
+    shadow_light: 'rgba(255,255,255,0.06)',
+  },
+  radii: { xs: 10, sm: 14, md: 18, lg: 24, xl: 32, pill: 999 },
+  spacing: {
+    s0: 0,
+    s1: 4,
+    s2: 8,
+    s3: 12,
+    s4: 16,
+    s5: 24,
+    s6: 32,
+    s7: 40,
+    s8: 48,
+  }
+};

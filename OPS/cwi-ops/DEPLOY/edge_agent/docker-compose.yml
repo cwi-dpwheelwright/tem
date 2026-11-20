@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  cwi-edge-agent:
+    image: ${REGISTRY}/cwi-edge-agent:${CWI_EDGE_AGENT_TAG}
+    container_name: client-restricted-edge-agent
+    env_file: .env
+    build:
+      context: ../../../../src/edge-agent
+      dockerfile: Dockerfile
+    volumes:
+      - ./edge-agent.yaml:/etc/cwi/edge-agent.yaml:ro
+      - cwi-edge-agent-state:/var/lib/cwi-edge-agent
+    restart: unless-stopped
+
+volumes:
+  cwi-edge-agent-state:

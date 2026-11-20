@@ -1,0 +1,65 @@
+tenant_id: "tenant-1"
+workspace_id: "workspace-1"
+poll_interval_seconds: 300
+state_store:
+  kind: "file"
+  path: "/var/lib/cwi-connectors/state.json"
+vector_ingest_url: "https://gateway.your-domain"
+vector_ingest_token: "env://CWI_CONNECTORS_TOKEN"
+orchestrator_url: "https://gateway.your-domain"
+orchestrator_token: "env://CWI_CONNECTORS_TOKEN"
+# Optional JWT validation for orchestrator_token identity bindings.
+# orchestrator_jwks_url: "https://identity.your-domain/jwks"
+# orchestrator_jwks_path: "/etc/cwi/jwks.json"
+# orchestrator_jwt_issuer: "https://identity.your-domain"
+# orchestrator_jwt_audience: "cwi-orchestrator"
+# Set to true only for local/dev when JWKS is unavailable.
+# orchestrator_allow_insecure_jwt: false
+reconciliation_url: "https://gateway.your-domain"
+reconciliation_token: "env://CWI_CONNECTORS_TOKEN"
+admin_token: "env://CWI_CONNECTORS_ADMIN_TOKEN"
+admin_enabled: true
+delivery_queue_path: "/var/lib/cwi-connectors/queue.json"
+run_journal_path: "/var/lib/cwi-connectors/runs.json"
+retention_state_path: "/var/lib/cwi-connectors/retention.json"
+redaction_tokens:
+  - "secret"
+chunk_size: 800
+chunk_overlap: 100
+retention_days: 90
+connectors:
+  - id: "example-connector"
+    type: "google_drive"
+    enabled: true
+    source_priority: 50
+    config:
+      root_folder_id: "root"
+      api_base_url: "https://www.googleapis.com/drive/v3"
+      # fixture_path: "drive/list_files.json"
+    auth:
+      type: "api_key"
+      api_key:
+        header_name: "X-Api-Key"
+        value: "env://CONNECTOR_API_KEY"
+    identity:
+      owner_id: "user-123"
+      delegate_ids:
+        - "user-456"
+      policy_id: "policy-connector-owner"
+  - id: "stream-simulated"
+    type: "stream_simulated"
+    enabled: false
+    # Simulated connector requires CWI_ENABLE_SIMULATED_CONNECTORS=true and is for non-prod only.
+    source_priority: 75
+    config:
+      source_id: "sim-source"
+      total_events: 250
+      events_per_poll: 50
+      max_buffer_size: 20
+      overflow_strategy: "drop_oldest"
+      max_batch_size: 10
+    auth:
+      type: "api_key"
+      api_key:
+        header_name: "X-Api-Key"
+        value: "env://CONNECTOR_API_KEY"

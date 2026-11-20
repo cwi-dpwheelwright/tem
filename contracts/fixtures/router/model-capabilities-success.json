@@ -1,0 +1,9 @@
+{
+  "engine": "ollama",
+  "tier": "pro",
+  "ready": true,
+  "capacity": {
+    "max_concurrency": 4,
+    "queue_depth": 32
+  }
+}

@@ -1,0 +1,12 @@
+Phase 6 – High-Speed Backhaul + Direct NIC Fabric
+Status: Paused (pending Core NIC hardware arrival).
+
+Current posture:
+- No partial NIC or MTU optimizations are introduced mid-baseline.
+- Performance baselines from Phase 5 remain the comparison reference.
+
+When resumed, Phase 6 will include:
+- Core NIC upgrade and driver validation.
+- iperf3 and throughput baselines (LAN and shard paths).
+- MTU tuning (if enabled) with before/after evidence.
+- Updated latency and throughput evidence bundles.

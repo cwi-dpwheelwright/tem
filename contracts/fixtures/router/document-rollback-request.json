@@ -1,0 +1,6 @@
+{
+  "tenant_id": "tenant-demo",
+  "actor_id": "ops.lead",
+  "target_version": "1.8.1",
+  "reason": "Rollback to prior approved version"
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OperatorMemoryCorrelation",
+  "type": "object",
+  "required": [
+    "correlation_id",
+    "tenant_id",
+    "operator_id",
+    "observed_utc",
+    "consent",
+    "signals",
+    "performance",
+    "correlation_score"
+  ],
+  "properties": {
+    "correlation_id": { "type": "string" },
+    "tenant_id": { "type": "string" },
+    "operator_id": { "type": "string" },
+    "session_id": { "type": "string" },
+    "observed_utc": { "type": "string", "format": "date-time" },
+    "consent": {
+      "type": "object",
+      "required": ["granted", "granted_utc"],
+      "properties": {
+        "granted": { "type": "boolean" },
+        "granted_utc": { "type": "string", "format": "date-time" },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["signal_type", "value", "unit", "occurred_utc"],
+        "properties": {
+          "signal_type": { "type": "string" },
+          "value": { "type": "number" },
+          "unit": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "occurred_utc": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "performance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["metric", "value", "unit", "window_utc"],
+        "properties": {
+          "metric": { "type": "string" },
+          "value": { "type": "number" },
+          "unit": { "type": "string" },
+          "window_utc": { "type": "string", "format": "date-time" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "correlation_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "notes": { "type": "string" },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false
+}

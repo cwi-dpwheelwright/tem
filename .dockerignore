@@ -1,0 +1,11 @@
+.git
+.github
+artifacts
+**/node_modules
+**/bin
+**/obj
+**/.gradle
+**/.idea
+**/.env
+**/.env.*
+**/.DS_Store

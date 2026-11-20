@@ -1,0 +1,36 @@
+services:
+  cwi-gpu-worker:
+    ports:
+      - "${GPU_WORKER_HTTP_PORT}:${GPU_WORKER_HTTP_PORT}"
+
+  cwi-gpu-worker-pro:
+    ports:
+      - "${PRO_WORKER_HTTP_PORT}:${PRO_WORKER_HTTP_PORT}"
+
+  cwi-gpu-worker-free:
+    ports:
+      - "${FREE_WORKER_HTTP_PORT}:${FREE_WORKER_HTTP_PORT}"
+
+  cwi-model-worker-health:
+    ports:
+      - "${MODEL_HEALTH_PORT}:${MODEL_HEALTH_PORT}"
+
+  cwi-model-worker-health-pro:
+    ports:
+      - "${MODEL_HEALTH_PRO_PORT}:${MODEL_HEALTH_PRO_PORT}"
+    environment:
+      MODEL_UPSTREAM_URL: http://host.docker.internal:1080
+
+  cwi-model-worker-health-free:
+    ports:
+      - "${MODEL_HEALTH_FREE_PORT}:${MODEL_HEALTH_FREE_PORT}"
+    environment:
+      MODEL_UPSTREAM_URL: http://host.docker.internal:1080
+
+  cwi-model-capabilities-pro:
+    ports:
+      - "${MODEL_CAPABILITIES_PRO_PORT}:${MODEL_CAPABILITIES_PRO_PORT}"
+
+  cwi-model-capabilities-free:
+    ports:
+      - "${MODEL_CAPABILITIES_FREE_PORT}:${MODEL_CAPABILITIES_FREE_PORT}"

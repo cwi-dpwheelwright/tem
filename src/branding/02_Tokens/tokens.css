@@ -1,0 +1,36 @@
+:root {
+  --cwi-navy-950: #010B31;
+  --cwi-navy-900: #01173E;
+  --cwi-navy-850: #001F48;
+  --cwi-navy-800: #002659;
+  --cwi-navy-700: #012D67;
+  --cwi-navy-600: #043E80;
+  --cwi-accent-600: #004FC0;
+  --cwi-accent-500: #0063F0;
+  --cwi-accent-400: #408AF4;
+  --cwi-text-primary: #FFFFFF;
+  --cwi-text-secondary: #C8D3E6;
+  --cwi-text-muted: #8FA4C3;
+  --cwi-divider: rgba(255,255,255,0.08);
+  --cwi-shadow-dark: rgba(0,0,0,0.55);
+  --cwi-shadow-light: rgba(255,255,255,0.06);
+  --cwi-shadow-raised: 0 10px 30px rgba(0,0,0,0.45), 0 -6px 18px rgba(255,255,255,0.05);
+  --cwi-shadow-inset: inset 0 6px 16px rgba(0,0,0,0.50), inset 0 -4px 14px rgba(255,255,255,0.05);
+  --cwi-gradient-bg: radial-gradient(120% 120% at 50% 20%, #012D67 0%, #010B31 70%);
+  --cwi-gradient-surface: linear-gradient(180deg, #012D67 0%, #001F48 100%);
+  --cwi-radius-xs: 10px;
+  --cwi-radius-sm: 14px;
+  --cwi-radius-md: 18px;
+  --cwi-radius-lg: 24px;
+  --cwi-radius-xl: 32px;
+  --cwi-radius-pill: 999px;
+  --cwi-space-0: 0px;
+  --cwi-space-1: 4px;
+  --cwi-space-2: 8px;
+  --cwi-space-3: 12px;
+  --cwi-space-4: 16px;
+  --cwi-space-5: 24px;
+  --cwi-space-6: 32px;
+  --cwi-space-7: 40px;
+  --cwi-space-8: 48px;
+}

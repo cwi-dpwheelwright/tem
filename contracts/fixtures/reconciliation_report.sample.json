@@ -1,0 +1,32 @@
+{
+  "report_id": "recon-2026-02-02-01",
+  "tenant_id": "tenant-demo",
+  "run_id": "run-2026-02-02",
+  "report_type": "reconciliation",
+  "generated_utc": "2026-02-02T17:05:00Z",
+  "title": "Reconciliation Report - Run 2026-02-02",
+  "status": "review",
+  "summary": "Three conflicts and two discrepancies flagged during ingestion.",
+  "coherence_score": 0.76,
+  "conflict_count": 3,
+  "narrative": "Reconciliation run run-2026-02-02 detected 3 conflicts and 2 discrepancies. Review approval tickets before publishing.",
+  "structured": {
+    "run_id": "run-2026-02-02",
+    "conflict_count": 3,
+    "discrepancy_count": 2,
+    "discrepancy_ids": ["disc-2026-02-02-01", "disc-2026-02-02-02"],
+    "metrics": {
+      "entity_count": 42
+    }
+  },
+  "sources": [
+    {
+      "source_id": "etl-run-448",
+      "source_type": "ingestion",
+      "version": "2026.02"
+    }
+  ],
+  "metadata": {
+    "format_version": "1.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ActivationState",
+  "type": "object",
+  "required": ["device_id", "bundle_id", "activated_utc", "expires_utc"],
+  "properties": {
+    "device_id": { "type": "string" },
+    "bundle_id": { "type": "string" },
+    "activated_utc": { "type": "string", "format": "date-time" },
+    "expires_utc": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

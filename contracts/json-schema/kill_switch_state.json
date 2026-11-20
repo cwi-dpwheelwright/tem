@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KillSwitchState",
+  "type": "object",
+  "required": ["enabled", "irreversible"],
+  "properties": {
+    "enabled": { "type": "boolean" },
+    "irreversible": { "type": "boolean" },
+    "updated_utc": { "type": "string", "format": "date-time" },
+    "source": { "type": "string" }
+  },
+  "additionalProperties": false
+}

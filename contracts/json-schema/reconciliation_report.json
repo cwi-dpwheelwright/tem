@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cwi.dev/schemas/reconciliation_report.json",
+  "title": "ReconciliationReport",
+  "allOf": [
+    { "$ref": "contracts/json-schema/dual_format_report.json" }
+  ],
+  "type": "object",
+  "required": ["report_type", "run_id"],
+  "properties": {
+    "report_type": { "const": "reconciliation" },
+    "run_id": { "type": "string" }
+  }
+}

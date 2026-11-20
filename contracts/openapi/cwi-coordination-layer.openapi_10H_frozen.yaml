@@ -1,0 +1,1571 @@
+openapi: 3.0.3
+info:
+  title: CWI Coordination Layer API (Frozen 10H)
+  version: 10H.1.0
+  description: 'Frozen OpenAPI contract for the cwi-coordination-layer service.
+
+
+    Responsibilities:
+
+    - Manages membership enrollment and rotation
+
+    - Provides activation status checks
+
+    - Emits readiness status for dependency health'
+servers:
+- url: http://cwi-coordination-layer:8080
+  description: Internal (Docker/Compose) service URL
+tags:
+- name: Health
+  description: Liveness/readiness endpoints
+- name: Membership
+  description: Membership enrollment and rotation
+- name: Activation
+  description: Activation status checks
+- name: Degradation
+  description: Degradation event ingestion
+- name: Transport
+  description: Transport plugin ingestion
+- name: Mesh
+  description: Mesh topology and routing hints
+- name: Placement
+  description: Mesh placement metrics and optimization
+- name: Survival
+  description: Survival-mode policy management
+- name: Backhaul
+  description: Backhaul policy enforcement
+- name: Ledger
+  description: Append-only ledger and verification
+components:
+  parameters:
+    CoordinationProtocol:
+      name: X-Coordination-Protocol
+      in: header
+      required: true
+      description: Coordination protocol version header.
+      schema:
+        type: string
+        maxLength: 32
+    NodeId:
+      name: node_id
+      in: query
+      required: true
+      description: Node identifier.
+      schema:
+        type: string
+        maxLength: 128
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: Error code identifier.
+        message:
+          type: string
+          description: Human-readable error description.
+    HealthResponse:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+    DependencyStatus:
+      type: object
+      required:
+      - url
+      - healthy
+      properties:
+        url:
+          type: string
+        healthy:
+          type: boolean
+    ReadyResponse:
+      type: object
+      required:
+      - ready
+      - dependencies
+      properties:
+        ready:
+          type: boolean
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/DependencyStatus'
+    EnrollmentRequest:
+      type: object
+      required:
+      - node_id
+      - cert_fingerprint
+      - protocol_version
+      properties:
+        node_id:
+          type: string
+          maxLength: 128
+        cert_fingerprint:
+          type: string
+          description: SHA-256 certificate fingerprint (hex).
+          maxLength: 128
+        protocol_version:
+          type: string
+          maxLength: 32
+    EnrollmentResponse:
+      type: object
+      required:
+      - node_id
+      - status
+      properties:
+        node_id:
+          type: string
+        status:
+          type: string
+    MemberResponse:
+      type: object
+      required:
+      - node_id
+      - cert_fingerprint
+      - status
+      - joined_utc
+      properties:
+        node_id:
+          type: string
+        cert_fingerprint:
+          type: string
+        status:
+          type: string
+        joined_utc:
+          type: string
+          format: date-time
+        revoked_utc:
+          type: string
+          format: date-time
+          nullable: true
+    RotationRequest:
+      type: object
+      required:
+      - node_id
+      - new_cert_fingerprint
+      properties:
+        node_id:
+          type: string
+        new_cert_fingerprint:
+          type: string
+          description: SHA-256 certificate fingerprint (hex).
+    RevokeRequest:
+      type: object
+      required:
+      - node_id
+      - reason
+      properties:
+        node_id:
+          type: string
+        reason:
+          type: string
+    ActivationStatusResponse:
+      type: object
+      required:
+      - node_id
+      - status
+      - checked_utc
+      properties:
+        node_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - pending
+          - revoked
+          - unknown
+        revoked_utc:
+          type: string
+          format: date-time
+          nullable: true
+        checked_utc:
+          type: string
+          format: date-time
+    DegradationEventRequest:
+      type: object
+      required:
+      - event_id
+      - node_id
+      - observed_utc
+      - severity
+      - details
+      properties:
+        event_id:
+          type: string
+        node_id:
+          type: string
+        observed_utc:
+          type: string
+          format: date-time
+        severity:
+          type: number
+          minimum: 0
+          maximum: 1
+        details:
+          type: object
+          additionalProperties: true
+        provenance:
+          type: object
+          nullable: true
+          additionalProperties: true
+    DegradationEventReceipt:
+      type: object
+      required:
+      - event_id
+      - received_utc
+      properties:
+        event_id:
+          type: string
+        received_utc:
+          type: string
+          format: date-time
+    LinkMetricsTransportRequest:
+      type: object
+      required:
+      - node_id
+      properties:
+        node_id:
+          type: string
+        observed_utc:
+          type: string
+          format: date-time
+          nullable: true
+        sequence:
+          type: integer
+          format: int64
+          nullable: true
+        payload:
+          $ref: '#/components/schemas/LinkMetricsReport'
+        signature:
+          type: string
+          nullable: true
+        key_id:
+          type: string
+          nullable: true
+        interfaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkMetricsInterface'
+    LinkMetricsReport:
+      type: object
+      required:
+      - node_id
+      - interfaces
+      properties:
+        node_id:
+          type: string
+        observed_utc:
+          type: string
+          format: date-time
+          nullable: true
+        interfaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkMetricsInterface'
+    LinkMetricsInterface:
+      type: object
+      required:
+      - interface_id
+      - interface_type
+      - state
+      properties:
+        interface_id:
+          type: string
+        interface_type:
+          type: string
+        observed_utc:
+          type: string
+          format: date-time
+          nullable: true
+        state:
+          type: string
+        rx_mbps:
+          type: number
+          nullable: true
+        tx_mbps:
+          type: number
+          nullable: true
+        mtu:
+          type: integer
+          nullable: true
+        quality:
+          $ref: '#/components/schemas/LinkMetricsQuality'
+    LinkMetricsQuality:
+      type: object
+      properties:
+        latency_ms:
+          type: number
+          nullable: true
+        jitter_ms:
+          type: number
+          nullable: true
+        loss_ratio:
+          type: number
+          nullable: true
+        throughput_mbps:
+          type: number
+          nullable: true
+        rssi_dbm:
+          type: number
+          nullable: true
+        snr_db:
+          type: number
+          nullable: true
+    LinkMetricsIngestResponse:
+      type: object
+      required:
+      - node_id
+      - accepted
+      - rejected
+      properties:
+        node_id:
+          type: string
+        accepted:
+          type: integer
+        rejected:
+          type: integer
+    LinkStateUpdateRequest:
+      type: object
+      required:
+      - node_id
+      - interface
+      properties:
+        node_id:
+          type: string
+        interface:
+          type: string
+        signal_quality:
+          type: number
+        latency_ms:
+          type: integer
+        jitter_ms:
+          type: number
+          nullable: true
+        packet_loss:
+          type: number
+        bandwidth_kbps:
+          type: integer
+        throughput_kbps:
+          type: integer
+        rssi_dbm:
+          type: number
+          nullable: true
+        snr_db:
+          type: number
+          nullable: true
+    LinkStateResponse:
+      type: object
+      required:
+      - node_id
+      - interface
+      - signal_quality
+      - latency_ms
+      - packet_loss
+      - bandwidth_kbps
+      - throughput_kbps
+      - status
+      - updated_utc
+      properties:
+        node_id:
+          type: string
+        interface:
+          type: string
+        signal_quality:
+          type: number
+        latency_ms:
+          type: integer
+        jitter_ms:
+          type: number
+          nullable: true
+        packet_loss:
+          type: number
+        bandwidth_kbps:
+          type: integer
+        throughput_kbps:
+          type: integer
+        rssi_dbm:
+          type: number
+          nullable: true
+        snr_db:
+          type: number
+          nullable: true
+        status:
+          type: string
+          enum:
+          - healthy
+          - degraded
+          - down
+        updated_utc:
+          type: string
+          format: date-time
+    RoutingHintRequest:
+      type: object
+      required:
+      - node_id
+      properties:
+        node_id:
+          type: string
+        task_complexity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+    RoutingHintResponse:
+      type: object
+      required:
+      - node_id
+      - preferred_interface
+      - confidence
+      - reason
+      - fallback_interfaces
+      - ttl_seconds
+      - cooldown_seconds
+      - hysteresis_margin
+      properties:
+        node_id:
+          type: string
+        preferred_interface:
+          type: string
+        preferred_path:
+          type: string
+          nullable: true
+        confidence:
+          type: number
+        reason:
+          type: string
+        fallback_interfaces:
+          type: array
+          items:
+            type: string
+        ttl_seconds:
+          type: integer
+        cooldown_seconds:
+          type: integer
+        hysteresis_margin:
+          type: number
+    SurvivalModeRequest:
+      type: object
+      required:
+      - enabled
+      properties:
+        enabled:
+          type: boolean
+        reason:
+          type: string
+          nullable: true
+    SurvivalModeResponse:
+      type: object
+      required:
+      - enabled
+      - updated_utc
+      properties:
+        enabled:
+          type: boolean
+        reason:
+          type: string
+          nullable: true
+        updated_utc:
+          type: string
+          format: date-time
+    BackhaulPolicyRequest:
+      type: object
+      required:
+      - require_authenticated_channel
+      properties:
+        require_authenticated_channel:
+          type: boolean
+        allowed_interfaces:
+          type: array
+          items:
+            type: string
+        denied_interfaces:
+          type: array
+          items:
+            type: string
+        revoked_peers:
+          type: array
+          items:
+            type: string
+        policy_version:
+          type: string
+    BackhaulPolicyResponse:
+      type: object
+      required:
+      - require_authenticated_channel
+      - policy_version
+      properties:
+        require_authenticated_channel:
+          type: boolean
+        allowed_interfaces:
+          type: array
+          items:
+            type: string
+        denied_interfaces:
+          type: array
+          items:
+            type: string
+        revoked_peers:
+          type: array
+          items:
+            type: string
+        policy_version:
+          type: string
+    BackhaulDecisionRequest:
+      type: object
+      required:
+      - interface
+      - authenticated
+      properties:
+        interface:
+          type: string
+        peer_id:
+          type: string
+          nullable: true
+        authenticated:
+          type: boolean
+    BackhaulDecisionResponse:
+      type: object
+      required:
+      - allowed
+      - reason
+      properties:
+        allowed:
+          type: boolean
+        reason:
+          type: string
+    MeshEventResponse:
+      type: object
+      required:
+      - event_id
+      - node_id
+      - interface
+      - event_type
+      - reason
+      - created_utc
+      properties:
+        event_id:
+          type: string
+          format: uuid
+        node_id:
+          type: string
+        interface:
+          type: string
+        event_type:
+          type: string
+        reason:
+          type: string
+        created_utc:
+          type: string
+          format: date-time
+    TopologyHealthResponse:
+      type: object
+      required:
+      - status
+      - total_nodes
+      - degraded_nodes
+      - down_nodes
+      - total_links
+      - degraded_links
+      - down_links
+      - nodes
+      - generated_utc
+      properties:
+        status:
+          type: string
+        total_nodes:
+          type: integer
+        degraded_nodes:
+          type: integer
+        down_nodes:
+          type: integer
+        total_links:
+          type: integer
+        degraded_links:
+          type: integer
+        down_links:
+          type: integer
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodeHealthResponse'
+        generated_utc:
+          type: string
+          format: date-time
+    NodeHealthResponse:
+      type: object
+      required:
+      - node_id
+      - status
+      - link_count
+      - degraded_links
+      - down_links
+      properties:
+        node_id:
+          type: string
+        status:
+          type: string
+        link_count:
+          type: integer
+        degraded_links:
+          type: integer
+        down_links:
+          type: integer
+    RerouteGuidanceRequest:
+      type: object
+      required:
+      - node_id
+      properties:
+        node_id:
+          type: string
+        current_interface:
+          type: string
+          nullable: true
+        task_complexity:
+          type: string
+          nullable: true
+    RerouteGuidanceResponse:
+      type: object
+      required:
+      - node_id
+      - reroute_required
+      - preferred_interface
+      - fallback_interfaces
+      - confidence
+      - reason
+      - generated_utc
+      properties:
+        node_id:
+          type: string
+        reroute_required:
+          type: boolean
+        preferred_interface:
+          type: string
+        fallback_interfaces:
+          type: array
+          items:
+            type: string
+        confidence:
+          type: number
+        reason:
+          type: string
+        generated_utc:
+          type: string
+          format: date-time
+    PlacementMetricsRequest:
+      type: object
+      required:
+      - metrics_id
+      - node_id
+      - observed_utc
+      - radio
+      - environment
+      - uncertainty
+      properties:
+        metrics_id:
+          type: string
+        node_id:
+          type: string
+        observed_utc:
+          type: string
+          format: date-time
+        scenario_id:
+          type: string
+          nullable: true
+        radio:
+          $ref: '#/components/schemas/PlacementRadioMetrics'
+        environment:
+          $ref: '#/components/schemas/PlacementEnvironmentMetrics'
+        uncertainty:
+          $ref: '#/components/schemas/PlacementUncertaintyMetrics'
+        metadata:
+          type: object
+          additionalProperties: true
+    PlacementMetricsResponse:
+      type: object
+      required:
+      - metrics_id
+      - node_id
+      - observed_utc
+      - radio
+      - environment
+      - uncertainty
+      properties:
+        metrics_id:
+          type: string
+        node_id:
+          type: string
+        observed_utc:
+          type: string
+          format: date-time
+        scenario_id:
+          type: string
+          nullable: true
+        radio:
+          $ref: '#/components/schemas/PlacementRadioMetrics'
+        environment:
+          $ref: '#/components/schemas/PlacementEnvironmentMetrics'
+        uncertainty:
+          $ref: '#/components/schemas/PlacementUncertaintyMetrics'
+        metadata:
+          type: object
+          additionalProperties: true
+    PlacementRecommendationRequest:
+      type: object
+      required:
+      - tenant_id
+      properties:
+        tenant_id:
+          type: string
+        scenario_id:
+          type: string
+          nullable: true
+        survival_mode_bias:
+          type: boolean
+          nullable: true
+        constraints:
+          $ref: '#/components/schemas/PlacementRecommendationConstraints'
+        node_ids:
+          type: array
+          items:
+            type: string
+        limit:
+          type: integer
+          format: int32
+        metadata:
+          type: object
+          additionalProperties: true
+    PlacementRecommendationResponse:
+      type: object
+      required:
+      - recommendation_id
+      - tenant_id
+      - generated_utc
+      - nodes
+      - score
+      properties:
+        recommendation_id:
+          type: string
+        tenant_id:
+          type: string
+        generated_utc:
+          type: string
+          format: date-time
+        scenario_id:
+          type: string
+          nullable: true
+        survival_mode_bias:
+          type: boolean
+        score:
+          type: number
+        constraints:
+          $ref: '#/components/schemas/PlacementRecommendationConstraints'
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlacementRecommendationNode'
+        rationale:
+          type: string
+          nullable: true
+        governance:
+          $ref: '#/components/schemas/PlacementGovernanceSummary'
+        provenance:
+          $ref: '#/components/schemas/PlacementProvenance'
+        metadata:
+          type: object
+          additionalProperties: true
+    PlacementRecommendationNode:
+      type: object
+      required:
+      - node_id
+      - recommended_location
+      - confidence
+      properties:
+        node_id:
+          type: string
+        recommended_location:
+          $ref: '#/components/schemas/PlacementRecommendationLocation'
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        rationale:
+          type: string
+          nullable: true
+        node_constraints:
+          $ref: '#/components/schemas/PlacementRecommendationConstraints'
+    PlacementRecommendationLocation:
+      type: object
+      required:
+      - lat
+      - lon
+      properties:
+        lat:
+          type: number
+        lon:
+          type: number
+        altitude_m:
+          type: number
+          nullable: true
+    PlacementRecommendationConstraints:
+      type: object
+      properties:
+        max_latency_ms:
+          type: number
+          nullable: true
+        min_rssi:
+          type: number
+          nullable: true
+        min_snr:
+          type: number
+          nullable: true
+    PlacementGovernanceSummary:
+      type: object
+      required:
+      - status
+      - policy_version
+      - evaluated_utc
+      properties:
+        status:
+          type: string
+        policy_version:
+          type: string
+        decision_id:
+          type: string
+          nullable: true
+        evaluated_utc:
+          type: string
+          format: date-time
+        notes:
+          type: string
+          nullable: true
+    PlacementProvenance:
+      type: object
+      properties:
+        metrics_ids:
+          type: array
+          items:
+            type: string
+        node_count:
+          type: integer
+          format: int32
+        source:
+          type: string
+          nullable: true
+    LedgerEventResponse:
+      type: object
+      required:
+      - event_id
+      - event_type
+      - payload_json
+      - prev_hash
+      - hash
+      - created_utc
+      properties:
+        event_id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+        payload_json:
+          type: string
+        prev_hash:
+          type: string
+        hash:
+          type: string
+        created_utc:
+          type: string
+          format: date-time
+    LedgerVerificationResponse:
+      type: object
+      required:
+      - valid
+      - checked_events
+      - checked_utc
+      properties:
+        valid:
+          type: boolean
+        checked_events:
+          type: integer
+          format: int32
+        last_valid_event_id:
+          type: string
+          format: uuid
+          nullable: true
+        failure_event_id:
+          type: string
+          format: uuid
+          nullable: true
+        failure_reason:
+          type: string
+          nullable: true
+        checked_utc:
+          type: string
+          format: date-time
+    PlacementRadioMetrics:
+      type: object
+      required:
+      - latency_ms
+      - packet_loss
+      - rssi_dbm
+      - snr_db
+      - throughput_mbps
+      - bandwidth_mbps
+      properties:
+        latency_ms:
+          type: number
+        jitter_ms:
+          type: number
+          nullable: true
+        packet_loss:
+          type: number
+          minimum: 0
+          maximum: 1
+        rssi_dbm:
+          type: number
+        snr_db:
+          type: number
+        throughput_mbps:
+          type: number
+        bandwidth_mbps:
+          type: number
+        noise_floor_dbm:
+          type: number
+          nullable: true
+        interference_index:
+          type: number
+          minimum: 0
+          maximum: 1
+          nullable: true
+    PlacementEnvironmentMetrics:
+      type: object
+      required:
+      - temperature_c
+      - humidity_pct
+      properties:
+        temperature_c:
+          type: number
+        humidity_pct:
+          type: number
+          minimum: 0
+          maximum: 100
+        wind_speed_mps:
+          type: number
+          nullable: true
+        precipitation_mm:
+          type: number
+          nullable: true
+        terrain:
+          type: string
+          nullable: true
+        obstruction_index:
+          type: number
+          minimum: 0
+          maximum: 1
+          nullable: true
+    PlacementUncertaintyMetrics:
+      type: object
+      required:
+      - confidence
+      properties:
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        rssi_stddev:
+          type: number
+          nullable: true
+        snr_stddev:
+          type: number
+          nullable: true
+        latency_stddev:
+          type: number
+          nullable: true
+        throughput_stddev:
+          type: number
+          nullable: true
+        location_stddev_m:
+          type: number
+          nullable: true
+paths:
+  /health:
+    get:
+      tags:
+      - Health
+      summary: Liveness check
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /api/ready:
+    get:
+      tags:
+      - Health
+      summary: Dependency readiness check
+      responses:
+        '200':
+          description: Ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadyResponse'
+        '503':
+          description: Not ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadyResponse'
+  /api/membership/enroll:
+    post:
+      tags:
+      - Membership
+      summary: Enroll node membership
+      parameters:
+      - $ref: '#/components/parameters/CoordinationProtocol'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnrollmentRequest'
+      responses:
+        '200':
+          description: Enrolled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/membership/rotate:
+    post:
+      tags:
+      - Membership
+      summary: Rotate membership certificate
+      parameters:
+      - $ref: '#/components/parameters/CoordinationProtocol'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RotationRequest'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/membership/revoke:
+    post:
+      tags:
+      - Membership
+      summary: Revoke node membership
+      parameters:
+      - $ref: '#/components/parameters/CoordinationProtocol'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeRequest'
+      responses:
+        '200':
+          description: Revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/membership:
+    get:
+      tags:
+      - Membership
+      summary: List memberships
+      parameters:
+      - $ref: '#/components/parameters/CoordinationProtocol'
+      responses:
+        '200':
+          description: Membership list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MemberResponse'
+  /api/activation/status:
+    get:
+      tags:
+      - Activation
+      summary: Activation status for a node
+      parameters:
+      - $ref: '#/components/parameters/NodeId'
+      responses:
+        '200':
+          description: Activation status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivationStatusResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/degradation/events:
+    post:
+      tags:
+      - Degradation
+      summary: Receive degradation events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DegradationEventRequest'
+      responses:
+        '200':
+          description: Event receipt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DegradationEventReceipt'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/transport/link-metrics:
+    post:
+      tags:
+      - Transport
+      summary: Ingest link metrics from transport plugins
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkMetricsTransportRequest'
+      responses:
+        '200':
+          description: Ingest result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkMetricsIngestResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/mesh/links:
+    post:
+      tags:
+      - Mesh
+      summary: Upsert link state
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkStateUpdateRequest'
+      responses:
+        '200':
+          description: Link state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkStateResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+      - Mesh
+      summary: List link states
+      parameters:
+      - name: node_id
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Link states
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinkStateResponse'
+  /api/mesh/events:
+    get:
+      tags:
+      - Mesh
+      summary: List mesh events
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Mesh events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MeshEventResponse'
+  /api/mesh/health:
+    get:
+      tags:
+      - Mesh
+      summary: Get topology health
+      responses:
+        '200':
+          description: Topology health
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopologyHealthResponse'
+  /api/mesh/hints:
+    post:
+      tags:
+      - Mesh
+      summary: Compute routing hint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoutingHintRequest'
+      responses:
+        '200':
+          description: Routing hint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutingHintResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: No routing hint available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/mesh/reroute:
+    post:
+      tags:
+      - Mesh
+      summary: Get reroute guidance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RerouteGuidanceRequest'
+      responses:
+        '200':
+          description: Reroute guidance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RerouteGuidanceResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: No reroute guidance available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/placement/metrics:
+    post:
+      tags:
+      - Placement
+      summary: Ingest placement metrics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlacementMetricsRequest'
+      responses:
+        '200':
+          description: Placement metrics accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlacementMetricsResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+      - Placement
+      summary: List placement metrics
+      parameters:
+      - name: node_id
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 128
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+      responses:
+        '200':
+          description: Placement metrics list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlacementMetricsResponse'
+  /api/placement/recommendations:
+    post:
+      tags:
+      - Placement
+      summary: Generate placement recommendations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlacementRecommendationRequest'
+      responses:
+        '200':
+          description: Placement recommendation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlacementRecommendationResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: No candidates meet constraints
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: No placement metrics available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/ledger/events:
+    get:
+      tags:
+      - Ledger
+      summary: List ledger events
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: since_utc
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          minimum: 1
+          maximum: 5000
+      responses:
+        '200':
+          description: Ledger events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LedgerEventResponse'
+  /api/ledger/verify:
+    get:
+      tags:
+      - Ledger
+      summary: Verify ledger hash chain
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 5000
+      responses:
+        '200':
+          description: Ledger verification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LedgerVerificationResponse'
+  /api/survival:
+    get:
+      tags:
+      - Survival
+      summary: Get survival-mode policy
+      responses:
+        '200':
+          description: Survival mode policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurvivalModeResponse'
+    post:
+      tags:
+      - Survival
+      summary: Set survival-mode policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SurvivalModeRequest'
+      responses:
+        '200':
+          description: Survival mode policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurvivalModeResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/backhaul/policy:
+    get:
+      tags:
+      - Backhaul
+      summary: Get backhaul policy
+      responses:
+        '200':
+          description: Backhaul policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackhaulPolicyResponse'
+    put:
+      tags:
+      - Backhaul
+      summary: Set backhaul policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackhaulPolicyRequest'
+      responses:
+        '200':
+          description: Backhaul policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackhaulPolicyResponse'
+  /api/backhaul/evaluate:
+    post:
+      tags:
+      - Backhaul
+      summary: Evaluate backhaul decision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackhaulDecisionRequest'
+      responses:
+        '200':
+          description: Backhaul decision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackhaulDecisionResponse'
+        '403':
+          description: Forbidden by policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

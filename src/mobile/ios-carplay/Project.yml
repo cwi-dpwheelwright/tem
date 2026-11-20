@@ -1,0 +1,50 @@
+name: CwiIosCarplay
+options:
+  bundleIdPrefix: com.cwi
+targets:
+  CwiIosCarplay:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    bundleId: com.cwi.personal
+    sources:
+      - Sources
+    resources:
+      - Resources
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: CWI CarPlay
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+                UISceneDelegateClassName: "$(PRODUCT_MODULE_NAME).SceneDelegate"
+            CPTemplateApplicationSceneSessionRoleApplication:
+              - UISceneConfigurationName: CarPlay Configuration
+                UISceneDelegateClassName: "$(PRODUCT_MODULE_NAME).CarPlaySceneDelegate"
+  CwiIosCarplayTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "16.0"
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+    sources:
+      - Tests
+    resources:
+      - Tests/Fixtures
+    dependencies:
+      - target: CwiIosCarplay
+  CwiIosCarplayUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "16.0"
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+    sources:
+      - UITests
+    dependencies:
+      - target: CwiIosCarplay

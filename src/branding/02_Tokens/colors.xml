@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="cwi_navy_950">#010B31</color>
+  <color name="cwi_navy_900">#01173E</color>
+  <color name="cwi_navy_850">#001F48</color>
+  <color name="cwi_navy_800">#002659</color>
+  <color name="cwi_navy_700">#012D67</color>
+  <color name="cwi_navy_600">#043E80</color>
+  <color name="cwi_accent_600">#004FC0</color>
+  <color name="cwi_accent_500">#0063F0</color>
+  <color name="cwi_accent_400">#408AF4</color>
+  <color name="cwi_text_primary">#FFFFFF</color>
+  <color name="cwi_text_secondary">#C8D3E6</color>
+  <color name="cwi_text_muted">#8FA4C3</color>
+</resources>

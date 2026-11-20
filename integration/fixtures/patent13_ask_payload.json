@@ -1,0 +1,12 @@
+{
+  "tenant_id": "tenant_dev",
+  "user_id": "integration-patent13",
+  "question": "Generate a dual-format incident report (structured JSON + narrative) for a 15-minute outage affecting Pump P-101 based on the provided timeline.",
+  "pack": {
+    "name": "enterprise"
+  },
+  "context": {
+    "mode": "observe",
+    "top_k": 3
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "sub": "6b61cf63-1095-44bd-b494-b6197bfcc6d3",
+  "tenant_id": "tenant-1",
+  "session_id": "0f6777e3-1727-48c8-b189-b4cb1598f861",
+  "token_version": 2,
+  "iss": "cwi-identity",
+  "aud": "cwi",
+  "nbf": 1706790000,
+  "exp": 1706793600
+}

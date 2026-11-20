@@ -1,0 +1,8 @@
+{
+  "tenant_id": "tenant-demo",
+  "asset_id": "agent-pack-22",
+  "owner_id": "owner-001",
+  "parent_asset_id": "agent-pack-21",
+  "relationship": "owner",
+  "reason": "succession bootstrap"
+}

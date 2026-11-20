@@ -1,0 +1,36 @@
+{
+  "defaults": {
+    "sshUser": "root",
+    "deployRoot": "/opt/cwi/DEPLOY",
+    "bundleRoot": "OPS/cwi-ops/DEPLOY",
+    "composeCommand": "docker compose",
+    "composeFile": "docker-compose.yml",
+    "composeArgs": "up -d",
+    "seedEnvFromTemplate": true
+  },
+  "hosts": [
+    {
+      "name": "public-gateway-01",
+      "host": "100.124.140.66",
+      "roles": [
+        {
+          "name": "cwi-gpt-web-ui",
+          "bundle": "OPS/cwi-ops/compose/cwi-gpt-web-ui",
+          "imageTar": "OPS/cwi-ops/DEPLOY/public-ui-images.tar",
+          "envFile": "OPS/cwi-ops/DEPLOY/public-gpt.env"
+        },
+        {
+          "name": "ollama",
+          "bundle": "OPS/cwi-ops/compose/ollama",
+          "envFile": "OPS/cwi-ops/DEPLOY/public-ollama.env"
+        },
+        {
+          "name": "cwi-identity-server",
+          "bundle": "OPS/cwi-ops/compose/cwi-identity-server",
+          "imageTar": "OPS/cwi-ops/DEPLOY/public-identity-images.tar",
+          "envFile": "OPS/cwi-ops/DEPLOY/public-identity.env"
+        }
+      ]
+    }
+  ]
+}

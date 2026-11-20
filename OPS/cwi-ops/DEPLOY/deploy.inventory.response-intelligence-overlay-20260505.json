@@ -1,0 +1,54 @@
+{
+  "defaults": {
+    "sshUser": "root",
+    "deployRoot": "/opt/cwi/DEPLOY",
+    "bundleRoot": "OPS/cwi-ops/DEPLOY",
+    "composeCommand": "docker compose",
+    "composeFile": "docker-compose.yml",
+    "composeArgs": "up -d",
+    "deploymentMode": "safe",
+    "seedEnvFromTemplate": true,
+    "clearContainersBeforeDeploy": false,
+    "clearImagesBeforeDeploy": false,
+    "clearVolumesBeforeDeploy": false
+  },
+  "hosts": [
+    {
+      "name": "internal-mcp-01",
+      "host": "100.120.208.51",
+      "roles": [
+        {
+          "name": "mcp-core",
+          "composeArgs": "up -d --force-recreate cwi-orchestrator",
+          "buildContextPaths": [
+            "global.json",
+            "src/backend/common",
+            "src/backend/services/cwi-language-normalization",
+            "src/backend/services/cwi-orchestrator",
+            "contracts/grpc",
+            "contracts/json-schema"
+          ],
+          "buildImages": [
+            {
+              "image": "local/cwi-orchestrator:sustainability-node-routing",
+              "dockerfile": "src/backend/services/cwi-orchestrator/Dockerfile"
+            }
+          ],
+          "copyPaths": [
+            {
+              "source": "src/backend/services/cwi-orchestrator/src/Cwi.Orchestrator.DataAccess/Migrations",
+              "target": "orchestrator-migrations"
+            },
+            {
+              "source": "OPS/cwi-ops/scripts/orchestrator-migrate.sh",
+              "target": "orchestrator-migrations"
+            }
+          ],
+          "preComposeCommands": [
+            "cd /opt/cwi/DEPLOY/mcp-core && docker compose -f docker-compose.yml --env-file .env up -d orchestrator-postgres && docker compose -f docker-compose.yml --env-file .env run --rm orchestrator-migrations"
+          ]
+        }
+      ]
+    }
+  ]
+}

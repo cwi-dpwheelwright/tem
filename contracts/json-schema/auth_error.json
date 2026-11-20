@@ -1,0 +1,16 @@
+{
+  "$id": "https://cwi.dev/schemas/auth_error.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AuthError",
+  "type": "object",
+  "required": ["error", "message"],
+  "properties": {
+    "error": { "type": "string" },
+    "message": { "type": "string" },
+    "details": {
+      "type": ["array", "null"],
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

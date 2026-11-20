@@ -1,0 +1,30 @@
+{
+  "schema_version": "recursive-event.v1",
+  "event_id": "rec-evt-0001",
+  "event_type": "quality_observation.created",
+  "tenant_id": "tenant-1",
+  "user_scope": {
+    "scope_type": "user",
+    "user_id_hash": "8a6c4c9f4d31b2aa"
+  },
+  "source": {
+    "component": "runtime_critic",
+    "source_type": "critic",
+    "source_id": "trace-abc123"
+  },
+  "confidence": 0.82,
+  "trace_id": "trace-abc123",
+  "policy_status": "observe_only",
+  "timestamp_utc": "2026-05-06T12:00:00Z",
+  "temporal_state": "current",
+  "payload": {
+    "category": "synthesis",
+    "rule": "backend_language_in_everyday_answer",
+    "severity": "warn"
+  },
+  "provenance": {
+    "source_hash": "7ef9b7f4a3c20c8d",
+    "created_utc": "2026-05-06T12:00:01Z",
+    "actor": "cwi-orchestrator"
+  }
+}

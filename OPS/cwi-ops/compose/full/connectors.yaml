@@ -1,0 +1,28 @@
+tenant_id: "tenant-1"
+workspace_id: "workspace-1"
+poll_interval_seconds: 300
+state_store:
+  kind: "file"
+  path: "/var/lib/cwi-connectors/state.json"
+vector_ingest_url: "http://cwi-gateway:18081"
+vector_ingest_token: "env://CWI_CONNECTORS_TOKEN"
+orchestrator_url: "http://cwi-gateway:18081"
+orchestrator_token: "env://CWI_CONNECTORS_TOKEN"
+reconciliation_url: "http://cwi-gateway:18081"
+reconciliation_token: "env://CWI_CONNECTORS_TOKEN"
+admin_token: "env://CWI_CONNECTORS_ADMIN_TOKEN"
+admin_enabled: true
+delivery_queue_path: "/var/lib/cwi-connectors/queue.json"
+run_journal_path: "/var/lib/cwi-connectors/runs.json"
+retention_state_path: "/var/lib/cwi-connectors/retention.json"
+connectors:
+  - id: "disabled-json"
+    type: "json"
+    enabled: false
+    config:
+      path: "/var/lib/cwi-connectors/fixtures/placeholder.json"
+    auth:
+      type: "api_key"
+      api_key:
+        header_name: "X-Api-Key"
+        value: "inline://disabled"

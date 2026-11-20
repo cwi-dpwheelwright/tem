@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\common\Cwi.Common\Cwi.Common.csproj" />
+    <ProjectReference Include="..\Cwi.PackService.Domain\Cwi.PackService.Domain.csproj" />
+    <ProjectReference Include="..\Cwi.PackService.DataAccess\Cwi.PackService.DataAccess.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\\Cwi.Router.Application\\Cwi.Router.Application.csproj" />
+    <ProjectReference Include="..\\Cwi.Router.Domain\\Cwi.Router.Domain.csproj" />
+    <ProjectReference Include="..\\Cwi.Router.DataAccess\\Cwi.Router.DataAccess.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+</Project>

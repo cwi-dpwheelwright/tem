@@ -1,0 +1,4 @@
+fixture,sha256
+fixture-01.simple.json,d48bad91dd531a17dee121c9d2cb4ec28be1a3924e5731b5eaab57a725567e73
+fixture-02.nested.json,829c59b60ae69fce1eb0ef53f05e1ac9d7a79de9f1027704b32a5a74a10707c3
+fixture-03.types.json,932d1dec6940ffac83f1a83cfbf4939090a7816955b221ea9f1def5b91cb0d61

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cwi.dev/schemas/canonical_record_upsert.json",
+  "title": "CanonicalRecordUpsert",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["record_id", "tenant_id", "user_id", "canonical", "sources"],
+  "properties": {
+    "record_id": { "type": "string", "minLength": 1 },
+    "tenant_id": { "type": "string", "minLength": 1 },
+    "user_id": { "type": "string", "minLength": 1 },
+    "canonical": { "type": "object" },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "contracts/json-schema/source_metadata.json" }
+    }
+  }
+}

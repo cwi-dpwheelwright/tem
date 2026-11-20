@@ -1,0 +1,104 @@
+﻿CWI Alignment Remediation Procedures
+
+Objective
+Bring the deployed stack into alignment with the March 1, 2026 architecture spec while preserving current functionality. Resolve known gaps first; phase advanced governance when components exist.
+
+1) Canonicalization Consistency (Pack Trust)
+Issue: Spec requires RFC 8785, but all current implementations use JCS-style canonicalization.
+
+Procedure
+1. Decide the standard for this release cycle:
+   - Option A: Adopt RFC 8785 (requires code changes and test updates).
+   - Option B: Align spec to current JCS-style canonicalization (fastest).
+2. If Option A: update pack anchor generation + verification in:
+   - OPS/cwi-ops/scripts/verify_pack_anchor.py
+   - tools/teacher-node/pack_utils.py
+   - tools/cwi-gold-tests/tests/test_smoke.py
+   - src/backend/services/cwi-orchestrator/src/Cwi.Orchestrator.Application/Provenance/CanonicalJson.cs
+3. If Option B: update the spec to JCS-style canonicalization and re-baseline.
+
+Outcome
+One canonicalization rule enforced consistently across pack creation, verification, and tests.
+
+2) Pack Adoption Receipts (PACK_ADOPTED)
+Issue: Spec requires JSONL receipts at /srv/cwi/ledger/pack_events.jsonl, but current ledger is Postgres and mirror script does not emit receipts.
+
+Procedure
+1. Update the spec and verification checks to use the orchestrator ledger API, or
+2. Add a mirror-script hook to post a PACK_ADOPTED event to the orchestrator after successful adoption.
+
+Outcome
+PACK_ADOPTED receipts can be verified in the ledger using a supported interface.
+
+3) Phase 5 Pin Resolver and Signed Pins
+Issue: Spec defaults to Phase 5, but pin resolver is not deployed or implemented.
+
+Procedure
+1. Immediate: set selected_profile to Phase 4 to match current deployment.
+2. Phase-5 build plan (if desired):
+   - Implement cwi-pin-resolver service.
+   - Add gateway routing /packs/* to resolver.
+   - Update orchestrator to resolve packs through resolver.
+   - Implement signature verification for pins (ed25519-raw).
+   - Add resolver deployment bundle and verification checks.
+
+Outcome
+Phase 4 alignment achieved now; Phase 5 becomes a planned upgrade.
+
+4) Critic Monitoring (Integrity and Drift)
+Issue: Critic service is not implemented.
+
+Procedure
+1. Add critic job (script + systemd timer) on Teacher node.
+2. Define least-privilege MinIO access:
+   - Read: packs/*
+   - Write: critic/reports/*
+3. Add verification checks for timer presence and report output.
+
+Outcome
+Continuous integrity/drift monitoring with non-blocking behavior.
+
+5) Pack-Service Mode (API vs Static)
+Issue: Spec requires immutable pack-service (read-only), but deployment uses API service.
+
+Procedure
+1. Decide operating mode:
+   - API mode (current): update spec to allow writable mounts.
+   - Static mode (immutable): switch pack-service to Nginx and lock mounts read-only.
+2. If API mode retained, document immutability exceptions and disable ingest endpoints in production if needed.
+
+Outcome
+Pack-service behavior matches declared policy.
+
+6) Gateway Routes and Network Allowlist
+Issue: Spec does not reflect actual gateway routes and required edges.
+
+Procedure
+1. Update spec to include all gateway routes: /auth, /jwks, /coordination, /swagger, /artifacts, /api/ledger/*, /api/reconciliation/*.
+2. Update allowlist with required service-to-service edges (gateway -> identity/coordination, router -> model endpoints, orchestrator -> graph DB, etc.).
+
+Outcome
+Spec matches live routing and security posture.
+
+7) Vector Shard Baseline
+Issue: Spec hard-codes collection=cwi_kb_primary and 1536 dimensions, but deployment uses environment variables.
+
+Procedure
+1. Treat vector collection and dimension as overlay parameters.
+2. Update verification to read VECTOR_COLLECTION and VECTOR_EMBEDDING_DIMENSION from overlay.
+
+Outcome
+Spec remains accurate across environments.
+
+8) Deployment Validation and E2E
+Procedure
+1. Run the unified script:
+   - OPS/cwi-ops/scripts/deploy-e2e.ps1
+2. Ensure results are captured and archived:
+   - artifacts/deploy-e2e-report-<timestamp>.json
+
+Outcome
+Repeatable, auditable deployment validation.
+
+Executive Summary (One-Line)
+Align spec to current Phase 4 capabilities now, ship governance upgrades (pin resolver + signed pins + critic) as a Phase 5 roadmap, and close pack trust + ledger receipt gaps immediately.

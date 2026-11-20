@@ -1,0 +1,30 @@
+{
+  "node_id": "node-17",
+  "observed_utc": "2026-02-02T12:00:00Z",
+  "interfaces": [
+    {
+      "interface": "lte",
+      "state": "up",
+      "signal_quality": 0.72,
+      "latency_ms": 45,
+      "jitter_ms": 6,
+      "packet_loss": 0.01,
+      "throughput_mbps": 18.5,
+      "bandwidth_mbps": 20,
+      "rssi_dbm": -70,
+      "snr_db": 18
+    },
+    {
+      "interface": "sat",
+      "state": "degraded",
+      "signal_quality": 0.4,
+      "latency_ms": 480,
+      "jitter_ms": 30,
+      "packet_loss": 0.08,
+      "throughput_mbps": 4.2,
+      "bandwidth_mbps": 6,
+      "rssi_dbm": -90,
+      "snr_db": 7
+    }
+  ]
+}

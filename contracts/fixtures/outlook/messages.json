@@ -1,0 +1,15 @@
+{
+  "documents": [
+    {
+      "doc_id": "outlook-msg-001",
+      "title": "Outlook Fixture",
+      "content": "Outlook fixture content.",
+      "source": "outlook",
+      "metadata": {
+        "mailbox": "inbox",
+        "tenant_id": "tenant-1",
+        "created_utc": "2026-01-02T00:00:00Z"
+      }
+    }
+  ]
+}

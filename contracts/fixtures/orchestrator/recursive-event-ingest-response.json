@@ -1,0 +1,9 @@
+{
+  "accepted": true,
+  "quarantined": false,
+  "status": "accepted",
+  "event_id": "rec-evt-stale-0001",
+  "trace_id": "trace-stale-001",
+  "temporal_state": "stale",
+  "recorded_utc": "2026-05-08T18:45:00+00:00"
+}

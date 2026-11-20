@@ -1,0 +1,162 @@
+entity_types:
+  equipment:
+    values:
+      micromat:
+        aliases: ["Micromat"]
+        domain: operations
+      extruder_6:
+        aliases: ["Extruder 6", "Extruder6"]
+        domain: operations
+      separation_tank:
+        aliases: ["Separation Tank"]
+        domain: operations
+      dosing_silo:
+        aliases: ["Dosing Silo"]
+        domain: operations
+      tdu_500:
+        aliases: ["TDU 500", "TDU500"]
+        domain: operations
+      rafter:
+        aliases: ["Rafter"]
+        domain: operations
+  component:
+    values:
+      agitator:
+        aliases: ["agitator", "Agitator"]
+        domain: maintenance
+      screw:
+        aliases: ["screw", "Screw"]
+        domain: maintenance
+      motor:
+        aliases: ["motor", "Motor"]
+        domain: maintenance
+      filter:
+        aliases: ["filter", "Filter"]
+        domain: maintenance
+      vacuum_port:
+        aliases: ["vacuum_port", "vacuum port", "Vacuum Port"]
+        domain: operations
+  metric:
+    values:
+      amperage:
+        aliases: ["Amperage", "amps"]
+        domain: operations
+      gpm:
+        aliases: ["GPM", "gpm"]
+        domain: operations
+      hz:
+        aliases: ["Hz", "hz"]
+        domain: operations
+      process_temp:
+        aliases: ["Process Temp", "process temp", "temperature"]
+        domain: operations
+      pressure:
+        aliases: ["Pressure", "pressure"]
+        domain: operations
+      yield:
+        aliases: ["Yield", "yield"]
+        domain: operations
+      downtime:
+        aliases: ["Downtime", "downtime"]
+        domain: operations
+      duration:
+        aliases: ["Duration", "duration"]
+        domain: operations
+      silo_level:
+        aliases: ["Silo Level", "silo level"]
+        domain: operations
+  procedure:
+    values:
+      preventive_maintenance:
+        aliases: ["preventive maintenance", "PM"]
+        domain: maintenance
+      operations_parameter_check:
+        aliases: ["operations parameter check", "parameter check list", "QC Operations Parameter Check List"]
+        domain: operations
+      maintenance_sheet:
+        aliases: ["maintenance sheet", "maintenance checklist"]
+        domain: maintenance
+      sop:
+        aliases: ["SOP", "standard operating procedure"]
+        domain: operations
+  line:
+    values:
+      line_1:
+        aliases: ["Line 1"]
+        domain: operations
+      line_2:
+        aliases: ["Line 2"]
+        domain: operations
+      line_6:
+        aliases: ["Line 6"]
+        domain: operations
+  material:
+    values:
+      hdpe:
+        aliases: ["HDPE"]
+        domain: materials
+      flocculant:
+        aliases: ["flocculant", "Flocculant"]
+        domain: materials
+      coagulant:
+        aliases: ["coagulant", "Coagulant"]
+        domain: materials
+
+relationship_types:
+  measured_by:
+    source_types: ["equipment", "component"]
+    target_types: ["metric"]
+  tracks:
+    source_types: ["procedure"]
+    target_types: ["metric"]
+  monitored_in:
+    source_types: ["equipment", "component", "metric", "line", "procedure"]
+    target_types: ["equipment", "component", "metric", "line", "procedure"]
+  maintained_in:
+    source_types: ["equipment", "component", "metric", "procedure"]
+    target_types: ["equipment", "component", "metric", "procedure"]
+  procedure_family_link:
+    source_types: ["procedure"]
+    target_types: ["procedure"]
+
+rejection_terms:
+  - status
+  - name
+  - date
+  - area
+
+document_class_patterns:
+  pm_record:
+    - "parameter check"
+    - "operations"
+    - "qc"
+  maintenance_record:
+    - "maintenance"
+    - "pm "
+    - "preventive"
+  manual_reference:
+    - "manual"
+    - "reference"
+    - "test report"
+  crosspack_inference:
+    - "crosspack"
+
+document_authority:
+  pm_record: 82
+  maintenance_record: 88
+  manual_reference: 90
+  crosspack_inference: 95
+  unknown: 60
+
+pack_role_hints:
+  manual_reference:
+    - "manual"
+    - "reference"
+    - "equipment-manuals-pack"
+  operations:
+    - "operations"
+    - "operations-pack"
+  maintenance:
+    - "maintenance"
+    - "engineering"
+    - "engineering-pack"

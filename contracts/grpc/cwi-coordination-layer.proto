@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package cwi.coordination.v1;
+
+option csharp_namespace = "Cwi.Coordination.Grpc";
+
+message EnrollmentRequest {
+  string node_id = 1;
+  string cert_fingerprint = 2;
+  string protocol_version = 3;
+  string tenant_id = 4;
+  string owner_user_id = 5;
+  string device_class = 6;
+  string tailscale_ip = 7;
+  string watcher_node_id = 8;
+  string capabilities_json = 9;
+  string pack_versions_json = 10;
+  string policy_profile_version = 11;
+  string health_json = 12;
+}
+
+message EnrollmentResponse {
+  string node_id = 1;
+  string status = 2;
+}
+
+message RotationRequest {
+  string node_id = 1;
+  string new_cert_fingerprint = 2;
+}
+
+message RevokeRequest {
+  string node_id = 1;
+  string reason = 2;
+}
+
+message MemberResponse {
+  string node_id = 1;
+  string cert_fingerprint = 2;
+  string status = 3;
+  string joined_utc = 4;
+  string revoked_utc = 5;
+  string tenant_id = 6;
+  string owner_user_id = 7;
+  string device_class = 8;
+  string tailscale_ip = 9;
+  string watcher_node_id = 10;
+  string capabilities_json = 11;
+  string pack_versions_json = 12;
+  string policy_profile_version = 13;
+  string health_json = 14;
+  string last_seen_utc = 15;
+}
+
+message ListMembersRequest {}
+
+message ListMembersResponse {
+  repeated MemberResponse members = 1;
+}
+
+message RoundCreateRequest {
+  string name = 1;
+}
+
+message HeartbeatRequest {
+  string round_id = 1;
+  string node_id = 2;
+  string status = 3;
+}
+
+message RoundResponse {
+  string round_id = 1;
+  string name = 2;
+  string status = 3;
+}
+
+message ListRoundsRequest {}
+
+message ListRoundsResponse {
+  repeated RoundResponse rounds = 1;
+}
+
+service Coordinator {
+  rpc Enroll(EnrollmentRequest) returns (EnrollmentResponse);
+  rpc Rotate(RotationRequest) returns (MemberResponse);
+  rpc Revoke(RevokeRequest) returns (MemberResponse);
+  rpc ListMembers(ListMembersRequest) returns (ListMembersResponse);
+  rpc CreateRound(RoundCreateRequest) returns (RoundResponse);
+  rpc ListRounds(ListRoundsRequest) returns (ListRoundsResponse);
+  rpc Heartbeat(HeartbeatRequest) returns (RoundResponse);
+}

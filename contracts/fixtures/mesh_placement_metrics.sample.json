@@ -1,0 +1,36 @@
+{
+  "metrics_id": "mpm-2026-02-02-001",
+  "node_id": "node-17",
+  "observed_utc": "2026-02-02T20:15:00Z",
+  "scenario_id": "storm-drill-7",
+  "radio": {
+    "latency_ms": 95,
+    "jitter_ms": 12,
+    "packet_loss": 0.04,
+    "rssi_dbm": -68,
+    "snr_db": 16,
+    "throughput_mbps": 8.2,
+    "bandwidth_mbps": 12.0,
+    "noise_floor_dbm": -96,
+    "interference_index": 0.22
+  },
+  "environment": {
+    "temperature_c": 12.4,
+    "humidity_pct": 72,
+    "wind_speed_mps": 6.1,
+    "precipitation_mm": 2.3,
+    "terrain": "urban",
+    "obstruction_index": 0.35
+  },
+  "uncertainty": {
+    "confidence": 0.78,
+    "rssi_stddev": 1.6,
+    "snr_stddev": 1.2,
+    "latency_stddev": 8.4,
+    "throughput_stddev": 0.9,
+    "location_stddev_m": 5.5
+  },
+  "metadata": {
+    "source": "field-sensor-v2"
+  }
+}

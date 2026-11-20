@@ -1,0 +1,2140 @@
+openapi: 3.0.3
+info:
+  title: CWI Router API (Frozen 10H)
+  version: 10H.1.0
+  description: 'Frozen OpenAPI contract for the public-facing cwi-router service.
+
+
+    Responsibilities:
+
+    - Terminates client API calls behind the gateway
+
+    - Enforces JWT authentication/authorization where required
+
+    - Applies rate limiting and tenant/user scoping
+
+    - Forwards orchestration to cwi-orchestrator
+
+
+    Sanitized: no internal domains/hosts/secrets.'
+servers:
+- url: https://{gatewayHost}
+  description: Public gateway (TLS termination) forwarding to cwi-router
+  variables:
+    gatewayHost:
+      default: your-gateway-host
+- url: http://cwi-router:8080
+  description: Internal (Docker/Compose) service URL
+tags:
+- name: Core
+  description: Client-facing ask/action/approval/telemetry endpoints
+- name: Health
+  description: Liveness/readiness endpoints
+- name: Observability
+  description: Metrics endpoint
+- name: Reports
+  description: Governance report review endpoints
+- name: Documents
+  description: Document catalog and rollback endpoints
+- name: Ownership
+  description: Ownership lineage and delegation endpoints
+- name: Mesh
+  description: Mesh topology and routing hint endpoints
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    BreakGlassToken:
+      type: apiKey
+      in: header
+      name: X-Break-Glass-Token
+      description: Break-glass token required for protected admin actions.
+  parameters:
+    XRequestId:
+      name: X-Request-Id
+      in: header
+      required: false
+      description: Optional caller-supplied correlation ID. If provided, it SHOULD
+        be echoed in responses.
+      schema:
+        type: string
+        maxLength: 128
+    TenantId:
+      name: tenant_id
+      in: query
+      required: false
+      description: Tenant identifier (required when no tenant header provided).
+      schema:
+        type: string
+        maxLength: 128
+  headers:
+    XTraceId:
+      description: Trace identifier for correlating logs/OTel spans/ledger records.
+      schema:
+        type: string
+    XRequestId:
+      description: Echo of X-Request-Id when provided.
+      schema:
+        type: string
+    XRateLimitLimit:
+      description: Max requests per window (implementation-defined).
+      schema:
+        type: integer
+        format: int32
+    XRateLimitRemaining:
+      description: Remaining requests in current window (implementation-defined).
+      schema:
+        type: integer
+        format: int32
+    XRateLimitReset:
+      description: UNIX epoch seconds when the current window resets (implementation-defined).
+      schema:
+        type: integer
+        format: int64
+    RetryAfter:
+      description: Seconds to wait before retrying (commonly used with 429).
+      schema:
+        type: integer
+        format: int32
+  schemas:
+    PolicyMode:
+      type: string
+      enum:
+      - observe
+      - recommend
+      - approve
+      - auto_within_bounds
+      description: Governing mode applied by the orchestrator.
+    RiskLevel:
+      type: string
+      enum:
+      - low
+      - medium
+      - high
+    ModelTier:
+      type: string
+      enum:
+      - pro
+      - free
+      - edge
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      - message
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code (alias of error).
+        error:
+          type: string
+          description: Short error code
+        message:
+          type: string
+          description: Human-readable message
+        trace_id:
+          type: string
+          description: Trace identifier (if available)
+    Citation:
+      type: object
+      required:
+      - doc_id
+      - chunk_id
+      properties:
+        doc_id:
+          type: string
+        chunk_id:
+          type: string
+        score:
+          type: number
+          format: float
+          nullable: true
+    Trace:
+      type: object
+      required:
+      - trace_id
+      - sources
+      - confidence
+      - policy_mode
+      - model
+      - pack_hash
+      properties:
+        trace_id:
+          type: string
+          description: Unique ID correlating logs/OTel spans/ledger records.
+        sources:
+          type: array
+          items:
+            type: string
+          description: Evidence identifiers (doc chunks, telemetry windows, policy
+            rules).
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        policy_mode:
+          $ref: '#/components/schemas/PolicyMode'
+        model:
+          $ref: '#/components/schemas/ModelTier'
+        pack_hash:
+          type: string
+          description: sha256 hex of the pack.json used for this response.
+        guardrails:
+          type: array
+          items:
+            $ref: '#/components/schemas/GuardrailViolation'
+          description: Guardrail violations detected during execution.
+        validations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationIssue'
+          description: Validation findings for the request or response.
+        discrepancies:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiscrepancyRecord'
+          description: Discrepancies discovered between expected and observed values.
+        corrections:
+          type: array
+          items:
+            $ref: '#/components/schemas/CorrectionDiff'
+          description: Correction diffs applied during processing.
+        otel_trace_id:
+          type: string
+          nullable: true
+          description: Optional OpenTelemetry trace ID, if emitted.
+    GuardrailViolation:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        severity:
+          type: string
+        message:
+          type: string
+    ValidationIssue:
+      type: object
+      properties:
+        rule:
+          type: string
+        field:
+          type: string
+        detail:
+          type: string
+    DiscrepancyRecord:
+      type: object
+      properties:
+        field:
+          type: string
+        expected:
+          type: string
+        actual:
+          type: string
+        note:
+          type: string
+    CorrectionDiff:
+      type: object
+      properties:
+        field:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        note:
+          type: string
+    OutcomeFeedbackRequest:
+      type: object
+      required:
+      - tenant_id
+      - trace_id
+      - feedback
+      properties:
+        tenant_id:
+          type: string
+        trace_id:
+          type: string
+        feedback:
+          type: string
+          enum:
+          - up
+          - down
+        reason_codes:
+          type: array
+          items:
+            type: string
+        note:
+          type: string
+          nullable: true
+    OutcomeFeedbackSummary:
+      type: object
+      required:
+      - tenant_id
+      - trace_id
+      - up_count
+      - down_count
+      properties:
+        tenant_id:
+          type: string
+        trace_id:
+          type: string
+        up_count:
+          type: integer
+          minimum: 0
+        down_count:
+          type: integer
+          minimum: 0
+        last_feedback:
+          type: string
+          nullable: true
+        last_feedback_utc:
+          type: string
+          format: date-time
+          nullable: true
+    OutcomeFeedbackResponse:
+      type: object
+      required:
+      - tenant_id
+      - trace_id
+      - feedback
+      - recorded_utc
+      - summary
+      properties:
+        tenant_id:
+          type: string
+        trace_id:
+          type: string
+        feedback:
+          type: string
+          enum:
+          - up
+          - down
+        recorded_utc:
+          type: string
+          format: date-time
+        summary:
+          $ref: '#/components/schemas/OutcomeFeedbackSummary'
+    AskRequest:
+      type: object
+      required:
+      - tenant_id
+      - user_id
+      - question
+      - pack
+      - context
+      properties:
+        tenant_id:
+          type: string
+        user_id:
+          type: string
+        question:
+          type: string
+        pack:
+          type: object
+          required:
+          - name
+          properties:
+            name:
+              type: string
+              description: Pack name (enterprise|personal|...)
+            anchor:
+              type: string
+              nullable: true
+              description: Optional client-known pack sha256 to include for validation.
+        context:
+          type: object
+          required:
+          - mode
+          properties:
+            mode:
+              $ref: '#/components/schemas/PolicyMode'
+            top_k:
+              type: integer
+              minimum: 1
+              maximum: 50
+              default: 8
+        network_assessment:
+          $ref: '#/components/schemas/NetworkAssessment'
+    AskResponse:
+      type: object
+      required:
+      - answer
+      - citations
+      - trace
+      properties:
+        answer:
+          type: string
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+        trace:
+          $ref: '#/components/schemas/Trace'
+    ActionRequest:
+      type: object
+      required:
+      - tenant_id
+      - user_id
+      - action
+      - policy_mode
+      properties:
+        tenant_id:
+          type: string
+        user_id:
+          type: string
+        policy_mode:
+          $ref: '#/components/schemas/PolicyMode'
+        action:
+          type: object
+          required:
+          - type
+          - payload
+          properties:
+            type:
+              type: string
+              description: Action identifier/type.
+            payload:
+              type: object
+              additionalProperties: true
+        network_assessment:
+          $ref: '#/components/schemas/NetworkAssessment'
+    NetworkInterfaceSignal:
+      type: object
+      required:
+      - interface
+      properties:
+        interface:
+          type: string
+        state:
+          type: string
+          description: Interface state (up|degraded|down).
+        signal_quality:
+          type: number
+          minimum: 0
+          maximum: 1
+        latency_ms:
+          type: number
+        jitter_ms:
+          type: number
+        packet_loss:
+          type: number
+          minimum: 0
+          maximum: 1
+        throughput_mbps:
+          type: number
+        bandwidth_mbps:
+          type: number
+        rssi_dbm:
+          type: number
+        snr_db:
+          type: number
+      additionalProperties: false
+    NetworkAssessment:
+      type: object
+      required:
+      - node_id
+      - interfaces
+      properties:
+        node_id:
+          type: string
+        observed_utc:
+          type: string
+          format: date-time
+          nullable: true
+        interfaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetworkInterfaceSignal'
+      additionalProperties: false
+    ApprovalTicket:
+      type: object
+      required:
+      - ticket_id
+      - risk
+      - reason
+      properties:
+        ticket_id:
+          type: string
+        risk:
+          $ref: '#/components/schemas/RiskLevel'
+        reason:
+          type: string
+    ActionResponse:
+      type: object
+      required:
+      - executed
+      - trace
+      properties:
+        executed:
+          type: boolean
+        approval_ticket:
+          allOf:
+          - $ref: '#/components/schemas/ApprovalTicket'
+          nullable: true
+        result:
+          type: object
+          nullable: true
+          additionalProperties: true
+        trace:
+          $ref: '#/components/schemas/Trace'
+    ApprovalCompleteRequest:
+      type: object
+      required:
+      - ticket_id
+      - decision
+      - approver_id
+      properties:
+        ticket_id:
+          type: string
+        decision:
+          type: string
+          enum:
+          - approve
+          - deny
+        approver_id:
+          type: string
+        reason:
+          type: string
+          nullable: true
+    ApprovalCompleteResponse:
+      type: object
+      required:
+      - ticket_id
+      - status
+      - executed
+      - trace
+      properties:
+        ticket_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - approved
+          - denied
+        executed:
+          type: boolean
+        trace:
+          $ref: '#/components/schemas/Trace'
+    TelemetryWindow:
+      type: object
+      required:
+      - start
+      - end
+      properties:
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+    TelemetrySignal:
+      type: object
+      required:
+      - tag
+      - unit
+      - series
+      properties:
+        tag:
+          type: string
+        unit:
+          type: string
+        series:
+          type: array
+          items:
+            type: number
+            format: float
+    TelemetryIngestRequest:
+      type: object
+      required:
+      - tenant_id
+      - window
+      - signals
+      - metadata
+      properties:
+        tenant_id:
+          type: string
+        window:
+          $ref: '#/components/schemas/TelemetryWindow'
+        signals:
+          type: array
+          items:
+            $ref: '#/components/schemas/TelemetrySignal'
+        metadata:
+          type: object
+          additionalProperties: true
+    TelemetryIngestResponse:
+      type: object
+      required:
+      - accepted
+      - ingest_id
+      - trace
+      properties:
+        accepted:
+          type: boolean
+        ingest_id:
+          type: string
+        trace:
+          $ref: '#/components/schemas/Trace'
+    HealthResponse:
+      type: object
+      required:
+      - ok
+      - services
+      properties:
+        ok:
+          type: boolean
+        services:
+          type: object
+          additionalProperties:
+            type: string
+          description: Map of subsystem -> status string.
+    ReadyCheck:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - degraded
+          - down
+        detail:
+          type: string
+          nullable: true
+        latency_ms:
+          type: integer
+          format: int32
+          nullable: true
+    ReadyResponse:
+      type: object
+      required:
+      - ready
+      - checks
+      properties:
+        ready:
+          type: boolean
+        checks:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ReadyCheck'
+        timestamp:
+          type: string
+          format: date-time
+          nullable: true
+        version:
+          type: string
+          nullable: true
+    OwnershipTransferRequest:
+      type: object
+      required:
+      - tenant_id
+      - from_user_id
+      - to_user_id
+      properties:
+        tenant_id:
+          type: string
+        from_user_id:
+          type: string
+        to_user_id:
+          type: string
+        transfer_type:
+          type: string
+          enum:
+          - transfer
+          - delegate
+        reason:
+          type: string
+          nullable: true
+        required_approvals:
+          type: integer
+          format: int32
+          minimum: 1
+        approver_ids:
+          type: array
+          items:
+            type: string
+    OwnershipTransferResponse:
+      type: object
+      required:
+      - request_id
+      - status
+      - transfer_type
+      - required_approvals
+      - approver_ids
+      - approved_by
+      - created_utc
+      - updated_utc
+      properties:
+        approval_ticket:
+          allOf:
+          - $ref: '#/components/schemas/ApprovalTicket'
+          nullable: true
+        request_id:
+          type: string
+        status:
+          type: string
+        transfer_type:
+          type: string
+        required_approvals:
+          type: integer
+          format: int32
+        approver_ids:
+          type: array
+          items:
+            type: string
+        approved_by:
+          type: array
+          items:
+            type: string
+        created_utc:
+          type: string
+          format: date-time
+        updated_utc:
+          type: string
+          format: date-time
+        completed_utc:
+          type: string
+          format: date-time
+          nullable: true
+    OwnershipTransferRevokeRequest:
+      type: object
+      required:
+      - request_id
+      - actor_id
+      properties:
+        request_id:
+          type: string
+        actor_id:
+          type: string
+        reason:
+          type: string
+          nullable: true
+    ReportEvidence:
+      type: object
+      required:
+      - label
+      - value
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+    ReportSummary:
+      type: object
+      required:
+      - report_id
+      - title
+      - created_utc
+      - status
+      - coherence_score
+      - conflict_count
+      - summary
+      properties:
+        report_id:
+          type: string
+        title:
+          type: string
+        created_utc:
+          type: string
+          format: date-time
+        status:
+          type: string
+        coherence_score:
+          type: number
+          format: double
+        conflict_count:
+          type: integer
+          format: int32
+        summary:
+          type: string
+        escalation_ticket:
+          type: string
+          nullable: true
+    ReportDetail:
+      allOf:
+      - $ref: '#/components/schemas/ReportSummary'
+      - type: object
+        required:
+        - narrative
+        - structured
+        - evidence
+        properties:
+          narrative:
+            type: string
+          structured:
+            type: object
+            additionalProperties:
+              type: string
+          evidence:
+            type: array
+            items:
+              $ref: '#/components/schemas/ReportEvidence'
+    DocumentVersion:
+      type: object
+      required:
+      - version
+      - created_utc
+      - author
+      - checksum
+      - notes
+      - content
+      properties:
+        version:
+          type: string
+        created_utc:
+          type: string
+          format: date-time
+        author:
+          type: string
+        checksum:
+          type: string
+        notes:
+          type: string
+        content:
+          type: string
+    DocumentSummary:
+      type: object
+      required:
+      - doc_id
+      - title
+      - type
+      - owner
+      - status
+      - versions_count
+      - latest_version
+      properties:
+        doc_id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        owner:
+          type: string
+        status:
+          type: string
+        versions_count:
+          type: integer
+          format: int32
+        latest_version:
+          type: string
+    DocumentDetail:
+      type: object
+      required:
+      - doc_id
+      - title
+      - type
+      - owner
+      - status
+      - versions
+      properties:
+        doc_id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        owner:
+          type: string
+        status:
+          type: string
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentVersion'
+    DocumentRollbackRequest:
+      type: object
+      required:
+      - tenant_id
+      - actor_id
+      - target_version
+      properties:
+        tenant_id:
+          type: string
+        actor_id:
+          type: string
+        target_version:
+          type: string
+        reason:
+          type: string
+          nullable: true
+    DocumentRollbackResponse:
+      type: object
+      required:
+      - rollback_id
+      - doc_id
+      - target_version
+      - status
+      - requested_by
+      - requested_utc
+      properties:
+        rollback_id:
+          type: string
+        doc_id:
+          type: string
+        target_version:
+          type: string
+        status:
+          type: string
+        requested_by:
+          type: string
+        requested_utc:
+          type: string
+          format: date-time
+        message:
+          type: string
+          nullable: true
+    OwnershipLineageNode:
+      type: object
+      required:
+      - node_id
+      - label
+      - role
+      - status
+      properties:
+        node_id:
+          type: string
+        label:
+          type: string
+        role:
+          type: string
+        status:
+          type: string
+    OwnershipLineageEdge:
+      type: object
+      required:
+      - from
+      - to
+      - scope
+      - relationship
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        scope:
+          type: string
+        relationship:
+          type: string
+    OwnershipLineageResponse:
+      type: object
+      required:
+      - nodes
+      - edges
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnershipLineageNode'
+        edges:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnershipLineageEdge'
+    OwnershipRevocationEntry:
+      type: object
+      required:
+      - request_id
+      - subject
+      - scope
+      - reason
+      - requested_by
+      - status
+      - updated_utc
+      properties:
+        request_id:
+          type: string
+        subject:
+          type: string
+        scope:
+          type: string
+        reason:
+          type: string
+        requested_by:
+          type: string
+        status:
+          type: string
+        updated_utc:
+          type: string
+          format: date-time
+    LinkStateResponse:
+      type: object
+      required:
+      - node_id
+      - interface
+      - signal_quality
+      - latency_ms
+      - packet_loss
+      - bandwidth_kbps
+      - throughput_kbps
+      - status
+      - updated_utc
+      properties:
+        node_id:
+          type: string
+        interface:
+          type: string
+        signal_quality:
+          type: number
+        latency_ms:
+          type: integer
+        jitter_ms:
+          type: number
+          nullable: true
+        packet_loss:
+          type: number
+        bandwidth_kbps:
+          type: integer
+        throughput_kbps:
+          type: integer
+        rssi_dbm:
+          type: number
+          nullable: true
+        snr_db:
+          type: number
+          nullable: true
+        status:
+          type: string
+          enum:
+          - healthy
+          - degraded
+          - down
+        updated_utc:
+          type: string
+          format: date-time
+    MeshEventResponse:
+      type: object
+      required:
+      - event_id
+      - node_id
+      - interface
+      - event_type
+      - reason
+      - created_utc
+      properties:
+        event_id:
+          type: string
+          format: uuid
+        node_id:
+          type: string
+        interface:
+          type: string
+        event_type:
+          type: string
+        reason:
+          type: string
+        created_utc:
+          type: string
+          format: date-time
+    RoutingHintRequest:
+      type: object
+      required:
+      - node_id
+      properties:
+        node_id:
+          type: string
+        task_complexity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+    RoutingHintResponse:
+      type: object
+      required:
+      - node_id
+      - preferred_interface
+      - confidence
+      - reason
+      - fallback_interfaces
+      - ttl_seconds
+      - cooldown_seconds
+      - hysteresis_margin
+      properties:
+        node_id:
+          type: string
+        preferred_interface:
+          type: string
+        preferred_path:
+          type: string
+          nullable: true
+        confidence:
+          type: number
+        reason:
+          type: string
+        fallback_interfaces:
+          type: array
+          items:
+            type: string
+        ttl_seconds:
+          type: integer
+        cooldown_seconds:
+          type: integer
+        hysteresis_margin:
+          type: number
+paths:
+  /api/ask:
+    post:
+      tags:
+      - Core
+      summary: Ask a question (RAG-grounded, traced, provenance logged)
+      operationId: ask
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AskRequest'
+      responses:
+        '200':
+          description: Successful answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AskResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+  /api/action:
+    post:
+      tags:
+      - Core
+      summary: Request an action (approval-gated; never silently executes outside
+        bounds)
+      operationId: action
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActionRequest'
+      responses:
+        '200':
+          description: Action result or approval ticket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '409':
+          description: Kill-switch active (actions disabled)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+  /api/approval/complete:
+    post:
+      tags:
+      - Core
+      summary: Complete an approval ticket (approve or deny) with audit/provenance
+      operationId: approvalComplete
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApprovalCompleteRequest'
+      responses:
+        '200':
+          description: Approval completion result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApprovalCompleteResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '404':
+          description: Ticket not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+  /api/ingest/telemetry:
+    post:
+      tags:
+      - Core
+      summary: Ingest telemetry (windowed) for indexing/analysis (provenance logged)
+      operationId: telemetryIngest
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelemetryIngestRequest'
+      responses:
+        '200':
+          description: Ingest result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelemetryIngestResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '400':
+          description: Rejected telemetry (schema/rules)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+  /api/feedback:
+    post:
+      tags:
+      - MCP
+      summary: Record outcome feedback correlated to a trace
+      operationId: outcomeFeedbackRecord
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OutcomeFeedbackRequest'
+      responses:
+        '200':
+          description: Feedback recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutcomeFeedbackResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+  /api/feedback/summary:
+    get:
+      tags:
+      - MCP
+      summary: Get aggregated outcome feedback for a trace
+      operationId: outcomeFeedbackSummary
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      - name: tenant_id
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: trace_id
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feedback summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutcomeFeedbackSummary'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+  /api/reports:
+    get:
+      tags:
+      - Reports
+      summary: List governance reports
+      operationId: reportsList
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      - $ref: '#/components/parameters/TenantId'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Report summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReportSummary'
+        '400':
+          description: Missing tenant id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/reports/{reportId}:
+    get:
+      tags:
+      - Reports
+      summary: Get report detail
+      operationId: reportDetail
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      - name: reportId
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/TenantId'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Report detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportDetail'
+        '400':
+          description: Missing tenant id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Report not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/documents:
+    get:
+      tags:
+      - Documents
+      summary: List documents
+      operationId: documentsList
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      - $ref: '#/components/parameters/TenantId'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Document summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DocumentSummary'
+        '400':
+          description: Missing tenant id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/documents/{docId}:
+    get:
+      tags:
+      - Documents
+      summary: Get document detail
+      operationId: documentDetail
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      - name: docId
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/TenantId'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Document detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDetail'
+        '400':
+          description: Missing tenant id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/documents/{docId}/rollback:
+    post:
+      tags:
+      - Documents
+      summary: Stage a document rollback
+      operationId: documentRollback
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentRollbackRequest'
+      responses:
+        '200':
+          description: Rollback staged
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentRollbackResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/ownership/delegate:
+    post:
+      tags:
+      - Ownership
+      summary: Delegate ownership
+      operationId: ownershipDelegate
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      security:
+      - BearerAuth: []
+        BreakGlassToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnershipTransferRequest'
+      responses:
+        '200':
+          description: Delegation request created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OwnershipTransferResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/ownership/revoke:
+    post:
+      tags:
+      - Ownership
+      summary: Revoke a delegation
+      operationId: ownershipRevoke
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      security:
+      - BearerAuth: []
+        BreakGlassToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnershipTransferRevokeRequest'
+      responses:
+        '200':
+          description: Delegation revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OwnershipTransferResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Request not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/ownership/lineage:
+    get:
+      tags:
+      - Ownership
+      summary: Get ownership lineage graph
+      operationId: ownershipLineage
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      - $ref: '#/components/parameters/TenantId'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Ownership lineage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OwnershipLineageResponse'
+        '400':
+          description: Missing tenant id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/ownership/revocations:
+    get:
+      tags:
+      - Ownership
+      summary: List ownership revocations
+      operationId: ownershipRevocations
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      - $ref: '#/components/parameters/TenantId'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Revocation entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OwnershipRevocationEntry'
+        '400':
+          description: Missing tenant id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/mesh/links:
+    get:
+      tags:
+      - Mesh
+      summary: List mesh link states
+      operationId: meshLinks
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      - $ref: '#/components/parameters/TenantId'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Link states
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinkStateResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/mesh/events:
+    get:
+      tags:
+      - Mesh
+      summary: List mesh events
+      operationId: meshEvents
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Mesh events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MeshEventResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/mesh/hints:
+    post:
+      tags:
+      - Mesh
+      summary: Compute routing hint
+      operationId: meshHints
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoutingHintRequest'
+      responses:
+        '200':
+          description: Routing hint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutingHintResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: No routing hint available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/health:
+    get:
+      tags:
+      - Health
+      summary: Liveness/health endpoint
+      operationId: health
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+  /api/ready:
+    get:
+      tags:
+      - Health
+      summary: Readiness endpoint (dependencies wired and usable)
+      operationId: ready
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      responses:
+        '200':
+          description: Ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadyResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '503':
+          description: Not ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadyResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/XTraceId'
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+  /api/metrics:
+    get:
+      tags:
+      - Observability
+      summary: Prometheus metrics endpoint
+      operationId: metrics
+      parameters:
+      - $ref: '#/components/parameters/XRequestId'
+      responses:
+        '200':
+          description: Prometheus text exposition format
+          headers:
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+          content:
+            text/plain:
+              schema:
+                type: string

@@ -1,0 +1,22 @@
+{
+  "tenant_id": "tenant-1",
+  "trace_id": "trace-99",
+  "ticket_id": "ticket-42",
+  "action_id": "action-7",
+  "actor_id": "user-5",
+  "idempotency_key": "feedback-tenant-1-trace-99-user-5",
+  "feedback": "up",
+  "consent_granted": true,
+  "note": "Correct and well sourced.",
+  "confidence_before": 0.52,
+  "confidence_after": 0.87,
+  "recorded_utc": "2026-01-26T16:52:00Z",
+  "summary": {
+    "tenant_id": "tenant-1",
+    "trace_id": "trace-99",
+    "up_count": 3,
+    "down_count": 1,
+    "last_feedback": "up",
+    "last_feedback_utc": "2026-01-26T16:52:00Z"
+  }
+}

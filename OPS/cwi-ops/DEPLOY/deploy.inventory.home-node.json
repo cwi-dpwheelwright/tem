@@ -1,0 +1,36 @@
+{
+  "defaults": {
+    "sshUser": "root",
+    "deployRoot": "/opt/cwi/DEPLOY",
+    "bundleRoot": "OPS/cwi-ops/DEPLOY",
+    "composeCommand": "docker compose",
+    "composeFile": "docker-compose.yml",
+    "composeArgs": "up -d",
+    "deploymentMode": "safe",
+    "seedEnvFromTemplate": true,
+    "clearContainersBeforeDeploy": false,
+    "clearImagesBeforeDeploy": false,
+    "clearVolumesBeforeDeploy": false
+  },
+  "hosts": [
+    {
+      "name": "cwi-home-data-vault-01",
+      "host": "100.122.244.48",
+      "roles": [
+        {
+          "name": "node_agent_runtime",
+          "buildContextPaths": [
+            "src/node-agent-runtime"
+          ],
+          "buildImages": [
+            {
+              "image": "local/cwi-node-agent-runtime:home-node-20260422",
+              "dockerfile": "src/node-agent-runtime/Dockerfile",
+              "context": "src/node-agent-runtime"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

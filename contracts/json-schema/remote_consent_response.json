@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RemoteConsentResponse",
+  "type": "object",
+  "required": [
+    "tenant_id",
+    "operator_id",
+    "consent"
+  ],
+  "properties": {
+    "tenant_id": { "type": "string" },
+    "operator_id": { "type": "string" },
+    "observed_utc": { "type": "string", "format": "date-time" },
+    "consent": {
+      "type": "object",
+      "required": [
+        "granted",
+        "granted_utc"
+      ],
+      "properties": {
+        "granted": { "type": "boolean" },
+        "granted_utc": { "type": "string", "format": "date-time" },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false
+}

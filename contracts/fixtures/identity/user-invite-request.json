@@ -1,0 +1,6 @@
+{
+  "tenant_id": "tenant-1",
+  "email": "user@tenant.local",
+  "username": "example.user",
+  "display_name": "Example User"
+}

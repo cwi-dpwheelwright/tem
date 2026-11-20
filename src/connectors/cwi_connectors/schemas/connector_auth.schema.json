@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ConnectorAuth",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["oauth2", "api_key", "basic"]
+    },
+    "oauth2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["client_id", "client_secret", "token_url", "scopes"],
+      "properties": {
+        "client_id": { "type": "string", "minLength": 1 },
+        "client_secret": { "type": "string", "minLength": 1 },
+        "token_url": { "type": "string", "format": "uri" },
+        "scopes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "api_key": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["header_name", "value"],
+      "properties": {
+        "header_name": { "type": "string", "minLength": 1 },
+        "value": { "type": "string", "minLength": 1 }
+      }
+    },
+    "basic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["username", "password"],
+      "properties": {
+        "username": { "type": "string", "minLength": 1 },
+        "password": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

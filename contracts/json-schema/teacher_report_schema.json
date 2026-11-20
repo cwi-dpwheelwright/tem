@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TeacherReport",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "report_id",
+    "pack_id",
+    "pack_version",
+    "run_id",
+    "generated_utc",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "report_id": { "type": "string" },
+    "pack_id": { "type": "string" },
+    "pack_version": { "type": "string" },
+    "run_id": { "type": "string" },
+    "generated_utc": { "type": "string" },
+    "summary": {
+      "type": "object",
+      "required": ["overall_status", "score", "finding_count"],
+      "properties": {
+        "overall_status": { "type": "string", "enum": ["pass", "warn", "fail", "unknown"] },
+        "score": { "type": ["number", "string"] },
+        "finding_count": { "type": "integer" }
+      },
+      "additionalProperties": true
+    },
+    "metrics": { "type": "object", "additionalProperties": true },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": { "type": "string" },
+          "message": { "type": "string" },
+          "trace_id": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "governance": { "type": "object", "additionalProperties": true },
+    "inputs": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": true
+}

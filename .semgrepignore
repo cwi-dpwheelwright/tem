@@ -1,0 +1,3 @@
+contracts/fixtures/identity/login-response.json
+contracts/fixtures/identity/refresh-response.json
+src/backend/services/cwi-teams-bot/src/__tests__/architecture.test.ts

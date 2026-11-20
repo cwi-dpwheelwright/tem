@@ -1,0 +1,32 @@
+{
+  "inputs": [
+    {
+      "source_id": "doc-1",
+      "model_id": null,
+      "timestamp_utc": "2026-01-30T00:00:00Z",
+      "raw_output": "Dose is 10 mg."
+    },
+    {
+      "source_id": "doc-2",
+      "model_id": null,
+      "timestamp_utc": "2026-01-30T00:00:10Z",
+      "raw_output": "Dose is 100 mg."
+    }
+  ],
+  "normalized": [
+    {
+      "field": "mass",
+      "value": 0.00001,
+      "unit": "kg",
+      "confidence": 0.8
+    }
+  ],
+  "alignment_map": [
+    {
+      "source_id": "doc-1",
+      "field": "mg",
+      "normalized_field": "mass"
+    }
+  ],
+  "ambiguities": []
+}

@@ -1,0 +1,19 @@
+{
+  "event_id": "event-123",
+  "node_id": "node-01",
+  "observed_utc": "2026-02-01T00:00:00Z",
+  "severity": 0.7,
+  "details": {
+    "observed_utc": "2026-02-01T00:00:00Z",
+    "load_1": 1.2,
+    "cpu_percent": 65.5,
+    "disk_free_ratio": 0.12,
+    "memory_free_ratio": 0.22,
+    "cpu_severity": 0.7,
+    "disk_severity": 0.0,
+    "memory_severity": 0.0
+  },
+  "provenance": {
+    "metrics_path": "state/degradation/metrics/event-123.json"
+  }
+}

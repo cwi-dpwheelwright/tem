@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CapabilityMap",
+  "type": "object",
+  "required": ["schema_version", "pack_id", "pack_version", "generated_utc"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "pack_id": { "type": "string" },
+    "pack_version": { "type": "string" },
+    "generated_utc": { "type": "string" },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "capability": { "type": "string" },
+          "actions": { "type": "array", "items": { "type": "string" } },
+          "permissions": { "type": "array", "items": { "type": "string" } },
+          "limits": { "type": "object", "additionalProperties": true }
+        },
+        "additionalProperties": true
+      }
+    },
+    "activation_map": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": { "type": "string" },
+          "requires": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "summary": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": true
+}

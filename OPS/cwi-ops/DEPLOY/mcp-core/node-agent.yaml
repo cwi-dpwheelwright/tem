@@ -1,0 +1,84 @@
+coordinator_url: http://cwi-coordination-layer:8081
+enrollment_url: http://cwi-coordination-layer:8081/api/membership/enroll
+identity:
+  node_id: internal-mcp-01-node-agent
+  private_key_path: /var/lib/cwi-node-agent/state/identity/private_key.pem
+  public_key_path: /var/lib/cwi-node-agent/state/identity/public_key.pem
+  key_type: ed25519
+  persist_keys: true
+storage:
+  state_dir: /var/lib/cwi-node-agent/state
+activation:
+  require_signature: false
+  expected_issuer: cwi-ops
+  expected_audience: cwi-node-agent-runtime
+  nonce_cache_max_entries: 10000
+kill_switch:
+  admin_url: http://cwi-router:8081/api/admin/kill_switch
+  tenant_id: tenant-1
+  break_glass_token_env: CWI_BREAK_GLASS_TOKEN
+  retry_attempts: 3
+  retry_backoff_seconds: 1
+bundle:
+  crypto_provider: noop
+cache:
+  cache_dir: /var/lib/cwi-node-agent/state/cache
+  max_bytes: 104857600
+  max_items: 1000
+  require_sha256: true
+  require_signature: false
+resilience:
+  max_entries: 1000
+  max_bytes: 10485760
+  max_attempts: 3
+  backoff_seconds: 1
+data_boundary:
+  allow_raw_data: false
+priority:
+  survival_mode: false
+  min_priority_level: 50
+  header_name: X-CWI-Priority
+link_metrics:
+  transport_timeout_seconds: 5
+  use_envelope: true
+metrics_signing:
+  require_signature: false
+  replay_window: 1000
+reroute:
+  warning_threshold: 0.7
+  critical_threshold: 0.9
+  clear_threshold: 0.5
+  cooldown_seconds: 60
+  transport_timeout_seconds: 5
+job_runner:
+  allow_commands:
+    - python
+  default_timeout_seconds: 60
+status:
+  timeout_seconds: 5
+qr_service:
+  identifier_version: machine-id-sha256-v1
+  allowed_networks:
+    - 127.0.0.1/32
+    - ::1/128
+    - 100.64.0.0/10
+    - fd7a:115c:a1e0::/48
+    - 172.16.0.0/12
+enrollment:
+  request_timeout_seconds: 10
+  protocol_version: "1.0"
+degradation:
+  cpu_warning_load: 1.0
+  cpu_critical_load: 2.0
+  cpu_warning_percent: 70
+  cpu_critical_percent: 90
+  disk_warning_free_ratio: 0.1
+  disk_critical_free_ratio: 0.05
+  memory_warning_free_ratio: 0.2
+  memory_critical_free_ratio: 0.1
+  transport_timeout_seconds: 5
+readiness:
+  max_degradation_severity: 0.9
+  dependency_timeout_seconds: 2
+  dependency_urls:
+    - http://cwi-router:8081/api/health

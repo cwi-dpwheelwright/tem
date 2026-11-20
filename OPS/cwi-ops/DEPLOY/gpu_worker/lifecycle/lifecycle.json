@@ -1,0 +1,13 @@
+{
+  "service": "cwi-model-worker",
+  "compose_file": "OPS/cwi-ops/DEPLOY/gpu_worker/docker-compose.yml",
+  "env_file": "OPS/cwi-ops/DEPLOY/gpu_worker/.env",
+  "start": "start.sh",
+  "stop": "stop.sh",
+  "health": "health.sh",
+  "health_ports": [
+    "MODEL_HEALTH_PORT",
+    "MODEL_HEALTH_PRO_PORT",
+    "MODEL_HEALTH_FREE_PORT"
+  ]
+}

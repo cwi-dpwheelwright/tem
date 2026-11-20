@@ -1,0 +1,28 @@
+{
+  "schema_version": "v1",
+  "report_id": "report-001",
+  "pack_id": "enterprise",
+  "pack_version": "0.0.1",
+  "run_id": "run-20260201",
+  "generated_utc": "2026-02-01T00:00:00Z",
+  "summary": {
+    "overall_status": "pass",
+    "score": 0.93,
+    "finding_count": 1
+  },
+  "metrics": {
+    "accuracy": 0.93,
+    "latency_ms": 120
+  },
+  "findings": [
+    {
+      "severity": "low",
+      "message": "Minor formatting variance in narrative output",
+      "trace_id": "trace-abc"
+    }
+  ],
+  "governance": {
+    "approval_required": false
+  },
+  "inputs": {}
+}

@@ -1,0 +1,12 @@
+{
+  "tenant_id": "tenant_dev",
+  "user_id": "integration-patent12",
+  "question": "Recommend an optimal placement for an additional mesh node to improve coverage between Node A and Node B given the radio constraints and terrain notes.",
+  "pack": {
+    "name": "enterprise"
+  },
+  "context": {
+    "mode": "observe",
+    "top_k": 3
+  }
+}

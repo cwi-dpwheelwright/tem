@@ -1,0 +1,25 @@
+{
+  "tenant_id": "tenant_dev",
+  "window": {
+    "start": "2026-01-31T11:55:00Z",
+    "end": "2026-01-31T12:00:00Z"
+  },
+  "signals": [
+    {
+      "tag": "cpu_load",
+      "unit": "ratio",
+      "series": [0.42, 0.71]
+    },
+    {
+      "tag": "latency_ms_p95",
+      "unit": "ms",
+      "series": [75, 220]
+    }
+  ],
+  "metadata": {
+    "device_id": "device-sim-001",
+    "node_id": "node-core-1",
+    "schema_version": "1.0",
+    "tags": ["integration", "patent7", "synthetic"]
+  }
+}

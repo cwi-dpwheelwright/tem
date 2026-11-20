@@ -1,0 +1,8 @@
+{
+  "tenant_id": "tenant-1",
+  "trace_id": "trace-99",
+  "up_count": 3,
+  "down_count": 1,
+  "last_feedback": "up",
+  "last_feedback_utc": "2026-01-26T16:52:00Z"
+}

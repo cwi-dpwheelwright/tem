@@ -1,0 +1,168 @@
+services:
+  cwi-node-agent-ollama:
+    image: ollama/ollama:latest
+    container_name: client-restricted-node-agent-ollama
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_KEEP_ALIVE: 30m
+    volumes:
+      - cwi-node-agent-ollama-data:/root/.ollama
+    restart: unless-stopped
+
+  cwi-node-agent-ollama-pull:
+    image: ollama/ollama:latest
+    container_name: client-restricted-node-agent-ollama-pull
+    depends_on:
+      - cwi-node-agent-ollama
+    environment:
+      OLLAMA_HOST: http://cwi-node-agent-ollama:11434
+      CWI_HOME_NODE_LOCAL_MODEL: ${CWI_HOME_NODE_LOCAL_MODEL:-llama3.1:8b}
+    volumes:
+      - cwi-node-agent-ollama-data:/root/.ollama
+    entrypoint:
+      - sh
+      - -c
+    command:
+      - |
+        set -e
+        until ollama list >/dev/null 2>&1; do sleep 2; done
+        ollama pull "$${CWI_HOME_NODE_LOCAL_MODEL}"
+    restart: "no"
+
+  cwi-node-agent-bootstrap:
+    image: ${REGISTRY}/cwi-node-agent-runtime:${CWI_NODE_AGENT_RUNTIME_TAG}
+    container_name: client-restricted-node-agent-bootstrap
+    env_file: .env
+    build:
+      context: ../../../../src/node-agent-runtime
+      dockerfile: Dockerfile
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        cwi-node-agent generate-identity --config /etc/cwi/node-agent.yaml
+        python - <<'PY'
+        import json
+        import os
+        from datetime import datetime, timedelta, timezone
+        from pathlib import Path
+
+        from node_agent_runtime.config import load_config
+
+        config = load_config("/etc/cwi/node-agent.yaml")
+        if config.storage.state_dir is None:
+            raise SystemExit("storage.state_dir is required")
+
+        activation_dir = config.storage.state_dir / "activation"
+        activation_dir.mkdir(parents=True, exist_ok=True)
+        expires = datetime.now(timezone.utc) + timedelta(days=3650)
+        state = {
+            "activated_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "bundle_id": os.getenv("NODE_AGENT_BOOTSTRAP_BUNDLE_ID", "cwi-home-node-bootstrap"),
+            "device_id": config.identity.node_id,
+            "expires_utc": expires.isoformat().replace("+00:00", "Z"),
+        }
+        (activation_dir / "state.json").write_text(
+            json.dumps(state, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+        PY
+    volumes:
+      - ./node-agent.yaml:/etc/cwi/node-agent.yaml:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - cwi-node-agent-runtime-state:/var/lib/cwi-node-agent
+    healthcheck:
+      disable: true
+    restart: "no"
+
+  cwi-node-agent-runtime:
+    image: ${REGISTRY}/cwi-node-agent-runtime:${CWI_NODE_AGENT_RUNTIME_TAG}
+    container_name: client-restricted-node-agent-runtime
+    env_file: .env
+    build:
+      context: ../../../../src/node-agent-runtime
+      dockerfile: Dockerfile
+    environment:
+      NODE_AGENT_HEALTH_PORT: ${NODE_AGENT_RUNTIME_HTTP_PORT:-8090}
+      CWI_BREAK_GLASS_TOKEN: ${CWI_BREAK_GLASS_TOKEN:-}
+      CWI_HOME_NODE_WORK_TOKEN_SECRET: ${CWI_HOME_NODE_WORK_TOKEN_SECRET:-}
+      CWI_HOME_NODE_LOCAL_MODEL: ${CWI_HOME_NODE_LOCAL_MODEL:-llama3.1:8b}
+      CWI_HOME_NODE_LOCAL_MODEL_BASE_URL: ${CWI_HOME_NODE_LOCAL_MODEL_BASE_URL:-http://cwi-node-agent-ollama:11434}
+    volumes:
+      - ./node-agent.yaml:/etc/cwi/node-agent.yaml:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - cwi-node-agent-runtime-state:/var/lib/cwi-node-agent
+    ports:
+      - "${NODE_AGENT_RUNTIME_HTTP_PORT:-8090}:8090"
+    restart: unless-stopped
+
+  cwi-node-agent-control:
+    image: ${REGISTRY}/cwi-node-agent-runtime:${CWI_NODE_AGENT_RUNTIME_TAG}
+    container_name: client-restricted-node-agent-control
+    env_file: .env
+    build:
+      context: ../../../../src/node-agent-runtime
+      dockerfile: Dockerfile
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        cwi-node-agent enroll --config /etc/cwi/node-agent.yaml
+        exec cwi-node-agent run-control-session --config /etc/cwi/node-agent.yaml
+    depends_on:
+      - cwi-node-agent-ollama
+    environment:
+      CWI_BREAK_GLASS_TOKEN: ${CWI_BREAK_GLASS_TOKEN:-}
+      CWI_HOME_NODE_WORK_TOKEN_SECRET: ${CWI_HOME_NODE_WORK_TOKEN_SECRET:-}
+      CWI_HOME_NODE_LOCAL_MODEL: ${CWI_HOME_NODE_LOCAL_MODEL:-llama3.1:8b}
+      CWI_HOME_NODE_LOCAL_MODEL_BASE_URL: ${CWI_HOME_NODE_LOCAL_MODEL_BASE_URL:-http://cwi-node-agent-ollama:11434}
+    volumes:
+      - ./node-agent.yaml:/etc/cwi/node-agent.yaml:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - cwi-node-agent-runtime-state:/var/lib/cwi-node-agent
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+
+  cwi-node-agent-qr:
+    image: ${REGISTRY}/cwi-node-agent-runtime:${CWI_NODE_AGENT_RUNTIME_TAG}
+    container_name: client-restricted-node-agent-qr
+    env_file: .env
+    build:
+      context: ../../../../src/node-agent-runtime
+      dockerfile: Dockerfile
+    command:
+      - cwi-node-agent
+      - serve-qr
+      - --config
+      - /etc/cwi/node-agent.yaml
+      - --host
+      - 0.0.0.0
+      - --port
+      - "${NODE_AGENT_QR_HTTP_PORT:-8088}"
+    environment:
+      NODE_AGENT_QR_HTTP_PORT: ${NODE_AGENT_QR_HTTP_PORT:-8088}
+      CWI_BREAK_GLASS_TOKEN: ${CWI_BREAK_GLASS_TOKEN:-}
+      CWI_HOME_NODE_WORK_TOKEN_SECRET: ${CWI_HOME_NODE_WORK_TOKEN_SECRET:-}
+    volumes:
+      - ./node-agent.yaml:/etc/cwi/node-agent.yaml:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - cwi-node-agent-runtime-state:/var/lib/cwi-node-agent
+    network_mode: host
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8088/health', timeout=3).read()
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  cwi-node-agent-runtime-state:
+  cwi-node-agent-ollama-data:

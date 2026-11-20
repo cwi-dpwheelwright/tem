@@ -1,0 +1,11 @@
+{
+  "tenant_id": "tenant_dev",
+  "from_user_id": "user_admin_001",
+  "to_user_id": "user_successor_001",
+  "transfer_type": "transfer",
+  "reason": "integration-test ownership transfer (synthetic)",
+  "required_approvals": 1,
+  "approver_ids": [
+    "user_approver_001"
+  ]
+}

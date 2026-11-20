@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "base_url": "http://localhost:8085",
+    "admin_email": "superadmin@cwi.local",
+    "admin_password": "ValidPassw0rd!",
+    "admin_tenant_id": "admin",
+    "tenants": [
+      {
+        "tenant_id": "tenant-1",
+        "name": "Tenant 1",
+        "users": [
+          {
+            "email": "operator@cwi.local",
+            "username": "operator",
+            "display_name": "Operator",
+            "password": "ValidPassw0rd!",
+            "roles": ["operator"]
+          }
+        ]
+      }
+    ]
+  },
+  "packs": {
+    "base_url": "http://localhost:18081",
+    "activations": [
+      {
+        "tenant_id": "tenant-1",
+        "pack_name": "enterprise",
+        "pack_hash": "<pack_hash>",
+        "actor_user_id": "operator"
+      }
+    ]
+  },
+  "documents": {
+    "ingest_url": "http://localhost:18082/api/ingest",
+    "payloads": [
+      {
+        "version": "v1",
+        "tenant_id": "tenant-1",
+        "idempotency_key": "seed-1",
+        "document": {
+          "doc_id": "seed-doc-1",
+          "title": "Seed Document",
+          "mime_type": "text/plain",
+          "content": "Seed content",
+          "content_encoding": "plain",
+          "source": "gold-tests"
+        }
+      }
+    ]
+  }
+}

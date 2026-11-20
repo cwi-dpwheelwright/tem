@@ -1,0 +1,23 @@
+{
+  "node_id": "node-1",
+  "observed_utc": "2026-02-01T00:00:00Z",
+  "interfaces": [
+    {
+      "interface_id": "wifi0",
+      "interface_type": "wifi",
+      "observed_utc": "2026-02-01T00:00:00Z",
+      "state": "up",
+      "rx_mbps": 12.5,
+      "tx_mbps": 3.2,
+      "mtu": 1500,
+      "quality": {
+        "latency_ms": 30,
+        "jitter_ms": 5,
+        "loss_ratio": 0.01,
+        "throughput_mbps": 12.0,
+        "rssi_dbm": -55,
+        "snr_db": 30
+      }
+    }
+  ]
+}

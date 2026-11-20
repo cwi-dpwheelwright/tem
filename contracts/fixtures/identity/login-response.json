@@ -1,0 +1,6 @@
+{
+  "access_token": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImEifQ.eyJzdWIiOiIxIiwic2Vzc2lvbl9pZCI6IjEiLCJ0ZW5hbnRfaWQiOiJ0ZW5hbnQtMSIsImV4cCI6MTcwNjc5MzYwMH0.sig",
+  "refresh_token": "dXBTR3c1V2R4c2l0S1VlbU9mR2NoUWJiWHB6Z2p2U0dOV1QzM09yTT0=",
+  "token_type": "Bearer",
+  "expires_utc": "2026-02-01T18:15:00Z"
+}

@@ -1,0 +1,14 @@
+{
+  "event_id": "rec-evt-stale-0001",
+  "event_type": "memory_candidate.observed",
+  "tenant_id": "tenant-1",
+  "scope_type": "user",
+  "source_component": "process_miner",
+  "source_type": "process_miner",
+  "confidence": 0.58,
+  "trace_id": "trace-stale-001",
+  "policy_status": "pending_review",
+  "temporal_state": "stale",
+  "timestamp_utc": "2026-04-01T12:00:00+00:00",
+  "created_utc": "2026-05-08T18:45:00+00:00"
+}

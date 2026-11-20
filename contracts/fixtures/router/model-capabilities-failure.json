@@ -1,0 +1,10 @@
+{
+  "engine": "ollama",
+  "tier": "pro",
+  "ready": false,
+  "capacity": {
+    "max_concurrency": 0,
+    "queue_depth": 0
+  },
+  "error": "dependency_unavailable"
+}

@@ -1,0 +1,5 @@
+{
+  "status": "ok",
+  "latency_ms": 120,
+  "alerts": ["telemetry nominal", "vector shard healthy"]
+}

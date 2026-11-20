@@ -1,0 +1,11 @@
+[
+  {
+    "user_id": "6b61cf63-1095-44bd-b494-b6197bfcc6d3",
+    "email": "user@tenant.local",
+    "username": "example.user",
+    "display_name": "Example User",
+    "status": "active",
+    "token_version": 2,
+    "roles": ["admin", "viewer"]
+  }
+]

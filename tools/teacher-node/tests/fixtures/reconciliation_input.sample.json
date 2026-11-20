@@ -1,0 +1,39 @@
+{
+  "tenant_id": "tenant-demo",
+  "run_id": "run-2026-02-02",
+  "summary": "Three conflicts and two discrepancies flagged during ingestion.",
+  "status": "review",
+  "conflicts": [
+    { "conflict_id": "conflict-1", "severity": "high", "field": "temperature" },
+    { "conflict_id": "conflict-2", "severity": "medium", "field": "pressure" },
+    { "conflict_id": "conflict-3", "severity": "low", "field": "flow_rate" }
+  ],
+  "discrepancies": [
+    {
+      "discrepancy_id": "disc-2026-02-02-01",
+      "tenant_id": "tenant-demo",
+      "created_utc": "2026-02-02T16:45:00Z",
+      "discrepancy_type": "multi_source_conflict",
+      "severity": "high",
+      "status": "open",
+      "sources": [
+        { "source_id": "model-a", "model_id": "model-a-1", "output_hash": "sha256:1c2d3e4f", "confidence": 0.74 },
+        { "source_id": "model-b", "model_id": "model-b-2", "output_hash": "sha256:5a6b7c8d", "confidence": 0.81 }
+      ],
+      "discrepancies": [
+        { "field": "temperature_c", "observed": "82", "expected": "76", "variance": 6, "confidence": 0.9 }
+      ],
+      "resolution": { "resolution_type": "escalated" },
+      "metadata": { "trace_id": "trace-90ab" }
+    }
+  ],
+  "sources": [
+    { "source_id": "etl-run-448", "source_type": "ingestion", "version": "2026.02" }
+  ],
+  "metrics": {
+    "entity_count": 42
+  },
+  "metadata": {
+    "format_version": "1.0"
+  }
+}

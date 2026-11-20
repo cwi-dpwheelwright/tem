@@ -1,0 +1,6 @@
+{
+  "tenant_id": "tenant-demo",
+  "snapshot_id": "snap-succ-20260202-001",
+  "actor_id": "owner-001",
+  "reason": "rollback"
+}

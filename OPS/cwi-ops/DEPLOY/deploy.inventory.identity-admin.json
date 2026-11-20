@@ -1,0 +1,25 @@
+{
+  "defaults": {
+    "sshUser": "root",
+    "deployRoot": "/opt/cwi/DEPLOY",
+    "bundleRoot": "OPS/cwi-ops/DEPLOY",
+    "composeCommand": "docker compose",
+    "composeFile": "docker-compose.yml",
+    "composeArgs": "up -d",
+    "seedEnvFromTemplate": true
+  },
+  "hosts": [
+    {
+      "name": "internal-mcp-01",
+      "host": "100.120.208.51",
+      "roles": [
+        {
+          "name": "identity-admin",
+          "bundle": "OPS/cwi-ops/compose/cwi-identity-admin-ui",
+          "envFile": "OPS/cwi-ops/DEPLOY/identity-admin.env",
+          "imageTar": "OPS/cwi-ops/DEPLOY/identity-admin-images.tar"
+        }
+      ]
+    }
+  ]
+}

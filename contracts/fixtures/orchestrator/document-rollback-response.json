@@ -1,0 +1,9 @@
+{
+  "rollback_id": "rb-20260202-01",
+  "doc_id": "doc-proc-018",
+  "target_version": "1.8.1",
+  "status": "staged",
+  "requested_by": "ops.lead",
+  "requested_utc": "2026-02-02T12:10:00Z",
+  "message": "Rollback staged for 1.8.1"
+}

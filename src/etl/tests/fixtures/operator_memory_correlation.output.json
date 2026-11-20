@@ -1,0 +1,50 @@
+{
+  "correlation_id": "omc-20260202-001",
+  "tenant_id": "tenant-demo",
+  "operator_id": "op-217",
+  "session_id": "sess-88a1",
+  "observed_utc": "2026-02-02T18:10:00Z",
+  "consent": {
+    "granted": true,
+    "granted_utc": "2026-02-02T17:55:00Z",
+    "source": "carplay-ui"
+  },
+  "signals": [
+    {
+      "signal_type": "correction",
+      "value": 1,
+      "unit": "count",
+      "confidence": 0.92,
+      "occurred_utc": "2026-02-02T18:00:12Z"
+    },
+    {
+      "signal_type": "delay",
+      "value": 1,
+      "unit": "count",
+      "confidence": 0.85,
+      "occurred_utc": "2026-02-02T18:02:00Z"
+    },
+    {
+      "signal_type": "confirmation",
+      "value": 1,
+      "unit": "count",
+      "confidence": 0.9,
+      "occurred_utc": "2026-02-02T18:03:30Z"
+    }
+  ],
+  "performance": [
+    {
+      "metric": "response_latency_ms",
+      "value": 420,
+      "unit": "ms",
+      "confidence": 0.88,
+      "window_utc": "2026-02-02T18:05:00Z"
+    }
+  ],
+  "correlation_score": 0.6283,
+  "notes": "Baseline correlation scoring output.",
+  "metadata": {
+    "source_id": "operator-memory",
+    "shift": "night"
+  }
+}

@@ -1,0 +1,221 @@
+coordinator_url: https://gateway.your-domain
+enrollment_url: https://gateway.your-domain/api/membership/enroll
+identity:
+  # Recommended for home nodes: derive once from /etc/machine-id using
+  # machine-id-sha256-v1 and persist it as:
+  # home-<first32hex(sha256(machine-id))>
+  # On Linux home nodes you can also set `node_id: auto` to derive it at runtime.
+  node_id: home-derived-node-id
+  # machine_id_path: /etc/machine-id
+  private_key_path: ./state/identity/private_key.pem
+  public_key_path: ./state/identity/public_key.pem
+  key_type: ed25519
+  # Optional secure key material from environment (PEM strings).
+  # private_key_pem_env: NODE_AGENT_PRIVATE_KEY_PEM
+  # public_key_pem_env: NODE_AGENT_PUBLIC_KEY_PEM
+  persist_keys: true
+storage:
+  state_dir: ./state
+activation:
+  require_signature: true
+  expected_issuer: cwi-ops
+  expected_audience: cwi-node-agent-runtime
+  public_key_path: ./state/identity/activation_pub.pem
+  # public_key_pem_env: NODE_AGENT_ACTIVATION_PUB_PEM
+  # handshake_path: ./state/activation/handshake.json
+  nonce_cache_max_entries: 10000
+  # status_url: https://gateway.your-domain/api/activation/status
+  status_timeout_seconds: 5
+kill_switch:
+  admin_url: https://gateway.your-domain/api/admin/kill_switch
+  tenant_id: tenant-01
+  break_glass_token_env: CWI_BREAK_GLASS_TOKEN
+  retry_attempts: 3
+  retry_backoff_seconds: 1
+  # state_path: ./state/kill_switch/state.json
+tamper:
+  indicator_files_exist:
+    - ./state/identity/private_key.pem
+  indicator_files_sha256:
+    # Replace with expected SHA-256 hex for the file.
+    ./state/identity/activation_pub.pem: "0000000000000000000000000000000000000000000000000000000000000000"
+  indicator_env_vars:
+    - NODE_AGENT_TAMPER
+  policy_action: ticket # local-only ticket file (no upstream transport target yet)
+  policy_minimum_severity: 1.0
+  # policy_ticket_path: ./state/tamper/tickets.jsonl
+bundle:
+  # sealed_bundle_path: ./state/bundles/sealed.json
+  # unseal_dir: ./state/bundles/unsealed
+  crypto_provider: noop
+  # crypto_key_path: ./state/identity/bundle_key.txt
+  # crypto_key_env: NODE_AGENT_BUNDLE_KEY
+cache:
+  cache_dir: ./state/cache
+  max_bytes: 104857600
+  max_items: 1000
+  require_sha256: true
+  require_signature: false
+  # signature_public_key_path: ./state/identity/cache_pub.pem
+  # signature_public_key_pem_env: NODE_AGENT_CACHE_PUB_PEM
+baseline_packs:
+  roots:
+    - ./state/baseline-packs/cwi-intent-interpreter
+    - ./state/baseline-packs/cwi-memory-policy
+    - ./state/baseline-packs/cwi-memory-capsule
+    - ./state/baseline-packs/cwi-source-retrieval
+    - ./state/baseline-packs/cwi-identity
+    - ./state/baseline-packs/cwi-values-core
+    - ./state/baseline-packs/cwi-values-biblical
+    - ./state/baseline-packs/cwi-ethical-reasoner
+    - ./state/baseline-packs/cwi-safety-guardrails
+    - ./state/baseline-packs/cwi-response-orchestrator
+    - ./state/baseline-packs/cwi-communication-core
+local_model:
+  enabled: false
+  provider: ollama
+  base_url: http://127.0.0.1:11434
+  # base_url_env: CWI_HOME_NODE_LOCAL_MODEL_BASE_URL
+  model: llama3.1:8b
+  # model_env: CWI_HOME_NODE_LOCAL_MODEL
+  model_family: 7b/8b-instruct
+  quantization: Q4_K_M
+  context_tokens: 4096
+  max_vram_gb: 6
+  timeout_seconds: 45
+resilience:
+  # queue_dir: ./state/offline_queue
+  max_entries: 1000
+  max_bytes: 10485760
+  max_attempts: 3
+  backoff_seconds: 1
+data_boundary:
+  allow_raw_data: false
+  allowed_export_paths:
+    - ./state/exports
+  allowed_export_hosts:
+    - api.cwi.dev
+update:
+  # updates_dir: ./state/updates
+  # current_dir: ./state/runtime/current
+  # manifest_filename: manifest.json
+  # require_manifest: false
+  # require_signature: false
+  # signature_public_key_path: ./state/identity/update_pub.pem
+  # signature_public_key_pem_env: NODE_AGENT_UPDATE_PUB_PEM
+priority:
+  survival_mode: false
+  min_priority_level: 50
+  header_name: X-CWI-Priority
+link_metrics:
+  # transport_url: https://gateway.your-domain/api/transport/link-metrics
+  transport_timeout_seconds: 5
+  use_envelope: true
+metrics_signing:
+  require_signature: false
+  # private_key_path: ./state/identity/metrics_priv.pem
+  # private_key_pem_env: NODE_AGENT_METRICS_PRIV_PEM
+  # public_key_path: ./state/identity/metrics_pub.pem
+  # public_key_pem_env: NODE_AGENT_METRICS_PUB_PEM
+  replay_window: 1000
+metrics_ingestion:
+  # allowed_node_ids:
+  #   - node-01
+  # allowed_key_ids:
+  #   - metrics-key-1
+  # allowed_interfaces:
+  #   - wifi0
+  # allowed_interface_types:
+  #   - wifi
+  #   - cellular
+  #   - satellite
+reroute:
+  warning_threshold: 0.7
+  critical_threshold: 0.9
+  clear_threshold: 0.5
+  cooldown_seconds: 60
+  # transport_url: https://gateway.your-domain/api/reroute/hints
+  transport_timeout_seconds: 5
+job_runner:
+  allow_commands:
+    - python
+  default_timeout_seconds: 60
+status:
+  # status_url: https://gateway.your-domain/api/node/status
+  timeout_seconds: 5
+qr_service:
+  identifier_version: machine-id-sha256-v1
+  allowed_networks:
+    - 127.0.0.1/32
+    - ::1/128
+    - 100.64.0.0/10
+    - fd7a:115c:a1e0::/48
+control_session:
+  # connect_url: wss://gateway.your-domain/control/nodes/connect
+  tenant_id: tenant-01
+  # tenant_id_env: CWI_HOME_NODE_TENANT_ID
+  owner_user_id: user-01
+  # owner_user_id_env: CWI_HOME_NODE_OWNER_USER_ID
+  friendly_name: node-01
+  runtime_version: 2026.04.04
+  policy_profile_version: "1.0"
+  protocol_version: "1.0"
+  keepalive_interval_seconds: 20
+  heartbeat_interval_seconds: 45
+  reconnect_backoff_seconds:
+    - 1
+    - 2
+    - 5
+    - 10
+    - 30
+  work_token_issuer: cwi-orchestrator
+  work_token_secret_env: CWI_HOME_NODE_WORK_TOKEN_SECRET
+  replay_cache_max_entries: 10000
+enrollment:
+  request_timeout_seconds: 10
+  protocol_version: "1.0"
+  # Optional: override fingerprint or compute from mTLS cert.
+  # cert_fingerprint: "hexsha256fingerprint"
+  mtls:
+    cert_path: ./state/identity/client-cert.pem
+    key_path: ./state/identity/client-key.pem
+    # ca_bundle_path: ./state/identity/ca.pem
+    verify_hostname: true
+    # cert_paths:
+    #   - ./state/identity/client-cert.pem
+    #   - ./state/identity/client-cert-2.pem
+    # key_paths:
+    #   - ./state/identity/client-key.pem
+    #   - ./state/identity/client-key-2.pem
+    # rotation_seconds: 3600
+    # rotation_grace_seconds: 300
+    # revocation_denylist_path: ./state/identity/revoked-serials.txt
+    # revocation_crl_url: https://gateway.your-domain/api/identity/crl
+    # revocation_crl_path: ./state/identity/revoked.crl
+    # revocation_crl_cache_path: ./state/identity/crl-cache.pem
+    # revocation_crl_refresh_seconds: 3600
+    # revocation_crl_timeout_seconds: 5
+    # revocation_fail_open: false
+  auth:
+    # token_env: NODE_AGENT_ENROLL_TOKEN
+    # tokens:
+    #   - token-1
+    #   - token-2
+    # token_type: Bearer
+    # token_rotation_seconds: 3600
+degradation:
+  cpu_warning_load: 1.0
+  cpu_critical_load: 2.0
+  cpu_warning_percent: 70
+  cpu_critical_percent: 90
+  disk_warning_free_ratio: 0.1
+  disk_critical_free_ratio: 0.05
+  memory_warning_free_ratio: 0.2
+  memory_critical_free_ratio: 0.1
+  # transport_url: https://gateway.your-domain/api/degradation/events
+  transport_timeout_seconds: 5
+readiness:
+  max_degradation_severity: 0.9
+  dependency_timeout_seconds: 2
+  dependency_urls:
+    - https://gateway.your-domain/health

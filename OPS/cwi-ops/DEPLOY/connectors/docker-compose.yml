@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  cwi-connectors:
+    image: ${REGISTRY}/cwi-connectors:${CWI_CONNECTORS_TAG}
+    container_name: internal-01-integrations-connectors
+    env_file: .env
+    build:
+      context: ../../../../src/connectors
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./connectors.yaml:/app/config/connectors.yaml:ro
+      - cwi-connectors-state:/var/lib/cwi-connectors
+    ports:
+      - "${CWI_CONNECTORS_HTTP_PORT:-8080}:8080"
+    restart: unless-stopped
+
+volumes:
+  cwi-connectors-state:

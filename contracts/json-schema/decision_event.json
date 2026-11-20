@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DecisionEvent",
+  "type": "object",
+  "required": [
+    "event_id",
+    "trace_id",
+    "tenant_id",
+    "decision_type",
+    "outcome",
+    "occurred_utc"
+  ],
+  "properties": {
+    "event_id": { "type": "string" },
+    "trace_id": { "type": "string" },
+    "tenant_id": { "type": "string" },
+    "actor_id": { "type": "string" },
+    "decision_type": { "type": "string" },
+    "outcome": { "type": "string" },
+    "occurred_utc": { "type": "string", "format": "date-time" },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false
+}

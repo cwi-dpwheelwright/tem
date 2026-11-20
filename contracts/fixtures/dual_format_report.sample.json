@@ -1,0 +1,26 @@
+{
+  "report_id": "dfr-2026-02-02-01",
+  "tenant_id": "tenant-demo",
+  "generated_utc": "2026-02-02T08:20:00Z",
+  "title": "Energy Optimization Summary",
+  "status": "review",
+  "summary": "Balancing actions reduced peak demand with minor conflicts flagged.",
+  "coherence_score": 0.82,
+  "conflict_count": 2,
+  "narrative": "Energy balancing reduced peak demand by 4.2%. Two signals showed missing operator confirmation due to telemetry gaps.",
+  "structured": {
+    "savings_pct": 4.2,
+    "anomalies": 2,
+    "recommended_action": "Review telemetry sampling policy"
+  },
+  "sources": [
+    {
+      "source_id": "telemetry-run-221",
+      "source_type": "telemetry",
+      "version": "2026.02"
+    }
+  ],
+  "metadata": {
+    "format_version": "1.0"
+  }
+}

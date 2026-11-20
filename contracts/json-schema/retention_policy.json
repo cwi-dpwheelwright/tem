@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cwi.dev/schemas/retention_policy.json",
+  "title": "Retention Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "telemetry_days": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ledger_days": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "trace_days": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "purge_enabled": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "telemetry_days",
+    "ledger_days",
+    "trace_days",
+    "purge_enabled"
+  ]
+}

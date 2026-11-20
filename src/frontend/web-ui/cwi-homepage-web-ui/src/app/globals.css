@@ -1,0 +1,444 @@
+:root {
+  --bg-0: #010817;
+  --bg-1: #031a45;
+  --bg-2: #0a3f82;
+  --line: rgba(115, 196, 255, 0.34);
+  --card: rgba(6, 18, 44, 0.66);
+  --text: #e7f4ff;
+  --muted: #9dbfe5;
+  --accent: #40b8ff;
+  --accent-2: #8de4ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body), "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 24% 16%, rgba(129, 187, 255, 0.24), transparent 32%),
+    radial-gradient(circle at 77% 8%, rgba(78, 151, 255, 0.22), transparent 28%),
+    radial-gradient(circle at 66% 72%, rgba(33, 119, 255, 0.24), transparent 30%),
+    linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 56%, #01050f 100%);
+}
+
+.homepage {
+  position: relative;
+  overflow: hidden;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 1.4rem 1.25rem 3rem;
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 8% 14%, rgba(255, 255, 255, 0.75) 0.07rem, transparent 0.2rem),
+    radial-gradient(circle at 62% 8%, rgba(183, 218, 255, 0.75) 0.06rem, transparent 0.2rem),
+    radial-gradient(circle at 76% 42%, rgba(201, 231, 255, 0.75) 0.07rem, transparent 0.2rem),
+    radial-gradient(circle at 42% 82%, rgba(170, 215, 255, 0.62) 0.08rem, transparent 0.21rem);
+  opacity: 0.6;
+}
+
+.mesh-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(128deg, transparent 48%, var(--line) 49%, transparent 50%),
+    linear-gradient(40deg, transparent 48%, var(--line) 49%, transparent 50%),
+    radial-gradient(circle at 22% 59%, rgba(118, 199, 255, 0.9) 0.1rem, transparent 0.22rem),
+    radial-gradient(circle at 62% 39%, rgba(146, 212, 255, 0.9) 0.09rem, transparent 0.22rem),
+    radial-gradient(circle at 82% 71%, rgba(255, 217, 150, 0.95) 0.11rem, transparent 0.23rem);
+  background-size: 340px 250px, 430px 310px, 220px 220px, 240px 240px, 260px 260px;
+  opacity: 0.35;
+  animation: pulse 7s ease-in-out infinite;
+}
+
+.site-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.logo-mark {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.logo-shield {
+  width: 2rem;
+  aspect-ratio: 1;
+  border-radius: 0.55rem;
+  background: linear-gradient(145deg, #58c0ff, #235bff);
+  box-shadow: 0 0 22px rgba(64, 161, 255, 0.85);
+}
+
+.logo-word {
+  margin: 0;
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  letter-spacing: 0.08em;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.logo-tagline {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.top-nav a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.94rem;
+}
+
+.pill-button {
+  display: inline-block;
+  padding: 0.68rem 1.26rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #00182f;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 28px rgba(62, 169, 255, 0.4);
+}
+
+.hero {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 5.2rem 0 3.6rem;
+  animation: rise 800ms ease;
+}
+
+.hero h1 {
+  margin: 0;
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  font-weight: 500;
+  font-size: clamp(2.1rem, 5.4vw, 4.2rem);
+  line-height: 1.15;
+  text-shadow: 0 8px 30px rgba(7, 18, 49, 0.9);
+}
+
+.hero strong {
+  font-weight: 800;
+}
+
+.hero-copy {
+  max-width: 700px;
+  margin: 1.2rem auto 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 2.1vw, 1.26rem);
+}
+
+.hero-ctas {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.outline-button {
+  border: 1px solid rgba(124, 189, 255, 0.7);
+  color: var(--text);
+  border-radius: 999px;
+  text-decoration: none;
+  padding: 0.85rem 1.5rem;
+  background: rgba(7, 26, 58, 0.45);
+  backdrop-filter: blur(3px);
+}
+
+.solid-button {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  text-decoration: none;
+  padding: 0.78rem 1.25rem;
+  color: #f4fbff;
+  font-weight: 600;
+  background: linear-gradient(120deg, #083f7e, #0b2a62 55%, #0e5ea6);
+  border: 1px solid rgba(117, 188, 255, 0.55);
+  box-shadow: 0 10px 28px rgba(8, 62, 134, 0.45);
+}
+
+.outline-button.compact,
+.solid-button.compact {
+  padding: 0.7rem 1.2rem;
+}
+
+.architecture {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 3.6rem;
+}
+
+.architecture-copy,
+.architecture-diagram {
+  border: 1px solid rgba(118, 190, 255, 0.27);
+  border-radius: 1.4rem;
+  padding: 1.3rem;
+  background: var(--card);
+  box-shadow: inset 0 1px 0 rgba(147, 212, 255, 0.28);
+}
+
+.architecture-copy h2 {
+  margin: 0;
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  font-size: clamp(1.6rem, 2.8vw, 2.8rem);
+  font-weight: 600;
+}
+
+.architecture-copy h2 span {
+  color: #49c2ff;
+}
+
+.architecture-copy p {
+  margin: 1rem 0 1.2rem;
+  color: #b4d1ee;
+  line-height: 1.5;
+  max-width: 34ch;
+}
+
+.architecture-diagram {
+  min-height: 280px;
+  position: relative;
+  overflow: hidden;
+}
+
+.orbit {
+  position: absolute;
+  inset: 10%;
+  border: 1px solid rgba(130, 200, 255, 0.4);
+  border-radius: 999px;
+}
+
+.orbit-b {
+  inset: 20% 8%;
+}
+
+.node {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #d8f2ff, #47b6ff 66%, #145fa7);
+  box-shadow: 0 0 22px rgba(95, 187, 255, 0.9);
+}
+
+.node-a {
+  top: 19%;
+  left: 20%;
+}
+
+.node-b {
+  top: 28%;
+  right: 23%;
+}
+
+.node-c {
+  bottom: 18%;
+  left: 48%;
+}
+
+.chip {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  border: 1px solid rgba(140, 208, 255, 0.56);
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  background: rgba(8, 39, 77, 0.75);
+  font-size: 0.82rem;
+  color: #d6ecff;
+}
+
+.dual-panel {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 1.2rem;
+}
+
+.trust-card,
+.domain-card {
+  border: 1px solid rgba(118, 190, 255, 0.27);
+  border-radius: 1.4rem;
+  padding: 1.3rem;
+  background: var(--card);
+}
+
+.trust-card h3,
+.domain-card h3 {
+  margin: 0;
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  font-size: clamp(1.5rem, 2.4vw, 2.5rem);
+  font-weight: 600;
+}
+
+.trust-card h3 span,
+.domain-card h3 span {
+  color: #4ac3ff;
+}
+
+.trust-card p {
+  margin: 0.8rem 0;
+  color: #b3d0ee;
+}
+
+.trust-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 1rem 0 0.8rem;
+}
+
+.trust-timeline span {
+  text-align: center;
+  border: 1px solid rgba(115, 191, 255, 0.4);
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.4rem;
+  font-size: 0.85rem;
+}
+
+.trust-note {
+  border: 1px solid rgba(126, 195, 255, 0.4);
+  border-radius: 0.85rem;
+  padding: 0.8rem;
+  color: #bed7f1;
+  margin: 0.4rem 0 1rem;
+}
+
+.domain-visual {
+  position: relative;
+  min-height: 220px;
+  margin: 1rem 0;
+  border: 1px solid rgba(119, 197, 255, 0.3);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(94, 175, 255, 0.4), rgba(1, 11, 34, 0.85) 50%),
+    linear-gradient(165deg, rgba(12, 42, 91, 0.7), rgba(5, 18, 43, 0.9));
+  overflow: hidden;
+}
+
+.domain-core {
+  position: absolute;
+  width: 82px;
+  height: 82px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 1rem;
+  background: linear-gradient(145deg, #0f86dd, #0a3870);
+  box-shadow: 0 0 28px rgba(91, 183, 255, 0.9);
+}
+
+.domain-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(135, 204, 255, 0.45);
+}
+
+.domain-ring.r1 {
+  inset: 16%;
+}
+
+.domain-ring.r2 {
+  inset: 24%;
+}
+
+.domain-ring.r3 {
+  inset: 32%;
+}
+
+.transparency-banner {
+  position: relative;
+  z-index: 2;
+  margin-top: 2.5rem;
+  padding: 1.2rem 1.3rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(118, 194, 255, 0.35);
+  background: rgba(7, 19, 43, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.transparency-banner h3 {
+  margin: 0;
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  font-size: clamp(1.4rem, 2vw, 2rem);
+}
+
+.transparency-banner p {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.28;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (max-width: 980px) {
+  .top-nav {
+    display: none;
+  }
+
+  .architecture,
+  .dual-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .transparency-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

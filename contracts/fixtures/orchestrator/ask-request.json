@@ -1,0 +1,13 @@
+{
+  "tenant_id": "tenant-1",
+  "user_id": "user-1",
+  "question": "What is the policy?",
+  "pack": {
+    "name": "enterprise",
+    "anchor": null
+  },
+  "context": {
+    "mode": "observe",
+    "top_k": 8
+  }
+}

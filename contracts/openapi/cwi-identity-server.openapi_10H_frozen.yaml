@@ -1,0 +1,1024 @@
+openapi: 3.0.3
+info:
+  title: CWI Identity Server API (Frozen 10H)
+  version: 10H.1.0
+  description: 'Frozen OpenAPI contract for the cwi-identity-server service.
+
+
+    Responsibilities:
+
+    - Issues access/refresh tokens for CWI services
+
+    - Manages password reset flows and session revocation
+
+    - Serves JWKS for JWT verification
+
+
+    Sanitized: no internal domains/hosts/secrets.'
+servers:
+- url: http://cwi-identity-server:8085
+  description: Internal (Docker/Compose) service URL
+- url: https://identity.your-domain
+  description: Local dev URL
+tags:
+- name: Auth
+  description: Login/refresh/logout and password management
+- name: Keys
+  description: JWKS discovery and rotation
+- name: Admin
+  description: Tenant/user administration endpoints
+- name: Health
+  description: Liveness/readiness endpoints
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      - message
+      properties:
+        error:
+          type: string
+          description: Short error code
+        message:
+          type: string
+          description: Human-readable message
+        details:
+          type: array
+          items:
+            type: string
+          nullable: true
+    EmptyResponse:
+      type: object
+      description: Empty response body.
+    HealthStatus:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          example: ok
+    LoginRequest:
+      type: object
+      required:
+      - password
+      properties:
+        tenant_id:
+          type: string
+          nullable: true
+          description: Required for standard users; optional for super admin login.
+        email:
+          type: string
+          format: email
+          nullable: true
+          description: Provide either email or username.
+        username:
+          type: string
+          nullable: true
+          description: Provide either username or email.
+        password:
+          type: string
+          format: password
+    RefreshRequest:
+      type: object
+      required:
+      - refresh_token
+      properties:
+        refresh_token:
+          type: string
+    LogoutRequest:
+      type: object
+      required:
+      - refresh_token
+      properties:
+        refresh_token:
+          type: string
+    PasswordSetRequest:
+      type: object
+      required:
+      - tenant_id
+      - email
+      - password
+      properties:
+        tenant_id:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    PasswordResetRequest:
+      type: object
+      required:
+      - tenant_id
+      - email
+      properties:
+        tenant_id:
+          type: string
+        email:
+          type: string
+          format: email
+    PasswordResetCompleteRequest:
+      type: object
+      required:
+      - token
+      - new_password
+      properties:
+        token:
+          type: string
+        new_password:
+          type: string
+          format: password
+    TokenResponse:
+      type: object
+      required:
+      - access_token
+      - refresh_token
+      - token_type
+      - expires_utc
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+          example: Bearer
+        expires_utc:
+          type: string
+          format: date-time
+    PasswordResetResponse:
+      type: object
+      required:
+      - reset_token
+      - expires_utc
+      properties:
+        reset_token:
+          type: string
+        expires_utc:
+          type: string
+          format: date-time
+    InviteActivationRequest:
+      type: object
+      required:
+      - token
+      - password
+      properties:
+        token:
+          type: string
+        password:
+          type: string
+          format: password
+    UserApproveRequest:
+      type: object
+      required:
+      - tenant_id
+      properties:
+        tenant_id:
+          type: string
+    UserUnlockRequest:
+      type: object
+      required:
+      - tenant_id
+      properties:
+        tenant_id:
+          type: string
+        reason:
+          type: string
+          nullable: true
+    AdminPasswordSetRequest:
+      type: object
+      required:
+      - tenant_id
+      - password
+      properties:
+        tenant_id:
+          type: string
+        password:
+          type: string
+          format: password
+    InviteResponse:
+      type: object
+      required:
+      - invite_token
+      - expires_utc
+      properties:
+        invite_token:
+          type: string
+        expires_utc:
+          type: string
+          format: date-time
+    TenantCreateRequest:
+      type: object
+      required:
+      - tenant_id
+      - name
+      properties:
+        tenant_id:
+          type: string
+        name:
+          type: string
+    TenantUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [active, disabled]
+    TenantResponse:
+      type: object
+      required:
+      - tenant_id
+      - name
+      - status
+      properties:
+        tenant_id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+    UserSummaryResponse:
+      type: object
+      required:
+      - user_id
+      - email
+      - display_name
+      - status
+      - account_state
+      - is_locked
+      - lockout_until_utc
+      - failed_login_count
+      - can_unlock
+      - token_version
+      - roles
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+        status:
+          type: string
+        account_state:
+          type: string
+        is_locked:
+          type: boolean
+        lockout_until_utc:
+          type: string
+          format: date-time
+          nullable: true
+        failed_login_count:
+          type: integer
+        can_unlock:
+          type: boolean
+        token_version:
+          type: integer
+        roles:
+          type: array
+          items:
+            type: string
+    UserInviteRequest:
+      type: object
+      required:
+      - tenant_id
+      - email
+      properties:
+        tenant_id:
+          type: string
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+    RoleCreateRequest:
+      type: object
+      required:
+      - tenant_id
+      - name
+      properties:
+        tenant_id:
+          type: string
+        name:
+          type: string
+    RoleResponse:
+      type: object
+      required:
+      - role_id
+      - name
+      properties:
+        role_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    UserRoleAssignRequest:
+      type: object
+      required:
+      - tenant_id
+      - roles
+      properties:
+        tenant_id:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+    RoleAssignResponse:
+      type: object
+      required:
+      - user_id
+      - roles
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        roles:
+          type: array
+          items:
+            type: string
+    UserRevokeRequest:
+      type: object
+      required:
+      - tenant_id
+      properties:
+        tenant_id:
+          type: string
+        reason:
+          type: string
+          nullable: true
+    TokenVersionResponse:
+      type: object
+      required:
+      - token_version
+      properties:
+        token_version:
+          type: integer
+    JwksResponse:
+      type: object
+      required:
+      - keys
+      properties:
+        keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/Jwk'
+    Jwk:
+      type: object
+      required:
+      - kty
+      - crv
+      - x
+      - y
+      - kid
+      - use
+      - alg
+      properties:
+        kty:
+          type: string
+          example: EC
+        crv:
+          type: string
+          example: P-256
+        x:
+          type: string
+        y:
+          type: string
+        kid:
+          type: string
+        use:
+          type: string
+          example: sig
+        alg:
+          type: string
+          example: ES256
+paths:
+  /healthz:
+    get:
+      tags:
+      - Health
+      summary: Liveness probe
+      responses:
+        '200':
+          description: Service is alive.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+  /readyz:
+    get:
+      tags:
+      - Health
+      summary: Readiness probe
+      responses:
+        '200':
+          description: Service is ready.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Service is not ready.
+  /auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Authenticate user and issue tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Tokens issued.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Invalid credentials or account locked.
+  /auth/refresh:
+    post:
+      tags:
+      - Auth
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Tokens issued.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Invalid or expired refresh token.
+  /auth/logout:
+    post:
+      tags:
+      - Auth
+      summary: Revoke refresh token and session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+      responses:
+        '200':
+          description: Logout processed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/password/set:
+    post:
+      tags:
+      - Auth
+      summary: Set a user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordSetRequest'
+      responses:
+        '200':
+          description: Password set.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '400':
+          description: Validation error or password policy failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found.
+  /auth/password/reset:
+    post:
+      tags:
+      - Auth
+      summary: Create password reset token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+      responses:
+        '200':
+          description: Reset token issued or request accepted.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/PasswordResetResponse'
+                - $ref: '#/components/schemas/EmptyResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/password/reset/complete:
+    post:
+      tags:
+      - Auth
+      summary: Complete password reset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetCompleteRequest'
+      responses:
+        '200':
+          description: Password updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '400':
+          description: Validation error or password policy failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Invalid or expired reset token.
+  /auth/activate:
+    post:
+      tags:
+      - Auth
+      summary: Activate invited user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteActivationRequest'
+      responses:
+        '200':
+          description: User activated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '400':
+          description: Validation error or password policy failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Invalid or expired invite token.
+        '403':
+          description: Invite not yet approved.
+  /auth/token-version:
+    get:
+      tags:
+      - Auth
+      summary: Get current token version for user
+      parameters:
+      - name: tenant_id
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Token version response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenVersionResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found.
+  /jwks:
+    get:
+      tags:
+      - Keys
+      summary: Retrieve current JWKS
+      responses:
+        '200':
+          description: JWKS document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwksResponse'
+  /jwks/rotate:
+    post:
+      tags:
+      - Keys
+      summary: Rotate signing key
+      responses:
+        '200':
+          description: JWKS document after rotation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwksResponse'
+  /admin/tenants:
+    get:
+      tags:
+      - Admin
+      summary: List tenants
+      responses:
+        '200':
+          description: Tenants.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TenantResponse'
+    post:
+      tags:
+      - Admin
+      summary: Create tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantCreateRequest'
+      responses:
+        '200':
+          description: Tenant created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Tenant already exists.
+  /admin/tenants/{tenantId}:
+    patch:
+      tags:
+      - Admin
+      summary: Update tenant
+      parameters:
+      - name: tenantId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantUpdateRequest'
+      responses:
+        '200':
+          description: Tenant updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Tenant not found.
+  /admin/tenants/{tenantId}/disable:
+    post:
+      tags:
+      - Admin
+      summary: Disable tenant
+      parameters:
+      - name: tenantId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Tenant disabled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantResponse'
+        '404':
+          description: Tenant not found.
+  /admin/users/invite:
+    post:
+      tags:
+      - Admin
+      summary: Invite user and return activation token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInviteRequest'
+      responses:
+        '200':
+          description: Invite created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InviteResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Tenant not found.
+        '409':
+          description: User already active.
+  /admin/users:
+    get:
+      tags:
+      - Admin
+      summary: List users for tenant
+      parameters:
+      - name: tenant_id
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Users for tenant.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSummaryResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /admin/roles:
+    get:
+      tags:
+      - Admin
+      summary: List tenant roles
+      parameters:
+      - name: tenant_id
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Roles for tenant.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Admin
+      summary: Create tenant role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleCreateRequest'
+      responses:
+        '200':
+          description: Role created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Role already exists.
+  /admin/users/{userId}/roles:
+    put:
+      tags:
+      - Admin
+      summary: Assign roles to user
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleAssignRequest'
+      responses:
+        '200':
+          description: Roles assigned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleAssignResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found.
+  /admin/users/{userId}/revoke:
+    post:
+      tags:
+      - Admin
+      summary: Revoke user tokens and increment token version
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRevokeRequest'
+      responses:
+        '200':
+          description: Token version updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenVersionResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found.
+  /admin/users/{userId}/unlock:
+    post:
+      tags:
+      - Admin
+      summary: Unlock user account and clear failed sign-in attempts
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUnlockRequest'
+      responses:
+        '200':
+          description: User unlocked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummaryResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found.
+  /admin/users/{userId}/approve:
+    post:
+      tags:
+      - Admin
+      summary: Approve pending invite for user
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserApproveRequest'
+      responses:
+        '200':
+          description: User approved.
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Invite or user not found.
+  /admin/users/{userId}/password:
+    post:
+      tags:
+      - Admin
+      summary: Set user password and activate
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminPasswordSetRequest'
+      responses:
+        '200':
+          description: Password set.
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found.

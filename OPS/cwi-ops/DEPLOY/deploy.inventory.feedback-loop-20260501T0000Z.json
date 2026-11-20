@@ -1,0 +1,83 @@
+{
+  "defaults": {
+    "sshUser": "root",
+    "deployRoot": "/opt/cwi/DEPLOY",
+    "bundleRoot": "OPS/cwi-ops/DEPLOY",
+    "composeCommand": "docker compose",
+    "composeFile": "docker-compose.yml",
+    "composeArgs": "up -d",
+    "deploymentMode": "safe",
+    "seedEnvFromTemplate": true,
+    "clearContainersBeforeDeploy": false,
+    "clearImagesBeforeDeploy": false,
+    "clearVolumesBeforeDeploy": false
+  },
+  "hosts": [
+    {
+      "name": "internal-mcp-01",
+      "host": "100.120.208.51",
+      "roles": [
+        {
+          "name": "mcp-core",
+          "composeArgs": "up -d --force-recreate cwi-orchestrator cwi-router",
+          "buildContextPaths": [
+            "global.json",
+            "src/backend/common",
+            "src/backend/services/cwi-orchestrator",
+            "src/backend/services/cwi-router",
+            "contracts/grpc",
+            "contracts/json-schema"
+          ],
+          "buildImages": [
+            {
+              "image": "local/cwi-orchestrator:connector-contract-20260429T1745Z",
+              "dockerfile": "src/backend/services/cwi-orchestrator/Dockerfile"
+            },
+            {
+              "image": "local/cwi-router:more-updates-20260426T2021Z",
+              "dockerfile": "src/backend/services/cwi-router/Dockerfile"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public-gateway-01",
+      "host": "100.124.140.66",
+      "roles": [
+        {
+          "name": "cwi-gpt-web-ui",
+          "bundle": "OPS/cwi-ops/compose/cwi-gpt-web-ui",
+          "composeArgs": "up -d --force-recreate cwi-gpt-web-ui",
+          "buildContextPaths": [
+            "contracts",
+            "src/frontend/web-ui/cwi-gpt-web-ui"
+          ],
+          "buildImages": [
+            {
+              "image": "local/cwi-gpt-web-ui:gpt-site-20260429T1813Z",
+              "dockerfile": "src/frontend/web-ui/cwi-gpt-web-ui/Dockerfile",
+              "buildArgs": {
+                "NEXT_PUBLIC_CWI_GATEWAY_BASE_URL": "https://cwigpt.com",
+                "NEXT_PUBLIC_CWI_DEFAULT_TENANT": "CWI-ops",
+                "NEXT_PUBLIC_CWI_AUTH_MODE": "token",
+                "NEXT_PUBLIC_CWI_OIDC_AUTHORITY": "",
+                "NEXT_PUBLIC_CWI_OIDC_CLIENT_ID": "",
+                "NEXT_PUBLIC_CWI_OIDC_REDIRECT_URI": "",
+                "NEXT_PUBLIC_CWI_OIDC_POST_LOGOUT_REDIRECT_URI": "",
+                "NEXT_PUBLIC_CWI_OIDC_SCOPES": "",
+                "NEXT_PUBLIC_CWI_POLICY_MODE": "observe",
+                "NEXT_PUBLIC_CWI_ERROR_REPORT_URL": "",
+                "NEXT_PUBLIC_CWI_REQUEST_TIMEOUT_MS": "240000",
+                "NEXT_PUBLIC_CWI_BUILD_VERSION": "feedback-loop-20260501T0000Z",
+                "NEXT_PUBLIC_CWI_BUILD_SHA": "feedback-loop",
+                "NEXT_PUBLIC_CWI_GLOBAL_INPUT_FOCUS_ENABLED": "true",
+                "NEXT_PUBLIC_CWI_STICKY_CHAT_LAYOUT_ENABLED": "true"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

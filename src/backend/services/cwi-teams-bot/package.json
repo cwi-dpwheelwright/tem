@@ -1,0 +1,38 @@
+{
+  "name": "cwi-teams-bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "nodemon --watch src --ext ts --exec \"node --loader ts-node/esm src/index.ts\"",
+    "codegen:check": "node ../../../../tools/codegen/src/codegen.js && git diff --exit-code",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "botbuilder": "^4.21.1",
+    "dotenv": "^16.4.5",
+    "jose": "^5.9.3",
+    "pg": "^8.12.0",
+    "redis": "^4.7.0",
+    "restify": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/pg": "^8.11.7",
+    "@types/restify": "^8.5.12",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.56.0",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "vitest": "^1.6.0"
+  },
+  "overrides": {
+    "find-my-way": "^8.2.2",
+    "send": "^0.19.0"
+  }
+}

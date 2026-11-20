@@ -1,0 +1,15 @@
+{
+  "plan_id": "succ-20260202-001",
+  "asset_id": "agent-pack-22",
+  "current_owner_id": "owner-001",
+  "status": "active",
+  "effective_utc": "2026-03-01T00:00:00Z",
+  "successors": [
+    {
+      "owner_id": "owner-002",
+      "order": 1,
+      "trigger": "retirement",
+      "approval_required": true
+    }
+  ]
+}

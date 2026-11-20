@@ -1,0 +1,277 @@
+This phase formally activated the Critic as an autonomous, non-blocking integrity and drift monitoring system across the network.
+Here is what this means in simple terms:
+• The Teacher publishes knowledge packs.
+• The Vector Shards store derived memory.
+• The Critic now continuously verifies that everything remains consistent, healthy, and tamper-free.
+• The system improves and monitors itself without interrupting operations.
+What We Completed in Phase 3.5:
+Critic Observer Mode (Non-Blocking)
+The Critic runs in the background. It does not stop Teacher or Shards. It observes, analyzes, and records.
+Cryptographic Pack Verification
+The Critic downloads pack.json files from MinIO and computes sha256 hashes to verify integrity.
+This ensures pack artifacts remain byte-accurate and unmodified.
+Cross-Shard Drift Detection
+The Critic samples vectors from Shard 1 and Shard 2.
+It compares payload hashes using deterministic JSON normalization.
+Any mismatch would be logged as drift.
+Automated Reporting
+Every scan writes a signed report to:
+teacher-node/critic/reports//critic_report.json
+Autonomous Scheduling
+The Critic now runs automatically every 10 minutes via systemd timer.
+It persists across reboots.
+It requires no manual intervention.
+Least-Privilege Access
+The Critic was provisioned with its own MinIO identity:
+Read-only access to packs
+Write-only access to critic/reports
+No authority over publication or deletion
+This preserves the original CWI architecture:
+Teacher is authoritative.
+Shards are derived memory.
+Critic is analytical and advisory.
+No role violates boundaries.
+Why Phase 3.5 Matters
+We now have:
+• Deterministic publication
+• Deterministic ingestion
+• Immutable storage
+• Cross-node integrity validation
+• Automated drift detection
+• Continuous background auditing
+This transforms CWI from infrastructure validation to a self-monitoring distributed knowledge system.
+Everything is now traceable.
+Everything is hash-verifiable.
+Everything is logged.
+Phase 3.5 is fully satisfied.
+Phase 4 Begins Next
+Phase 4 activates the operational layer:
+Core mirror adoption (PACK_ADOPTED events)
+Pack-service immutable serving
+Pin controls (latest_stable / approved / experiment)
+Gateway routing through pack-service
+Fail-closed anchor enforcement
+Latency and performance baselining
+Phase 4 transitions CWI from validated infrastructure to a controlled, versioned, live distributed knowledge network.
+We are no longer building components.
+We are now orchestrating a system.
+# CWI Phase 3.5 Completion Report
+## Integrity Enforcement + Autonomous Critic Activation
+
+---
+
+## Executive Summary
+
+Phase 3.5 marks the transition of CWI from validated infrastructure to a self-monitoring distributed intelligence system.
+
+Phase 3 established:
+
+- Deterministic pack publication  
+- Dual-shard ingestion validation  
+- MinIO artifact immutability  
+- Evidence capture with sha256 receipts  
+
+Phase 3.5 activates continuous verification.
+
+The Critic is now:
+
+- Autonomous  
+- Non-blocking  
+- Cryptographically aware  
+- Drift-detecting  
+- Least-privilege isolated  
+
+The system now verifies itself.
+
+---
+
+# Architecture Context
+
+### Teacher Node
+- Authoritative publisher  
+- Generates deterministic anchors  
+- Signs pack artifacts  
+- Pushes immutable versions  
+
+### Vector Shards
+- Derived memory  
+- Rebuildable from pack  
+- No authority  
+
+### MinIO
+- Immutable artifact store  
+- Versioned pack custody  
+
+### Critic
+- Observes  
+- Verifies  
+- Detects drift  
+- Records findings  
+- Does NOT block operations  
+
+---
+
+# Phase 3.5 Deliverables
+
+## 1. Critic Observer Mode (Non-Blocking)
+
+The Critic:
+- Runs independently of Teacher  
+- Does not intercept publish  
+- Does not halt ingestion  
+- Does not modify shards  
+- Only records and reports  
+
+This matches the original CWI design philosophy: analytics without interruption.
+
+---
+
+## 2. Cryptographic Pack Verification
+
+The Critic now:
+
+- Lists pack versions in MinIO  
+- Downloads pack.json  
+- Computes sha256 hash  
+- Records pack_sha256 in report  
+
+Purpose:
+Ensure no pack artifact is modified after publication.
+
+---
+
+## 3. Cross-Shard Drift Detection
+
+The Critic:
+
+- Pulls point IDs from Shard 1  
+- Fetches same IDs from Shard 2  
+- Normalizes JSON payload  
+- Computes deterministic payload hash  
+- Compares across shards  
+
+If mismatch → logged under `"drift"` section.
+
+Detects:
+- Partial ingestion failures  
+- Shard corruption  
+- Write inconsistencies  
+- Payload mutation  
+
+---
+
+## 4. Automated Reporting
+
+Reports written to:
+
+teacher-node/critic/reports/<timestamp>/critic_report.json
+
+Each report includes:
+
+- Timestamp  
+- Qdrant health  
+- Collection status  
+- Pack anchor verification  
+- Pack SHA verification  
+- Drift sample results  
+- Mismatch logs  
+
+---
+
+## 5. Autonomous Scheduling
+
+Configured via systemd:
+
+cwi-critic-scan.timer  
+cwi-critic-scan.service  
+
+Runs every 10 minutes.
+
+- Starts after network  
+- Persistent across reboot  
+- No manual trigger required  
+
+---
+
+## 6. Least-Privilege Identity
+
+MinIO user: critic-observer
+
+Permissions:
+- Read-only: packs/*
+- Write-only: critic/reports/*
+- No delete
+- No publish authority
+
+Role boundaries preserved.
+
+---
+
+# Evidence Artifacts
+
+MinIO Path:
+
+teacher-node/critic/reports/
+
+Example:
+
+- 20260225_184510/critic_report.json  
+- 20260225_191651/critic_report.json  
+- 20260225_193729/critic_report.json  
+
+These provide traceability and audit history.
+
+---
+
+# Capabilities Now Online
+
+CWI now has:
+
+- Deterministic publication  
+- Deterministic ingestion  
+- Immutable artifact storage  
+- Cryptographic verification  
+- Cross-node drift detection  
+- Continuous integrity auditing  
+
+CWI is now self-verifying.
+
+---
+
+# Phase 4 Preview
+
+Phase 4 activates operational orchestration.
+
+## Objectives
+
+1. Core Mirror Adoption (PACK_ADOPTED events)
+2. Pack-Service Immutable Serving
+3. Pin Controls (latest_stable / approved / experiment)
+4. Fail-Closed Anchor Enforcement
+5. Gateway Routing Hardening
+6. Latency & Performance Baseline
+
+---
+
+# Roadmap
+
+Phase 4 – Operational Orchestration  
+Phase 5 – Governance & Policy Enforcement  
+Phase 6 – High-Speed Backhaul Fabric  
+Phase 7 – Multi-Region Replication  
+Phase 8 – Enterprise Deployment  
+
+---
+
+# Strategic Position
+
+Teacher = authoritative  
+Shards = derived memory  
+MinIO = immutable custody  
+Critic = autonomous integrity engine  
+
+CWI is now operating as a distributed, self-monitoring intelligence system.
+
+ALIGNMENT ADDENDUM (2026-03-02)
+- Pack and payload canonicalization should use RFC 8785 for deterministic hashing.
+- Backward-compatible verification for existing anchors is required until republish completes.

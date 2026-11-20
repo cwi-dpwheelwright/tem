@@ -1,0 +1,8 @@
+{
+  "baseUrl": "https://api.cwi.example",
+  "tenantId": "tenant-1",
+  "userId": "user-1",
+  "packName": "default",
+  "policyMode": "approve",
+  "overrideExisting": false
+}

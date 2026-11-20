@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: internal-02-data-postgres
+    env_file: .env
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cwi_identity
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-identity-server:
+    image: ${REGISTRY}/cwi-identity-server:${CWI_IDENTITY_TAG}
+    container_name: internal-01-identity-server
+    env_file: .env
+    build:
+      context: ../../../..
+      dockerfile: src/backend/services/cwi-identity-server/Dockerfile
+    ports:
+      - "${IDENTITY_HTTP_PORT}:8085"
+    depends_on:
+      - postgres
+    entrypoint: ["sh", "-c", "dotnet Cwi.Identity.Api.dll --migrate && dotnet Cwi.Identity.Api.dll"]
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+  cwi-coordination-layer:
+    image: ${REGISTRY}/cwi-coordination-layer:${CWI_COORDINATION_TAG}
+    container_name: internal-01-core-coordination-layer
+    env_file: .env
+    build:
+      context: ../../../..
+      dockerfile: src/backend/services/cwi-coordination-layer/Dockerfile
+    ports:
+      - "${COORDINATION_HTTP_PORT}:8081"
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+networks:
+  cwi-internal:
+    name: cwi-internal

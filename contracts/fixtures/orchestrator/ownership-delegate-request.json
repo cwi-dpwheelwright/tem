@@ -1,0 +1,11 @@
+{
+  "tenant_id": "tenant-demo",
+  "from_user_id": "owner-001",
+  "to_user_id": "delegate-101",
+  "transfer_type": "delegate",
+  "reason": "scope:Ops; requested_by:owner-001",
+  "required_approvals": 1,
+  "approver_ids": [
+    "owner-001"
+  ]
+}

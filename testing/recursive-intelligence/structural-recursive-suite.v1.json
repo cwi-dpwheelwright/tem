@@ -1,0 +1,81 @@
+{
+  "schema_version": "cwi.structural_recursive_suite.v1",
+  "suite_id": "structural-recursive-internal-open-loops.v1",
+  "purpose": "Controlled, de-identified structural validation for recursive intelligence beyond the behavioral ASK path.",
+  "pilot": {
+    "name": "internal_ownership_open_loops",
+    "description": "Proves whether sanitized process-miner observations can become recursive events, graph candidates, vector refresh work, response-quality graph evidence, and governed export summaries.",
+    "privacy_posture": "No real personal names, customer identifiers, secrets, raw prompts, raw conversations, or private operational endpoints are included."
+  },
+  "controlled_observations": [
+    {
+      "id": "OBS-STRUCT-001",
+      "type": "open_loop",
+      "signal": "ownership_open_loop",
+      "outcome": "observed",
+      "count": 1,
+      "confidence": 0.91,
+      "tags": [
+        "internal_ownership",
+        "open_loop",
+        "structural_validation"
+      ]
+    },
+    {
+      "id": "OBS-STRUCT-002",
+      "type": "relationship",
+      "signal": "telemetry_contract_dependency",
+      "outcome": "observed",
+      "count": 1,
+      "confidence": 0.88,
+      "tags": [
+        "telemetry",
+        "dependency",
+        "structural_validation"
+      ]
+    }
+  ],
+  "graph_fact": {
+    "subject": "role_observability_owner",
+    "relation": "owns",
+    "object": "dashboard_telemetry_contract",
+    "fact_key_prefix": "structural_validation_internal_open_loops"
+  },
+  "conflict_fact": {
+    "subject": "role_observability_owner",
+    "relation": "owns",
+    "object": "conflicting_owner_alias",
+    "fact_key_prefix": "structural_validation_internal_open_loops_conflict"
+  },
+  "quality_observation": {
+    "category": "structural_validation",
+    "rule": "recursive_chain_requires_structural_evidence",
+    "severity": "warn",
+    "detail": "Behavioral ASK success is not sufficient structural recursive-loop proof.",
+    "route": "structural_recursive_validation",
+    "prompt_type": "controlled_structural_probe",
+    "source_behavior": "structural_gap_identified",
+    "critic_score": 0.78,
+    "fix_status": "active"
+  },
+  "required_steps": [
+    "controlled_input_event",
+    "process_miner_observation",
+    "normalized_recursive_event",
+    "recursive_event_ingest",
+    "recursive_event_query",
+    "graph_candidate_created",
+    "graph_conflict_candidate_created",
+    "graph_vector_refresh_job_created",
+    "vector_refresh_completed",
+    "ask_retrieval_improvement",
+    "truth_engine_trace_signal",
+    "external_opinion_observed",
+    "runtime_critic_external_submission",
+    "quality_observation_ingest",
+    "response_quality_graph_update",
+    "federated_summary_observed",
+    "validated_cache_lifecycle",
+    "ledger_audit_chain"
+  ]
+}

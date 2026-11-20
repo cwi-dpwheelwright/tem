@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TeacherReportInput",
+  "type": "object",
+  "properties": {
+    "pack_id": { "type": "string" },
+    "pack_version": { "type": "string" },
+    "run_id": { "type": "string" },
+    "summary": { "type": "object", "additionalProperties": true },
+    "metrics": { "type": "object", "additionalProperties": true },
+    "findings": { "type": "array" },
+    "governance": { "type": "object", "additionalProperties": true },
+    "inputs": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": true
+}

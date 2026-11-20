@@ -1,0 +1,20 @@
+﻿{
+  "records": [
+    {
+      "id": "json-1",
+      "title": "JSON Record One",
+      "body": "First JSON record content",
+      "source": "json",
+      "created_utc": "2026-01-01T00:00:00Z",
+      "record_id": "rec-json-1"
+    },
+    {
+      "id": "json-2",
+      "title": "JSON Record Two",
+      "body": "Second JSON record content",
+      "source": "json",
+      "created_utc": "2026-01-02T00:00:00Z",
+      "record_id": "rec-json-2"
+    }
+  ]
+}

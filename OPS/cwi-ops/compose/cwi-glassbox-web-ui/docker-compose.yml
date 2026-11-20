@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  cwi-glassbox-web-ui:
+    image: ${REGISTRY}/cwi-glassbox-web-ui:${CWI_GLASSBOX_WEB_UI_TAG}
+    container_name: public-ui-glassbox-web-ui
+    env_file: .env
+    environment:
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      NEXT_PUBLIC_OIDC_AUTHORITY: ${NEXT_PUBLIC_OIDC_AUTHORITY}
+      NEXT_PUBLIC_OIDC_CLIENT_ID: ${NEXT_PUBLIC_OIDC_CLIENT_ID}
+      NEXT_PUBLIC_OIDC_REDIRECT_URI: ${NEXT_PUBLIC_OIDC_REDIRECT_URI}
+      NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI: ${NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI}
+      NEXT_PUBLIC_OIDC_SCOPES: ${NEXT_PUBLIC_OIDC_SCOPES}
+      NEXT_PUBLIC_PACKS_BASE_URL: ${NEXT_PUBLIC_PACKS_BASE_URL}
+    ports:
+      - "${GLASSBOX_WEB_UI_HTTP_PORT}:3000"
+    restart: unless-stopped

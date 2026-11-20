@@ -1,0 +1,19 @@
+{
+  "candidateId": "graph-candidate-abc123",
+  "tenantId": "tenant-1",
+  "userIdHash": "8a6c4c9f4d31b2aa",
+  "nodeId": "home-node-01",
+  "recursiveEventId": "rec-evt-stale-0001",
+  "traceId": "trace-stale-001",
+  "candidateState": "add",
+  "temporalState": "stale",
+  "subject": "project_priority",
+  "relation": "observed",
+  "object": "Older observed project priority candidate retained for review.",
+  "factKey": "project_priority|observed|older observed project priority candidate retained for review.",
+  "confidence": 0.58,
+  "sourceComponent": "process_miner",
+  "sourceHash": "db76ed4fcade7821",
+  "observedUtc": "2026-04-01T12:00:00+00:00",
+  "createdUtc": "2026-05-08T18:45:00+00:00"
+}

@@ -1,0 +1,147 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.artifacts/
+.iterations/
+.dotnet-home/
+
+# .NET
+**/bin/
+**/obj/
+**/TestResults/
+
+# Node
+node_modules/
+.npm/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.tox/
+.nox/
+.eggs/
+*.egg-info/
+pip-wheel-metadata/
+.venv/
+venv/
+ENV/
+env/
+Lib/
+pyvenv.cfg
+!OPS/cwi-ops/env/
+!OPS/cwi-ops/env/ENV_VAR_MATRIX.json
+
+# Allow tracking node-ui-web source lib directory (macOS ignorecase can match Lib/ -> lib/)
+!src/frontend/web-ui/cwi-node-ui-web/src/lib/
+!src/frontend/web-ui/cwi-node-ui-web/src/lib/**
+# Allow tracking cwi-user-web source lib directory (macOS ignorecase can match Lib/ -> lib/)
+# Allow tracking cwi-admin-console source lib directory (macOS ignorecase can match Lib/ -> lib/)
+!src/frontend/web-ui/cwi-admin-console/src/lib/
+!src/frontend/web-ui/cwi-admin-console/src/lib/**
+
+!src/frontend/web-ui/cwi-user-web/src/lib/
+!src/frontend/web-ui/cwi-user-web/src/lib/**
+!src/frontend/web-ui/cwi-gpt-web-ui/src/lib/
+!src/frontend/web-ui/cwi-gpt-web-ui/src/lib/**
+
+# Env files
+.env
+.env.*
+*.env
+**/.env
+!**/.env.template
+
+# Coverage
+coverage/
+.coverage
+
+# Artifacts and iterations
+OPS/cwi-ops/compose/test/graph-db-data/
+OPS/cwi-ops/compose/full/graph-db-data/
+OPS/cwi-ops/compose/test/qdrant-data/
+OPS/cwi-ops/compose/test/model-worker-lifecycle/
+OPS/cwi-ops/compose/packs/
+artifacts/
+testing/runs/
+!OPS/cwi-ops/compose/packs/artifacts/
+!OPS/cwi-ops/compose/packs/artifacts/**/*
+
+# Mobile (Android)
+**/.gradle/
+**/build/
+**/local.properties
+
+# Mobile (iOS)
+**/DerivedData/
+**/*.xcuserstate
+**/*.xcuserdata/
+
+# Tooling downloads
+tools/gradle-dist/
+
+# Temp
+*.tmp
+*.temp
+*.swp
+.codex-temp/
+cwi-platform-backlog-generated-v33.csv
+*.zip
+AGENTS.md
+# Allow orchestrator application artifacts service code
+!src/backend/services/cwi-orchestrator/src/Cwi.Orchestrator.Application/Artifacts/
+!src/backend/services/cwi-orchestrator/src/Cwi.Orchestrator.Application/Artifacts/**
+OPS/cwi-ops/compose/full/.env.local
+OPS/cwi-ops/DEPLOY/deploy.inventory.local.json
+OPS/cwi-ops/DEPLOY/public-identity-images.tar
+OPS/cwi-ops/DEPLOY/public-identity-images.tar.part000
+OPS/cwi-ops/DEPLOY/public-identity-images.tar.part001
+OPS/cwi-ops/DEPLOY/public-identity-images.tar.part002
+OPS/cwi-ops/DEPLOY/public-identity-images.tar.part003
+OPS/cwi-ops/DEPLOY/public-identity-images.tar.part004
+OPS/cwi-ops/DEPLOY/public-pack-service-images.tar
+OPS/cwi-ops/DEPLOY/public-pack-service-images.tar.part000
+OPS/cwi-ops/DEPLOY/public-pack-service-images.tar.part001
+OPS/cwi-ops/DEPLOY/public-pack-service-images.tar.part002
+OPS/cwi-ops/DEPLOY/public-pack-service-images.tar.part003
+OPS/cwi-ops/DEPLOY/public-pack-service-images.tar.part004
+OPS/cwi-ops/DEPLOY/public-ui-images.tar
+OPS/cwi-ops/DEPLOY/public-ui-images.tar.part000
+OPS/cwi-ops/DEPLOY/public-ui-images.tar.part001
+OPS/cwi-ops/DEPLOY/public-ui-images.tar.part002
+OPS/cwi-ops/DEPLOY/public-ui-images.tar.part003
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part000
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part001
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part002
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part003
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part004
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part005
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part006
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part007
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part008
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part009
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part010
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part011
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part012
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part013
+OPS/cwi-ops/DEPLOY/mcp-core-images.tar.part014

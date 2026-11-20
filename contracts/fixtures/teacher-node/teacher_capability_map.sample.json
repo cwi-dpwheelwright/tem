@@ -1,0 +1,26 @@
+{
+  "schema_version": "v1",
+  "pack_id": "enterprise",
+  "pack_version": "0.0.1",
+  "generated_utc": "2026-02-01T00:00:00Z",
+  "capabilities": [
+    {
+      "capability": "ask",
+      "actions": ["ask"],
+      "permissions": ["read"],
+      "limits": {
+        "rate": 10
+      }
+    }
+  ],
+  "activation_map": [
+    {
+      "action": "ask",
+      "requires": ["ask"]
+    }
+  ],
+  "summary": {
+    "capability_count": 1,
+    "activation_rule_count": 1
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "answer": "Example response for contract verification.",
+  "answer_markdown": "Example response for contract verification.",
+  "citations": [
+    {
+      "doc_id": "doc-1",
+      "chunk_id": "chunk-1",
+      "score": 0.42
+    }
+  ],
+  "execution_state": "completed",
+  "execution_target": "shared_compute",
+  "trace": {
+    "trace_id": "trace-1",
+    "sources": [
+      "doc-1:chunk-1"
+    ],
+    "confidence": 0.5,
+    "grounded": false,
+    "reasoning_based": false,
+    "graph_used": false,
+    "graph_hits": 0,
+    "document_hits": 0,
+    "memory_results": [],
+    "memory_used": false,
+    "source_results": [],
+    "policy_mode": "observe",
+    "model": "free",
+    "pack_hash": "hash-1",
+    "pack_hashes": {},
+    "pack_used": false,
+    "baseline_packs": [],
+    "pack_capabilities": [],
+    "pack_capability_decision": null,
+    "guardrails": [],
+    "guardrails_summary": null,
+    "guardrails_pointers": [],
+    "validations": [],
+    "discrepancies": [],
+    "corrections": [],
+    "pack_version": "1.0.0"
+  }
+}

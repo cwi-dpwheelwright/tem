@@ -1,0 +1,68 @@
+gateway_url: "https://gateway.your-domain"
+tenant_id: "tenant-1"
+poll_interval_seconds: 15
+buffer_path: "/var/lib/cwi-edge-agent/buffer"
+# ingest_timeout_seconds: 10
+# buffer_max_items: 1000
+# buffer_max_bytes: 10485760
+# buffer_drop_policy: "drop_oldest"
+# identity:
+#   base_url: "https://identity.your-domain"
+#   tenant_id: "tenant-1"
+#   username_env: "CWI_EDGE_AGENT_IDENTITY_USERNAME"
+#   password_env: "CWI_EDGE_AGENT_IDENTITY_PASSWORD"
+#   refresh_margin_seconds: 60
+# mtls:
+#   cert_path: "/etc/cwi/edge-agent.crt"
+#   key_path: "/etc/cwi/edge-agent.key"
+#   revoked_serials_path: "/etc/cwi/revoked_serials.txt"
+#   ca_bundle_path: "/etc/cwi/edge-agent-ca.pem"
+#   crl_url: "https://ca.your-domain/crl.pem"
+#   crl_cache_path: "/var/lib/cwi-edge-agent/crl.pem"
+#   crl_refresh_seconds: 3600
+#   pinned_fingerprints:
+#     - "sha256:__FINGERPRINT__"
+#   verify_hostname: true
+#   reload_interval_seconds: 300
+#   reload_on_sighup: true
+# survival:
+#   enabled: true
+#   endpoint: "https://orchestrator.your-domain/api/survival/signal"
+#   emit_interval_seconds: 60
+#   min_severity: 0.1
+#   min_change: 0.05
+#   signal_type: "edge_agent_degradation"
+# degradation:
+#   buffer_warning_ratio: 0.7
+#   buffer_critical_ratio: 0.9
+#   disk_warning_free_ratio: 0.1
+#   disk_critical_free_ratio: 0.05
+#   network_failure_threshold: 3
+#   network_open_severity: 0.95
+#   network_half_open_severity: 0.7
+# otel:
+#   enabled: false
+#   service_name: "cwi-edge-agent"
+#   otlp_endpoint: "https://otel.your-domain:4318"
+#   headers: "authorization=Bearer token"
+#   metrics_interval_seconds: 15
+#   traces_enabled: true
+#   metrics_enabled: true
+
+# metrics:
+#   enabled: false
+#   node_id: "edge-agent-1"
+#   endpoint: "https://coordination.your-domain/api/transport/link-metrics"
+#   collector: "simulated"
+#   # collector: "system"  # requires psutil
+#   queue_path: "/var/lib/cwi-edge-agent/metrics-buffer.jsonl"
+#   queue_max_items: 500
+#   queue_max_bytes: 1048576
+#   queue_drop_policy: "drop_oldest"
+#   flush_interval_seconds: 30
+#   max_batch: 25
+#   timeout_seconds: 10
+#   backoff_base_seconds: 1
+#   backoff_max_seconds: 30
+#   failure_threshold: 3
+#   recovery_seconds: 30

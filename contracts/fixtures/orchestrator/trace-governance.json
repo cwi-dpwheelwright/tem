@@ -1,0 +1,87 @@
+{
+  "trace_id": "trace-99",
+  "sources": [
+    "policy:guardrails",
+    "doc-7:chunk-2"
+  ],
+  "confidence": 0.27,
+  "grounded": false,
+  "reasoning_based": false,
+  "graph_used": false,
+  "graph_hits": 0,
+  "document_hits": 0,
+  "memory_results": [],
+  "memory_used": false,
+  "source_results": [],
+  "policy_mode": "approve",
+  "model": "free",
+  "pack_hash": "hash-99",
+  "pack_used": false,
+  "pack_hashes": {},
+  "baseline_packs": [],
+  "pack_capabilities": [
+    {
+      "name": "search",
+      "scope": "ask",
+      "risk": "low",
+      "requires_approval": false
+    },
+    {
+      "name": "action:shutdown",
+      "scope": "action",
+      "risk": "high",
+      "requires_approval": true
+    }
+  ],
+  "pack_capability_decision": {
+    "policy_mode": "approve",
+    "risk": "high",
+    "requires_approval": true,
+    "allow_execution": false,
+    "blocking_capabilities": [
+      "action:shutdown"
+    ],
+    "reason": "Pack capability requires approval."
+  },
+  "guardrails": [
+    {
+      "id": "gr-1",
+      "name": "no-hallucination",
+      "severity": "high",
+      "message": "Unsupported claim detected."
+    }
+  ],
+  "guardrails_summary": {
+    "total": 1,
+    "severity_counts": {
+      "high": 1
+    }
+  },
+  "guardrails_pointers": [
+    "gr-1"
+  ],
+  "validations": [
+    {
+      "rule": "citation_required",
+      "field": "answer.citations",
+      "detail": "Missing required citation for source claim."
+    }
+  ],
+  "discrepancies": [
+    {
+      "field": "dosage",
+      "expected": "5mg",
+      "actual": "10mg",
+      "note": "Double-check patient record."
+    }
+  ],
+  "corrections": [
+    {
+      "field": "dosage",
+      "from": "10mg",
+      "to": "5mg",
+      "note": "Adjusted per policy."
+    }
+  ],
+  "pack_version": "1.0.0"
+}

@@ -1,0 +1,83 @@
+tenant_id: "tenant-1"
+workspace_id: "workspace-1"
+poll_interval_seconds: 300
+state_store:
+  kind: "file"
+  path: "/var/lib/cwi-connectors/state.json"
+admin_enabled: false
+connectors:
+  - id: "calendar-primary"
+    type: "outlook"
+    enabled: false
+    config:
+      mailbox: "me"
+      api_base_url: "https://graph.microsoft.com/v1.0"
+    auth:
+      type: "api_key"
+      api_key:
+        header_name: "Authorization"
+        value: "env://CWI_CONNECTOR_OUTLOOK_TOKEN"
+  - id: "email-primary"
+    type: "outlook"
+    enabled: false
+    config:
+      mailbox: "me"
+      api_base_url: "https://graph.microsoft.com/v1.0"
+    auth:
+      type: "api_key"
+      api_key:
+        header_name: "Authorization"
+        value: "env://CWI_CONNECTOR_OUTLOOK_TOKEN"
+  - id: "tasks-primary"
+    type: "smartsheet"
+    enabled: false
+    config:
+      sheet_id: "env://CWI_CONNECTOR_TASKS_SHEET_ID"
+      api_base_url: "https://api.smartsheet.com/2.0"
+    auth:
+      type: "api_key"
+      api_key:
+        header_name: "Authorization"
+        value: "env://CWI_CONNECTOR_SMARTSHEET_TOKEN"
+  - id: "notes-primary"
+    type: "google_drive"
+    enabled: false
+    config:
+      root_folder_id: "env://CWI_CONNECTOR_NOTES_FOLDER_ID"
+      api_base_url: "https://www.googleapis.com/drive/v3"
+    auth:
+      type: "api_key"
+      api_key:
+        header_name: "Authorization"
+        value: "env://CWI_CONNECTOR_GOOGLE_DRIVE_TOKEN"
+  - id: "documents-primary"
+    type: "google_drive"
+    enabled: false
+    config:
+      root_folder_id: "env://CWI_CONNECTOR_DOCUMENTS_FOLDER_ID"
+      api_base_url: "https://www.googleapis.com/drive/v3"
+    auth:
+      type: "api_key"
+      api_key:
+        header_name: "Authorization"
+        value: "env://CWI_CONNECTOR_GOOGLE_DRIVE_TOKEN"
+  - id: "alerts-primary"
+    type: "json"
+    enabled: false
+    config:
+      path: "/var/lib/cwi-connectors/fixtures/alerts-placeholder.json"
+    auth:
+      type: "api_key"
+      api_key:
+        header_name: "X-Api-Key"
+        value: "env://CWI_CONNECTOR_ALERTS_TOKEN"
+  - id: "workflow-primary"
+    type: "json"
+    enabled: false
+    config:
+      path: "/var/lib/cwi-connectors/fixtures/workflows-placeholder.json"
+    auth:
+      type: "api_key"
+      api_key:
+        header_name: "X-Api-Key"
+        value: "env://CWI_CONNECTOR_WORKFLOW_TOKEN"

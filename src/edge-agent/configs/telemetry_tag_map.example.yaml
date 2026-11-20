@@ -1,0 +1,10 @@
+timestamp_column: "timestamp"
+signals:
+  - source: "temperature_c"
+    tag: "temperature"
+    unit: "C"
+    # opcua_node: "ns=2;s=Sensors.Temperature"
+  - source: "pressure_kpa"
+    tag: "pressure"
+    unit: "kPa"
+    # opcua_node: "ns=2;s=Sensors.Pressure"

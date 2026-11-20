@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cwi.dev/schemas/teacher_template_schema.json",
+  "title": "TeacherTemplate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["template_id", "template_type", "version", "title", "sections"],
+  "properties": {
+    "template_id": { "type": "string", "minLength": 1 },
+    "template_type": {
+      "type": "string",
+      "enum": ["procedure", "policy", "runbook", "report"]
+    },
+    "version": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "classification": { "type": "string" },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required_fields": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "max_sections": { "type": "integer", "minimum": 1 },
+        "allowed_tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "requires_approval": { "type": "boolean" },
+        "approval_reason": { "type": "string" }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["section_id", "title", "fields"],
+        "properties": {
+          "section_id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "fields": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["field_id", "label"],
+              "properties": {
+                "field_id": { "type": "string", "minLength": 1 },
+                "label": { "type": "string", "minLength": 1 },
+                "type": {
+                  "type": "string",
+                  "enum": ["text", "markdown", "list"]
+                },
+                "required": { "type": "boolean" },
+                "default": { "type": ["string", "number", "boolean", "array", "object", "null"] },
+                "semantic_hint": { "type": "string" },
+                "constraints": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "max_length": { "type": "integer", "minimum": 1 },
+                    "min_length": { "type": "integer", "minimum": 0 },
+                    "allowed_values": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mapping_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field_id", "source_path"],
+        "properties": {
+          "field_id": { "type": "string", "minLength": 1 },
+          "source_path": { "type": "string", "minLength": 1 },
+          "default": {},
+          "transform": { "type": "string" },
+          "required": { "type": "boolean" },
+          "join_separator": { "type": "string" }
+        }
+      }
+    }
+  }
+}

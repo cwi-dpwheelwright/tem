@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  cwi-critic-node:
+    image: ${REGISTRY}/cwi-critic-node:${CWI_CRITIC_NODE_TAG}
+    container_name: ${CRITIC_NODE_CONTAINER_NAME:-internal-critic-node}
+    env_file: .env
+    environment:
+      CRITIC_NODE_HTTP_PORT: ${CRITIC_NODE_HTTP_PORT:-8086}
+    ports:
+      - "${CRITIC_NODE_HTTP_PORT:-8086}:${CRITIC_NODE_HTTP_PORT:-8086}"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import os, urllib.request; urllib.request.urlopen('http://127.0.0.1:%s/health' % os.getenv('CRITIC_NODE_HTTP_PORT', '8086'), timeout=2).read()"
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - cwi-internal
+    restart: unless-stopped
+
+networks:
+  cwi-internal:
+    name: cwi-internal

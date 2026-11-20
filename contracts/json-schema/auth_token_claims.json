@@ -1,0 +1,23 @@
+{
+  "$id": "https://cwi.dev/schemas/auth_token_claims.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AuthTokenClaims",
+  "type": "object",
+  "required": ["sub", "tenant_id", "session_id", "token_version", "iss", "aud", "nbf", "exp"],
+  "properties": {
+    "sub": { "type": "string" },
+    "tenant_id": { "type": "string" },
+    "session_id": { "type": "string" },
+    "token_version": { "type": "integer" },
+    "iss": { "type": "string" },
+    "aud": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "nbf": { "type": "integer" },
+    "exp": { "type": "integer" }
+  },
+  "additionalProperties": false
+}

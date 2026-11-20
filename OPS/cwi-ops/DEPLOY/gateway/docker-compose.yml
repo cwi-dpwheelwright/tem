@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  cwi-gateway:
+    image: caddy:2
+    container_name: public-core-gateway
+    env_file: .env
+    ports:
+      - "${GATEWAY_HTTP_PORT}:${GATEWAY_HTTP_PORT}"
+      - "${GATEWAY_HTTPS_PORT}:${GATEWAY_HTTPS_PORT}"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - cwi-public
+    healthcheck:
+      test: ["CMD-SHELL", "wget --header=\"Host: public-core-gateway\" -qO- http://127.0.0.1:${GATEWAY_HTTP_PORT}/api/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  cwi-public:
+    name: cwi-public
+    external: true

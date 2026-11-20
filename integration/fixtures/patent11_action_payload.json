@@ -1,0 +1,50 @@
+{
+  "action": {
+    "args": {
+      "doc_type": "procedure",
+      "governance": {
+        "require_approval": true,
+        "retain_days": 30
+      },
+      "inputs": {
+        "asset_id": "P-101",
+        "hazards": [
+          "stored_energy",
+          "rotating_equipment",
+          "pressurized_fluid"
+        ],
+        "location": "Plant A \u2014 Line 3",
+        "ppe": [
+          "gloves",
+          "eye_protection",
+          "hearing_protection"
+        ],
+        "steps": [
+          "Notify affected personnel.",
+          "Isolate energy sources.",
+          "Apply lockout/tagout devices.",
+          "Verify zero-energy state.",
+          "Perform maintenance task.",
+          "Remove LOTO devices and restore energy.",
+          "Return equipment to service and document completion."
+        ]
+      },
+      "output_formats": [
+        "structured",
+        "narrative"
+      ],
+      "schema_version": "1.0",
+      "template_id": "tmpl.loto.v1",
+      "title": "Lockout/Tagout (LOTO) \u2014 Pump P-101"
+    },
+    "type": "document.generate"
+  },
+  "actor": {
+    "role": "operator",
+    "user_id": "user_operator_001"
+  },
+  "idempotency_key": "action-afe63a7d-f64d-458e-b7bd-9348217757c2",
+  "pack": "enterprise_pack",
+  "policy_mode": "approve",
+  "tenant_id": "tenant_dev"
+}

@@ -1,0 +1,8 @@
+services:
+  cloudflared:
+    image: ${CLOUDFLARED_IMAGE}
+    container_name: public-edge-cloudflared
+    env_file: .env
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TUNNEL_TOKEN}
+    network_mode: host
+    restart: unless-stopped

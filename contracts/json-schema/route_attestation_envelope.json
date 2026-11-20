@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RouteAttestationEnvelope",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "attestation_id",
+    "issued_utc",
+    "trace_id",
+    "decision_id",
+    "selected_tier",
+    "nonce",
+    "sequence",
+    "reroute_required"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "attestation_id": { "type": "string" },
+    "issued_utc": { "type": "string", "format": "date-time" },
+    "trace_id": { "type": "string" },
+    "tenant_id": { "type": "string" },
+    "node_id": { "type": "string" },
+    "decision_id": { "type": "string" },
+    "selected_tier": { "type": "string", "enum": ["pro", "free", "edge"] },
+    "selected_endpoint": { "type": "string" },
+    "network_status": { "type": "string", "enum": ["healthy", "degraded", "down", "unknown"] },
+    "network_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "mesh_health_status": { "type": "string", "enum": ["healthy", "degraded", "down", "unknown"] },
+    "preferred_interface": { "type": "string" },
+    "reroute_required": { "type": "boolean" },
+    "reroute_reason": { "type": "string" },
+    "nonce": { "type": "string" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "reason_codes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "signature": { "type": "string" }
+  },
+  "additionalProperties": false
+}

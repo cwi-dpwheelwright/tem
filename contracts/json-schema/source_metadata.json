@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cwi.dev/schemas/source_metadata.json",
+  "title": "SourceMetadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source_id", "updated_utc", "attributes"],
+  "properties": {
+    "source_id": { "type": "string", "minLength": 1 },
+    "updated_utc": { "type": "string", "format": "date-time" },
+    "attributes": { "type": "object" }
+  }
+}

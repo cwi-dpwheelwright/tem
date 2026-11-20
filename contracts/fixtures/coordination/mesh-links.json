@@ -1,0 +1,24 @@
+[
+  {
+    "node_id": "node-a12",
+    "interface": "sub6-1",
+    "signal_quality": 0.9,
+    "latency_ms": 12,
+    "packet_loss": 0.01,
+    "bandwidth_kbps": 12000,
+    "throughput_kbps": 8200,
+    "status": "healthy",
+    "updated_utc": "2026-02-02T11:00:00Z"
+  },
+  {
+    "node_id": "node-b07",
+    "interface": "mmwave-2",
+    "signal_quality": 0.6,
+    "latency_ms": 28,
+    "packet_loss": 0.08,
+    "bandwidth_kbps": 8000,
+    "throughput_kbps": 4200,
+    "status": "degraded",
+    "updated_utc": "2026-02-02T11:01:00Z"
+  }
+]

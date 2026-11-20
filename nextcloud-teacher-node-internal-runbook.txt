@@ -1,0 +1,169 @@
+Nextcloud + Teacher-Node Integration Runbook
+Target server: 100.87.205.59 (cwi-internal-teacher-01)
+
+Goal
+- Stand up Nextcloud on the same server as internal teacher-node.
+- Keep teacher-node as system-of-record for generated artifacts.
+- Expose artifacts in Nextcloud in a stable, read-only integration format.
+
+Architecture Contract
+- Teacher-node writes artifacts to: /data/teacher-node (inside container)
+- Host bind for artifacts: /srv/cwi/teacher-node-artifacts
+- Canonical artifact subfolders:
+  - /srv/cwi/teacher-node-artifacts/reports
+  - /srv/cwi/teacher-node-artifacts/documents
+  - /srv/cwi/teacher-node-artifacts/reconciliation
+  - /srv/cwi/teacher-node-artifacts/packs
+- Nextcloud mounts this path read-only and exposes it as:
+  - TeacherNodeArtifacts/reports
+  - TeacherNodeArtifacts/documents
+  - TeacherNodeArtifacts/reconciliation
+  - TeacherNodeArtifacts/packs
+
+------------------------------------------------------------------------------
+1) Prepare server directories
+------------------------------------------------------------------------------
+ssh root@100.87.205.59
+
+mkdir -p /srv/cwi/teacher-node-artifacts/{reports,documents,reconciliation,packs}
+mkdir -p /srv/nextcloud
+chmod -R 755 /srv/cwi/teacher-node-artifacts
+
+------------------------------------------------------------------------------
+2) Wire teacher-node to persistent filesystem artifacts
+------------------------------------------------------------------------------
+# Edit teacher-node env (internal deployment path created by deploy script)
+cd ~/cwi-teacher-node-internal
+
+# Set filesystem artifact backend
+sed -i 's/^TEACHER_NODE_ARTIFACT_BACKEND=.*/TEACHER_NODE_ARTIFACT_BACKEND=filesystem/' .env || true
+
+# Ensure artifact root is an absolute in-container path
+grep -q '^TEACHER_NODE_ARTIFACT_ROOT=' .env \
+  && sed -i 's|^TEACHER_NODE_ARTIFACT_ROOT=.*|TEACHER_NODE_ARTIFACT_ROOT=/data/teacher-node|' .env \
+  || echo 'TEACHER_NODE_ARTIFACT_ROOT=/data/teacher-node' >> .env
+
+# Add bind mount to compose for teacher-node artifacts
+# File: ~/cwi-teacher-node-internal/docker-compose.yml
+# Under service cwi-teacher-node add:
+#   volumes:
+#     - /srv/cwi/teacher-node-artifacts:/data/teacher-node
+
+# Then apply
+docker compose --env-file .env up -d
+
+# Verify
+docker inspect internal-02-teacher-node --format '{{json .Mounts}}'
+docker exec internal-02-teacher-node sh -lc 'echo test > /data/teacher-node/reports/.rw-test && ls -la /data/teacher-node/reports/.rw-test'
+
+------------------------------------------------------------------------------
+3) Deploy Nextcloud (separate stack)
+------------------------------------------------------------------------------
+cd /srv/nextcloud
+
+cat > .env << 'EOF'
+POSTGRES_DB=nextcloud
+POSTGRES_USER=nextcloud
+POSTGRES_PASSWORD=CHANGE_ME_DB_PASSWORD
+NEXTCLOUD_DB_PASSWORD=CHANGE_ME_DB_PASSWORD
+NEXTCLOUD_ADMIN_USER=admin
+NEXTCLOUD_ADMIN_PASSWORD=CHANGE_ME_ADMIN_PASSWORD
+EOF
+
+cat > docker-compose.yml << 'EOF'
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+
+  app:
+    image: nextcloud:apache
+    container_name: nextcloud-app
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "8088:80"
+    env_file: .env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${NEXTCLOUD_DB_PASSWORD}
+      - REDIS_HOST=redis
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+    volumes:
+      - nextcloud_data:/var/www/html
+      - /srv/cwi/teacher-node-artifacts:/mnt/teacher-node-artifacts:ro
+
+volumes:
+  db_data:
+  nextcloud_data:
+EOF
+
+docker compose up -d
+
+------------------------------------------------------------------------------
+4) Configure Nextcloud for teacher-node integration
+------------------------------------------------------------------------------
+# Open UI:
+# http://100.87.205.59:8088
+# Login with NEXTCLOUD_ADMIN_USER / NEXTCLOUD_ADMIN_PASSWORD
+
+# In Nextcloud as admin:
+# 1. Apps -> enable "External storage support"
+# 2. Administration Settings -> External storages
+# 3. Add storage:
+#    - Type: Local
+#    - Folder name: TeacherNodeArtifacts
+#    - Configuration: /mnt/teacher-node-artifacts
+# 4. Set read-only for all users/groups that should consume artifacts.
+
+# Optional CLI enable for app:
+docker exec --user www-data nextcloud-app php occ app:enable files_external
+
+------------------------------------------------------------------------------
+5) Connectivity and integration tests
+------------------------------------------------------------------------------
+# Teacher-node health
+curl -sS -D - http://100.87.205.59:8084/health
+
+# Nextcloud landing
+curl -sS -I http://100.87.205.59:8088
+
+# Artifact visibility smoke test
+docker exec internal-02-teacher-node sh -lc 'echo "{\"ok\":true}" > /data/teacher-node/reports/smoke.json'
+# Then verify /TeacherNodeArtifacts/reports/smoke.json appears in Nextcloud UI.
+
+------------------------------------------------------------------------------
+6) Operational guidance
+------------------------------------------------------------------------------
+- Keep teacher-node private/internal where possible.
+- Expose Nextcloud to users (preferably behind HTTPS reverse proxy).
+- Do not let users write into teacher-node canonical artifact folders.
+- Use Nextcloud for distribution/access; keep provenance and manifests in teacher-node artifacts.
+- Backup both:
+  - /srv/cwi/teacher-node-artifacts
+  - /srv/nextcloud (or at minimum DB + nextcloud_data volume data)
+
+------------------------------------------------------------------------------
+7) Optional publish mode (curated subset only)
+------------------------------------------------------------------------------
+If you only want approved artifacts in Nextcloud, publish from teacher-node output to a curated folder:
+- Source: /srv/cwi/teacher-node-artifacts/reports
+- Target: /srv/cwi/teacher-node-artifacts/published
+- Nextcloud can expose only /mnt/teacher-node-artifacts/published
+

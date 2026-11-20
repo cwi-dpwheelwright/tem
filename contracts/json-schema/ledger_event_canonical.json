@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ledger canonical event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "trace_id",
+    "event_type",
+    "payload",
+    "prev_hash",
+    "created_utc"
+  ],
+  "properties": {
+    "trace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "event_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload": {
+      "type": "object"
+    },
+    "prev_hash": {
+      "type": "string"
+    },
+    "created_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signature": {
+      "type": "string"
+    },
+    "signature_algorithm": {
+      "type": "string"
+    },
+    "key_id": {
+      "type": "string"
+    }
+  }
+}

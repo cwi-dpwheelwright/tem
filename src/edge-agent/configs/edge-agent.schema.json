@@ -1,0 +1,329 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CWI Edge Agent Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "gateway_url",
+    "tenant_id",
+    "poll_interval_seconds",
+    "buffer_path"
+  ],
+  "properties": {
+    "gateway_url": {
+      "type": "string",
+      "format": "uri",
+      "minLength": 1
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "poll_interval_seconds": {
+      "type": "number",
+      "minimum": 1
+    },
+    "buffer_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "buffer_max_items": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "buffer_max_bytes": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "buffer_drop_policy": {
+      "type": "string",
+      "enum": [
+        "drop_oldest",
+        "drop_newest"
+      ]
+    },
+    "ingest_timeout_seconds": {
+      "type": "number",
+      "minimum": 1
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "login_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "refresh_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "username": {
+          "type": "string",
+          "minLength": 1
+        },
+        "username_env": {
+          "type": "string",
+          "minLength": 1
+        },
+        "password": {
+          "type": "string",
+          "minLength": 1
+        },
+        "password_env": {
+          "type": "string",
+          "minLength": 1
+        },
+        "password_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "refresh_margin_seconds": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "mtls": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cert_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revoked_serials_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ca_bundle_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "crl_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "crl_cache_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "crl_refresh_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pinned_fingerprints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "verify_hostname": {
+          "type": "boolean"
+        },
+        "reload_interval_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reload_on_sighup": {
+          "type": "boolean"
+        }
+      }
+    },
+    "survival": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "endpoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "emit_interval_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "min_severity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "min_change": {
+          "type": "number",
+          "minimum": 0
+        },
+        "signal_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "degradation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "buffer_warning_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "buffer_critical_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "disk_warning_free_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "disk_critical_free_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "network_failure_threshold": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "network_open_severity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "network_half_open_severity": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "otel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "service_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "otlp_endpoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "headers": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "metrics_interval_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "traces_enabled": {
+          "type": "boolean"
+        },
+        "metrics_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "endpoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "endpoints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "collector": {
+          "type": "string",
+          "enum": [
+            "simulated",
+            "system",
+            "none"
+          ]
+        },
+        "queue_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "queue_max_items": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "queue_max_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "queue_drop_policy": {
+          "type": "string",
+          "enum": [
+            "drop_oldest",
+            "drop_newest"
+          ]
+        },
+        "flush_interval_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_batch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "timeout_seconds": {
+          "type": "number",
+          "minimum": 1
+        },
+        "backoff_base_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "backoff_max_seconds": {
+          "type": "number",
+          "minimum": 1
+        },
+        "failure_threshold": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "recovery_seconds": {
+          "type": "number",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

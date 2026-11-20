@@ -1,0 +1,4 @@
+{
+  "tenant_id": "tenant-1",
+  "roles": ["admin", "viewer"]
+}

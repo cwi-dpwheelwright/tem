@@ -1,0 +1,102 @@
+We have completed Governance + Policy Enforcement and activated the centralized Pin Resolver architecture across Core. With governance enforced, pack resolution deterministic, and latency baselines recorded, we are advancing to Phase 7.
+Phase 6 (High-Speed Backhaul + Direct NIC Fabric) will resume when Core’s upgraded NIC hardware arrives. We are intentionally sequencing this to maintain clean performance baselines and avoid mixing fabric-level optimizations into governance validation metrics.
+Below is a full context update.
+────────────────────────────
+PHASE 5 – WHAT WE CLOSED
+────────────────────────────
+Phase 5 delivered three major structural upgrades:
+Cryptographic Governance Boundary
+• Teacher signs governance pins (ed25519-raw).
+• Core verifies signatures before any pack resolution.
+• Resolution priority is deterministic (experiment → approved → latest_stable).
+• All resolution events are written to ledger.
+Runtime pack selection is now cryptographically controlled and auditable.
+Centralized Pin Resolver (Control Plane)
+• /resolve/<pack_id> verifies signature + returns effective hash.
+• /packs/* now served through governance boundary.
+• Orchestrator now points to:
+PACKS_BASE_URL=http://cwi-pin-resolver:8090
+• Gunicorn production runtime active.
+The Orchestrator no longer consumes pack artifacts directly. It must pass through governance.
+Performance Baselines Captured
+We established latency baselines across:
+Core → pack-service (local): ~0.6 ms p50
+Core → gateway path: ~2.5 ms p50
+Core → Qdrant shards: ~2.0–2.1 ms p50
+Core → MinIO health: ~1.9 ms p50
+Orchestrator TCP connect: ~0.08 ms
+ApacheBench throughput:
+• ~9,300 req/sec (local)
+• ~3,700 req/sec (gateway path)
+These metrics place our internal mesh squarely within intra-datacenter east–west performance territory (1–3 ms class).
+The network layer is not our bottleneck.
+Governance is not our bottleneck.
+We are inference-bound, not transport-bound.
+────────────────────────────
+CURRENT NETWORK STATE
+────────────────────────────
+• All nodes operating behind OPNsense LAN.
+• Teacher and vector shards running upgraded NICs.
+• Core NIC upgrade pending.
+• Tailscale overlay stable.
+• Ledger integrity intact.
+• Evidence bundles uploaded and verified on Teacher (MinIO).
+Infrastructure is stable and deterministic.
+────────────────────────────
+PHASE 6 STATUS – PAUSED (BY DESIGN)
+────────────────────────────
+Phase 6 = High-Speed Backhaul + Direct NIC Fabric.
+This includes:
+• Core NIC upgrade
+• Throughput re-baselining
+• iperf3 validation
+• MTU tuning (if enabled)
+• Direct shard fabric optimization
+We are pausing Phase 6 until Core hardware arrives so that performance measurements remain clean and comparable.
+No partial optimization will be introduced mid-measurement.
+────────────────────────────
+WE ARE NOW STARTING PHASE 7
+────────────────────────────
+Phase 7 – Multi-Region Replication
+This is a strategic move.
+Because governance is now centralized and deterministic, we can safely extend the architecture horizontally.
+Phase 7 Objectives:
+Secondary Core Instance Modeling
+• Simulate region-B core.
+• Validate replicated pin resolution consistency.
+• Confirm signature verification across regions.
+Pack Artifact Replication Strategy
+• Controlled replication of pack versions.
+• Anchor integrity validation.
+• Cross-node ledger traceability.
+Deterministic Cross-Region Resolution
+• Ensure identical resolved_hash across regions.
+• Validate no drift between region-A and region-B.
+Latency Impact Modeling
+• Measure resolver latency across Tailscale / WAN path.
+• Compare intra-LAN vs simulated inter-region performance.
+Governance Survivability
+• Validate that Teacher authority model scales regionally.
+• Confirm pack promotion flow remains deterministic across replicas.
+Phase 7 transforms CWI from a single-region governed mesh into a replication-ready architecture.
+────────────────────────────
+WHAT WE ARE CAPABLE OF NOW
+────────────────────────────
+With Phase 5 complete, we now have:
+• Cryptographically enforced runtime governance
+• Deterministic pack resolution
+• Full audit trail for every pack resolve event
+• Measured and documented network performance
+• Governance boundary separation between publish (Teacher) and runtime (Core)
+• Orchestrator strictly bound to policy-controlled pack resolution
+This is enterprise-grade infrastructure.
+We can now:
+• Promote packs without redeploying Core.
+• Prove runtime lineage for audit and compliance.
+• Demonstrate deterministic governance to enterprise customers.
+• Scale concurrency without governance overhead concerns.
+• Expand to multi-region safely (Phase 7).
+
+ALIGNMENT ADDENDUM (2026-03-02)
+- Phase 5 capabilities are claimed here, but production profile remains Phase 4 until signed-pin enforcement
+  and PIN_APPLIED receipts are proven end-to-end with evidence gates.

@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cwi/contracts/recursive_event_schema.json",
+  "title": "RecursiveEvent",
+  "description": "Versioned append-only event contract for recursive intelligence observations, candidates, and validation outcomes.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_id",
+    "event_type",
+    "tenant_id",
+    "user_scope",
+    "source",
+    "confidence",
+    "trace_id",
+    "policy_status",
+    "timestamp_utc",
+    "temporal_state",
+    "payload",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "recursive-event.v1"
+    },
+    "event_id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "event_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "user_scope": {
+      "type": "object",
+      "required": [
+        "scope_type"
+      ],
+      "properties": {
+        "scope_type": {
+          "type": "string",
+          "enum": [
+            "system",
+            "tenant",
+            "user",
+            "node"
+          ]
+        },
+        "user_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "user_id_hash": {
+          "type": "string",
+          "minLength": 16
+        },
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "component",
+        "source_type"
+      ],
+      "properties": {
+        "component": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "ask_trace",
+            "critic",
+            "teacher",
+            "process_miner",
+            "graph",
+            "vector",
+            "truth_engine",
+            "cache",
+            "federated_summary",
+            "external_opinion"
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "trace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy_status": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "denied",
+        "observe_only",
+        "pending_review",
+        "quarantined"
+      ]
+    },
+    "timestamp_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "temporal_state": {
+      "type": "string",
+      "enum": [
+        "current",
+        "historical",
+        "stale",
+        "conflicted",
+        "unsupported",
+        "estimated"
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "source_hash",
+        "created_utc"
+      ],
+      "properties": {
+        "source_hash": {
+          "type": "string",
+          "minLength": 16
+        },
+        "created_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "actor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parent_event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 8
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
